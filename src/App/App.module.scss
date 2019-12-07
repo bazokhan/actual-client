@@ -1,0 +1,27 @@
+.row {
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-bottom: solid 1px #ddd;
+
+  .midCell {
+    width: 100px;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 13px;
+    color: #333;
+    padding: 5px 10px;
+  }
+
+  .bigCell {
+    width: 250px;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 13px;
+    color: #333;
+    padding: 5px 10px;
+  }
+}
