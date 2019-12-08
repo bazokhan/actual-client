@@ -36,11 +36,12 @@ const useInitialLoad = () => {
     a.get(dbRoutes.categoryMapping).then(res => setCategoryMapping(res.data));
     a.get(dbRoutes.payees).then(res => setPayees(res.data));
     a.get(dbRoutes.payeeMapping).then(res => setPayeeMapping(res.data));
-    a.get(dbRoutes.transactions, {
-      headers: {
-        range: 'rows=0-200'
-      }
-    }).then(res => setTransactions(res.data));
+    a.get(dbRoutes.transactions).then(res => setTransactions(res.data));
+    // assigning headers: {
+    //   headers: {
+    //     range: 'rows=0-200'
+    //   }
+    // }
   }, []);
 
   useEffect(() => {
