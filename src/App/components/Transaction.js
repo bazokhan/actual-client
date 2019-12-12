@@ -26,7 +26,7 @@ const Transaction = ({ transaction }) => {
     categoryObj,
     catGroup,
     payee,
-    description,
+    // description,
     dateString,
     notes,
     amountType
@@ -45,7 +45,7 @@ const Transaction = ({ transaction }) => {
       <div className={cx(styles.midCell, styles.right)}>
         {amountType === 'Deposit' && actualAmount ? n(actualAmount) : null}
       </div>
-      <div className={styles.bigCell}>{description}</div>
+      {/* <div className={styles.bigCell}>{description}</div> */}
     </div>
   );
 };

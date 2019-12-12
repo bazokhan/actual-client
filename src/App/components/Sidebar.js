@@ -5,7 +5,12 @@ import styles from '../App.module.scss';
 
 const n = num => numeral(num).format('0,0.00');
 
-const Sidebar = ({ transactions, accounts, amountsByAccount }) => {
+const Sidebar = ({
+  transactions,
+  accounts,
+  amountsByAccount,
+  setActiveAccount
+}) => {
   const [totalBalance, setTotalBalance] = useState(0);
 
   useEffect(() => {
@@ -20,7 +25,7 @@ const Sidebar = ({ transactions, accounts, amountsByAccount }) => {
       <button
         className={styles.accountsButton}
         type="button"
-        onClick={() => console.log('all')}
+        onClick={() => setActiveAccount(null)}
       >
         <span>All accounts</span>
         <span>{n(totalBalance)} EGP</span>
@@ -30,7 +35,7 @@ const Sidebar = ({ transactions, accounts, amountsByAccount }) => {
           key={account.id}
           className={styles.accountButton}
           type="button"
-          onClick={() => console.log(account.name)}
+          onClick={() => setActiveAccount(account.id)}
         >
           <span>{account.name}</span>
           <span>
@@ -52,7 +57,8 @@ const Sidebar = ({ transactions, accounts, amountsByAccount }) => {
 Sidebar.propTypes = {
   transactions: PropTypes.array.isRequired,
   accounts: PropTypes.array.isRequired,
-  amountsByAccount: PropTypes.object.isRequired
+  amountsByAccount: PropTypes.object.isRequired,
+  setActiveAccount: PropTypes.func.isRequired
 };
 
 export default Sidebar;

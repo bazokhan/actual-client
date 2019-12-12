@@ -69,10 +69,10 @@ const TransactionsHeader = ({ sortState, setSortState }) => {
         <p>Deposit</p>
         {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
-      <button type="button" onClick={() => {}} className={styles.bigCell}>
+      {/* <button type="button" onClick={() => {}} className={styles.bigCell}>
         <p>Description</p>
         {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button>
+      </button> */}
     </div>
   );
 };

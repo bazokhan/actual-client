@@ -12,6 +12,33 @@ import TransactionsHeader from './components/TransactionsHeader';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 
+const toggleFullScreen = () => {
+  const doc = window.document;
+  const docEl = doc.documentElement;
+
+  const requestFullScreen =
+    docEl.requestFullscreen ||
+    docEl.mozRequestFullScreen ||
+    docEl.webkitRequestFullScreen ||
+    docEl.msRequestFullscreen;
+  const cancelFullScreen =
+    doc.exitFullscreen ||
+    doc.mozCancelFullScreen ||
+    doc.webkitExitFullscreen ||
+    doc.msExitFullscreen;
+
+  if (
+    !doc.fullscreenElement &&
+    !doc.mozFullScreenElement &&
+    !doc.webkitFullscreenElement &&
+    !doc.msFullscreenElement
+  ) {
+    requestFullScreen.call(docEl);
+  } else {
+    cancelFullScreen.call(doc);
+  }
+};
+
 const App = () => {
   const {
     loading,
@@ -26,12 +53,13 @@ const App = () => {
   // console.log(transactions);
 
   const [sortedTransactions, setSortedTransactions] = useState([]);
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
   const [amountsByAccount, setAmountsByAccount] = useState({});
   const [sortState, setSortState] = useState({
     prop: null,
     isAscending: false
   });
-  const [activeAccount, setActiveAccount] = useState('all');
+  const [activeAccount, setActiveAccount] = useState(null);
 
   useEffect(() => {
     if (sortedTransactions.length) {
@@ -41,6 +69,15 @@ const App = () => {
       });
     }
   }, [sortedTransactions]);
+
+  useEffect(() => {
+    if (activeAccount) {
+      const filtered = sortedTransactions.filter(
+        t => t.account.id === activeAccount
+      );
+      setFilteredTransactions(filtered);
+    }
+  }, [activeAccount]);
 
   useEffect(() => {
     // console.log(sortState);
@@ -82,6 +119,13 @@ const App = () => {
 
   return (
     <div className={styles.container}>
+      <button
+        className={styles.topBar}
+        type="button"
+        onClick={toggleFullScreen}
+      >
+        Full Screen
+      </button>
       <Sidebar
         transactions={
           !loading
@@ -94,21 +138,37 @@ const App = () => {
               )
             : []
         }
+        setActiveAccount={setActiveAccount}
         accounts={accounts}
         amountsByAccount={amountsByAccount}
       />
       <div className={styles.main}>
         <div className={styles.header}>
-          <Header transactions={sortedTransactions} title="telescan" />
+          <Header
+            transactions={
+              activeAccount && filteredTransactions.length > 0
+                ? filteredTransactions
+                : sortedTransactions
+            }
+            title={
+              activeAccount
+                ? accounts.find(a => a.id === activeAccount).name
+                : 'All accounts'
+            }
+          />
           <TransactionsHeader
             sortState={sortState}
             setSortState={setSortState}
           />
         </div>
         <div className={styles.body}>
-          {sortedTransactions.map(transaction => (
-            <Transaction key={transaction.id} transaction={transaction} />
-          ))}
+          {activeAccount && filteredTransactions.length > 0
+            ? filteredTransactions.map(transaction => (
+                <Transaction key={transaction.id} transaction={transaction} />
+              ))
+            : sortedTransactions.map(transaction => (
+                <Transaction key={transaction.id} transaction={transaction} />
+              ))}
         </div>
       </div>
     </div>
