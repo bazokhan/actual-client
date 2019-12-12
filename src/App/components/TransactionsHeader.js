@@ -39,7 +39,7 @@ const TransactionsHeader = ({ sortState, setSortState }) => {
       </button>
       <button
         type="button"
-        onClick={() => sort('category')}
+        onClick={() => sort('categoryObj')}
         className={styles.midCell}
       >
         <p>Category</p>

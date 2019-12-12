@@ -3,19 +3,34 @@ const resolveTransactions = (
   transactions,
   accounts,
   categories,
-  categoryGroups
+  categoryGroups,
+  payees
 ) => {
-  return transactions.map(t => {
-    const ds = t.date.toString();
-    t.account = accounts.find(account => account.id === t.acct) || {};
-    t.category = categories.find(cat => cat.id === t.category) || {};
-    t.catGroup =
-      categoryGroups.find(group => group.id === t.category.cat_group) || {};
-    t.dateString = `${ds.slice(6, 8)}/${ds.slice(4, 6)}/${ds.slice(0, 4)}`;
-    t.amountType = t.amount > 0 ? 'Deposit' : 'Payment';
-    t.actualAmount = t.amount / 100;
-    return t;
-  });
+  // console.log(transactions);
+  return transactions
+    .filter(
+      transaction =>
+        !transaction.starting_balance_flag && !transaction.tombstone
+    )
+    .map(t => {
+      const ds = t.date.toString();
+      t.categoryObj = categories.find(cat => cat.id === t.category) || {};
+      // console.log(t);
+      t.account = accounts.find(account => account.id === t.acct) || {};
+      // t.category = categories.find(cat => cat.id === t.category) || {};
+      t.catGroup =
+        categoryGroups.find(
+          group =>
+            group.id ===
+            (categories.find(cat => cat.id === t.category) || {}).cat_group
+        ) || {};
+      t.dateString = `${ds.slice(6, 8)}/${ds.slice(4, 6)}/${ds.slice(0, 4)}`;
+      t.amountType = t.amount > 0 ? 'Deposit' : 'Payment';
+      t.actualAmount = t.amount / 100;
+      // console.log(t);
+      t.payee = payees.find(payee => payee.id === t.description) || {};
+      return t;
+    });
 };
 
 const sortAmountsByAccount = (transactions, accounts) => {
@@ -33,7 +48,7 @@ const sortAmountsByAccount = (transactions, accounts) => {
 const sortTransactions = (transactions, sortState) => {
   if (
     sortState.prop === 'account' ||
-    sortState.prop === 'category' ||
+    sortState.prop === 'categoryObj' ||
     sortState.prop === 'catGroup'
   ) {
     if (sortState.isAscending) {

@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
@@ -30,13 +31,57 @@ const useInitialLoad = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    a.get(dbRoutes.accounts).then(res => setAccounts(res.data));
-    a.get(dbRoutes.categories).then(res => setCategories(res.data));
-    a.get(dbRoutes.categoryGroups).then(res => setCategoryGroups(res.data));
-    a.get(dbRoutes.categoryMapping).then(res => setCategoryMapping(res.data));
-    a.get(dbRoutes.payees).then(res => setPayees(res.data));
-    a.get(dbRoutes.payeeMapping).then(res => setPayeeMapping(res.data));
-    a.get(dbRoutes.transactions).then(res => setTransactions(res.data));
+    a.get(dbRoutes.accounts)
+      .then(res => setAccounts(res.data))
+      .catch(e => {
+        console.log(e);
+        setAccounts([]);
+      });
+    a.get(dbRoutes.categories)
+      .then(res => setCategories(res.data))
+      .catch(e => {
+        console.log(e);
+        setCategories([]);
+      });
+    a.get(dbRoutes.categoryGroups)
+      .then(res => setCategoryGroups(res.data))
+      .catch(e => {
+        console.log(e);
+        setCategoryGroups([]);
+      });
+    a.get(dbRoutes.categoryMapping)
+      .then(res => setCategoryMapping(res.data))
+      .catch(e => {
+        console.log(e);
+        setCategoryMapping([]);
+      });
+    a.get(dbRoutes.payees)
+      .then(res => {
+        console.log(res.data.filter(payee => payee.transfer_acct));
+        setPayees(res.data);
+      })
+      .catch(e => {
+        console.log(e);
+        setPayees([]);
+      });
+    a.get(dbRoutes.payeeMapping)
+      .then(res => {
+        console.log(res.data.filter(payee => payee.id !== payee.targetId));
+        setPayeeMapping(res.data);
+      })
+      .catch(e => {
+        console.log(e);
+        setPayeeMapping([]);
+      });
+    a.get(dbRoutes.transactions)
+      .then(res => {
+        // console.log(res.data);
+        setTransactions(res.data);
+      })
+      .catch(e => {
+        console.log(e);
+        setTransactions([]);
+      });
     // assigning headers: {
     //   headers: {
     //     range: 'rows=0-200'
