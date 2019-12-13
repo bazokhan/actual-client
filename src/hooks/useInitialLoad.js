@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
-const server = 'http://localhost:8085/';
+const server = 'http://192.168.1.7:8085/';
 const a = {
   get: (query, config) => {
     if (config) return axios.get(server + query, config);

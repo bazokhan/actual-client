@@ -155,10 +155,22 @@ const App = () => {
                 ? filteredTransactions
                 : sortedTransactions
             }
+            categories={categories}
             title={
               activeAccount
                 ? accounts.find(a => a.id === activeAccount).name
                 : 'All accounts'
+            }
+            filter={id =>
+              setSortedTransactions(
+                resolveTransactions(
+                  transactions,
+                  accounts,
+                  categories,
+                  categoryGroups,
+                  payees
+                ).filter(t => t.categoryObj.id === id)
+              )
             }
           />
           <TransactionsHeader

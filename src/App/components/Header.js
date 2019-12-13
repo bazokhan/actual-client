@@ -5,7 +5,7 @@ import styles from '../App.module.scss';
 
 const n = num => numeral(num).format('0,0.00');
 
-const Header = ({ transactions, title }) => {
+const Header = ({ transactions, title, categories, filter }) => {
   const [totalBalance, setTotalBalance] = useState(0);
 
   useEffect(() => {
@@ -28,13 +28,24 @@ const Header = ({ transactions, title }) => {
         <h2>BALANCE</h2>
         <p>{n(totalBalance)} EGP</p>
       </div>
+      <div>
+        <select onChange={e => filter(e.target.value)}>
+          {categories.map(cat => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };
 
 Header.propTypes = {
   transactions: PropTypes.array.isRequired,
-  title: PropTypes.string.isRequired
+  title: PropTypes.string.isRequired,
+  categories: PropTypes.array.isRequired,
+  filter: PropTypes.func.isRequired
 };
 
 export default Header;
