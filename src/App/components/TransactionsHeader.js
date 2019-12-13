@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
 import styles from '../App.module.scss';
 
-const TransactionsHeader = ({ sortState, setSortState }) => {
+const TransactionsHeader = ({ sortState, setSortState, activeAccount }) => {
   const sort = prop => {
     setSortState({
       prop,
@@ -21,15 +21,17 @@ const TransactionsHeader = ({ sortState, setSortState }) => {
         <p>Date</p>
         {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
-      <button
-        type="button"
-        onClick={() => sort('account')}
-        className={styles.midCell}
-      >
-        <p>Account</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button>
-      <button type="button" onClick={() => {}} className={styles.midCell}>
+      {!activeAccount && (
+        <button
+          type="button"
+          onClick={() => sort('account')}
+          className={styles.midCell}
+        >
+          <p>Account</p>
+          {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        </button>
+      )}
+      <button type="button" onClick={() => {}} className={styles.normCell}>
         <p>Payee</p>
         {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
@@ -79,7 +81,12 @@ const TransactionsHeader = ({ sortState, setSortState }) => {
 
 TransactionsHeader.propTypes = {
   sortState: PropTypes.object.isRequired,
-  setSortState: PropTypes.func.isRequired
+  setSortState: PropTypes.func.isRequired,
+  activeAccount: PropTypes.string
+};
+
+TransactionsHeader.defaultProps = {
+  activeAccount: null
 };
 
 export default TransactionsHeader;

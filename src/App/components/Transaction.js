@@ -6,7 +6,7 @@ import styles from '../App.module.scss';
 
 const n = num => numeral(num).format('0,0.00');
 
-const Transaction = ({ transaction }) => {
+const Transaction = ({ transaction, activeAccount }) => {
   // console.log(transaction.categoryId);
   // if (transaction.financial_id) console.log(transaction.financial_id);
   // if (transaction.imported_description)
@@ -34,8 +34,8 @@ const Transaction = ({ transaction }) => {
   return (
     <div key={id} className={styles.row}>
       <div className={styles.midCell}>{dateString}</div>
-      <div className={styles.midCell}>{account.name}</div>
-      <div className={styles.midCell}>{payee.name}</div>
+      {!activeAccount && <div className={styles.midCell}>{account.name}</div>}
+      <div className={styles.normCell}>{payee.name}</div>
       <div className={styles.bigCell}>{notes}</div>
       <div className={styles.midCell}>{categoryObj.name}</div>
       <div className={styles.midCell}>{catGroup.name}</div>
@@ -51,7 +51,12 @@ const Transaction = ({ transaction }) => {
 };
 
 Transaction.propTypes = {
-  transaction: PropTypes.object.isRequired
+  transaction: PropTypes.object.isRequired,
+  activeAccount: PropTypes.string
+};
+
+Transaction.defaultProps = {
+  activeAccount: null
 };
 
 export default Transaction;
