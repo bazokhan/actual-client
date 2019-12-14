@@ -2,7 +2,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 
-const server = 'http://192.168.1.7:8085/';
+const server = process.env.REACT_APP_SERVER_URL;
+
 const a = {
   get: (query, config) => {
     if (config) return axios.get(server + query, config);
@@ -75,7 +76,6 @@ const useInitialLoad = () => {
       });
     a.get(dbRoutes.transactions)
       .then(res => {
-        // console.log(res.data);
         setTransactions(res.data);
       })
       .catch(e => {
@@ -94,22 +94,12 @@ const useInitialLoad = () => {
       accounts.length &&
       categories.length &&
       categoryGroups.length &&
-      categoryMapping.length &&
       payees.length &&
-      payeeMapping.length &&
       transactions.length
     ) {
       setLoading(false);
     }
-  }, [
-    accounts,
-    categories,
-    categoryGroups,
-    categoryMapping,
-    payees,
-    payeeMapping,
-    transactions
-  ]);
+  }, [accounts, categories, categoryGroups, payees, transactions]);
 
   return {
     loading,

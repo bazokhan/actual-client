@@ -3,90 +3,179 @@ import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
 import styles from '../App.module.scss';
 
-const TransactionsHeader = ({ sortState, setSortState, activeAccount }) => {
-  const sort = prop => {
-    setSortState({
-      prop,
-      isAscending: !sortState.isAscending
-    });
-  };
+const sortNumsAscending = (a, b) => {
+  if (!a) return 1;
+  if (!b) return -1;
+  return a - b;
+};
+const sortNumsDescending = (a, b) => {
+  if (!a) return 1;
+  if (!b) return -1;
+  return b - a;
+};
+const sortStringsAscending = (a, b) => {
+  if (!a) return 1;
+  if (!b) return -1;
+  if (a.toLowerCase() < b.toLowerCase()) {
+    return -1;
+  }
+  if (a.toLowerCase() > b.toLowerCase()) {
+    return 1;
+  }
+  return 0;
+};
+const sortStringsDescending = (a, b) => {
+  if (!a) return 1;
+  if (!b) return -1;
+  if (a.toLowerCase() < b.toLowerCase()) {
+    return 1;
+  }
+  if (a.toLowerCase() > b.toLowerCase()) {
+    return -1;
+  }
+  return 0;
+};
 
+const TransactionsHeader = ({
+  sortBy,
+  isAscending,
+  activeAccount,
+  toggleSortMode
+}) => {
   return (
     <div className={styles.row}>
       <button
         type="button"
-        onClick={() => sort('date')}
+        onClick={() => {
+          sortBy(
+            t => t.date,
+            isAscending ? sortNumsAscending : sortNumsDescending
+          );
+          toggleSortMode();
+        }}
         className={styles.midCell}
       >
         <p>Date</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
       {!activeAccount && (
         <button
           type="button"
-          onClick={() => sort('account')}
+          onClick={() => {
+            sortBy(
+              t => t.account.name,
+              isAscending ? sortStringsAscending : sortStringsDescending
+            );
+            toggleSortMode();
+          }}
           className={styles.midCell}
         >
           <p>Account</p>
-          {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+          {isAscending ? <FaAngleUp /> : <FaAngleDown />}
         </button>
       )}
-      <button type="button" onClick={() => {}} className={styles.normCell}>
+      <button
+        type="button"
+        onClick={() => {
+          sortBy(
+            t => t.payee.name,
+            isAscending ? sortStringsAscending : sortStringsDescending
+          );
+          toggleSortMode();
+        }}
+        className={styles.normCell}
+      >
         <p>Payee</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button>
-      <button type="button" onClick={() => {}} className={styles.bigCell}>
-        <p>Notes</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
       <button
         type="button"
-        onClick={() => sort('categoryObj')}
+        onClick={() => {
+          sortBy(
+            t => t.notes,
+            isAscending ? sortStringsAscending : sortStringsDescending
+          );
+          toggleSortMode();
+        }}
+        className={styles.bigCell}
+      >
+        <p>Notes</p>
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          sortBy(
+            t => t.categoryObj.name,
+            isAscending ? sortStringsAscending : sortStringsDescending
+          );
+          toggleSortMode();
+        }}
         className={styles.midCell}
       >
         <p>Category</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
       <button
         type="button"
-        onClick={() => sort('catGroup')}
+        onClick={() => {
+          sortBy(
+            t => t.catGroup.name,
+            isAscending ? sortStringsAscending : sortStringsDescending
+          );
+          toggleSortMode();
+        }}
         className={styles.midCell}
       >
         <p>Type</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
       <button
         type="button"
-        onClick={() => sort('amount')}
+        onClick={() => {
+          sortBy(
+            t => (t.amountType === 'Payment' ? t.actualAmount : null),
+            isAscending ? sortNumsAscending : sortNumsDescending
+          );
+          toggleSortMode();
+        }}
         className={styles.midCell}
       >
         <p>Payment</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
       <button
         type="button"
-        onClick={() => sort('amount')}
+        onClick={() => {
+          sortBy(
+            t => (t.amountType === 'Deposit' ? t.actualAmount : null),
+            isAscending ? sortNumsAscending : sortNumsDescending
+          );
+          toggleSortMode();
+        }}
         className={styles.midCell}
       >
         <p>Deposit</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
       {/* <button type="button" onClick={() => {}} className={styles.bigCell}>
         <p>Description</p>
-        {sortState.isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button> */}
     </div>
   );
 };
 
 TransactionsHeader.propTypes = {
-  sortState: PropTypes.object.isRequired,
-  setSortState: PropTypes.func.isRequired,
-  activeAccount: PropTypes.string
+  sortBy: PropTypes.func.isRequired,
+  isAscending: PropTypes.bool.isRequired,
+  activeAccount: PropTypes.string,
+  toggleSortMode: PropTypes.func
 };
 
 TransactionsHeader.defaultProps = {
-  activeAccount: null
+  activeAccount: null,
+  toggleSortMode: () => {}
 };
 
 export default TransactionsHeader;

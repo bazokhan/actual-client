@@ -6548,6 +6548,11 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+mapsort@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mapsort/-/mapsort-1.0.2.tgz#adb5de395dad80f1614cad0868a46c6045ba700f"
+  integrity sha512-II+4m4DOJdH6M3Lm5kRWuo3yv4OKEI0Rfj3s3P/pmKHJ0CS9M2Fhr5N8Sb24LdstT9xereLLjwi/2RrWs5msnw==
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
