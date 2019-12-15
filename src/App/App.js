@@ -16,6 +16,7 @@ import Transaction from './components/Transaction';
 import TransactionsHeader from './components/TransactionsHeader';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import resolvePayees from '../helpers/resolvePayees';
 
 const n = num => numeral(num).format('0,0.00');
 
@@ -29,24 +30,31 @@ const App = () => {
     transactions
   } = useInitialLoad();
 
+  const [allPayees, setAllPayees] = useState([]);
   const [allTransactions, setAllTransactions] = useState([]);
   const [activeTransactions, setActiveTransactions] = useState([]);
   const [activeAccount, setActiveAccount] = useState(null);
   const [isAscending, setIsAscending] = useState(true);
 
   useEffect(() => {
-    if (transactions && !loading) {
+    if (payees && !loading) {
+      setAllPayees(resolvePayees(payees, accounts));
+    }
+  }, [payees, loading]);
+
+  useEffect(() => {
+    if (transactions && allPayees.length && !loading) {
       setAllTransactions(
         resolveTransactions(
           transactions,
           accounts,
           categories,
           categoryGroups,
-          payees
+          allPayees
         )
       );
     }
-  }, [transactions, loading]);
+  }, [transactions, loading, allPayees]);
 
   useEffect(() => {
     if (activeAccount) {
@@ -74,7 +82,7 @@ const App = () => {
                 accounts,
                 categories,
                 categoryGroups,
-                payees
+                allPayees
               )
             : []
         }
@@ -94,7 +102,7 @@ const App = () => {
           <Header
             transactions={activeTransactions}
             categories={categories}
-            payees={payees}
+            payees={allPayees}
             title={
               activeAccount
                 ? accounts.find(a => a.id === activeAccount).name
