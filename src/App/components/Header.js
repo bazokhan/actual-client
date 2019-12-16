@@ -1,35 +1,14 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import styles from '../App.module.scss';
-// import { dateNumToString } from '../../helpers/dateHelpers';
 import { sum, n } from '../../helpers/mathHelpers';
-// import Filters from './Filters';
 
-const Header = ({
-  transactions,
-  accountsAmounts,
-  title
-  // categories,
-  // payees,
-  // setDate,
-  // activeType,
-  // setType,
-  // setCategory,
-  // setPayee,
-  // setSearch
-}) => {
-  // const [totalBalance, setTotalBalance] = useState(0);
-  // const [startDate, setStartDate] = useState(null);
-  // const [endDate, setEndDate] = useState(null);
-
+const Header = ({ transactions, accountsAmounts, title }) => {
   const totalBalance = useMemo(
     () => accountsAmounts.reduce((total, next) => total + next, 0),
     [accountsAmounts]
   );
   const sheetNet = useMemo(() => sum(transactions), [transactions]);
-  // useEffect(() => {
-  //   setTotalBalance(sum(transactions));
-  // }, [transactions]);
 
   return (
     <div className={styles.headerContainer}>
@@ -40,10 +19,6 @@ const Header = ({
       <div className={styles.title}>
         <h1>{title}</h1>
       </div>
-      {/* <div className={styles.dateFilter}>
-        {startDate && <p>From {dateNumToString(startDate, 'DMY')}</p>}
-        {endDate && <p>To {dateNumToString(endDate, 'DMY')}</p>}
-      </div> */}
       <div className={styles.totalsRow}>
         <div className={styles.balance}>
           <h2>BALANCE</h2>
@@ -62,18 +37,6 @@ Header.propTypes = {
   transactions: PropTypes.array.isRequired,
   accountsAmounts: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired
-  // categories: PropTypes.array.isRequired,
-  // payees: PropTypes.array.isRequired,
-  // setDate: PropTypes.func.isRequired,
-  // activeType: PropTypes.string,
-  // setType: PropTypes.func.isRequired,
-  // setCategory: PropTypes.func.isRequired,
-  // setPayee: PropTypes.func.isRequired,
-  // setSearch: PropTypes.func.isRequired
 };
-
-// Header.defaultProps = {
-//   activeType: ''
-// };
 
 export default Header;

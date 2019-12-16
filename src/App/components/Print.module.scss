@@ -1,0 +1,97 @@
+@page {
+  size: A4;
+  margin: 11mm 17mm 17mm 17mm;
+}
+
+.printContainer {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  //   padding: 30px;
+  position: relative;
+
+  .printTitle {
+    padding: 5px 10px;
+    font-size: 20px;
+    font-weight: 900;
+    text-align: left;
+    margin: 0;
+  }
+
+  .printSubtitle {
+    padding: 3px 10px 10px;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    margin: 0;
+    border-bottom: solid 1px #ddd;
+  }
+
+  .printFooter {
+    font-size: 9px;
+    color: #333;
+    text-align: center;
+  }
+
+  .table {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    .row {
+      box-sizing: border-box;
+      margin: 0;
+      display: flex;
+      width: 100%;
+      justify-content: flex-start;
+      align-items: stretch;
+      border-bottom: solid 1px #ddd;
+
+      .midCell {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        flex-grow: 1;
+        width: 100px;
+        display: flex;
+        justify-content: flex-start;
+        font-size: 13px;
+        color: #333;
+        padding: 5px 10px;
+        border-right: solid 1px #eee;
+
+        &.right {
+          justify-content: flex-end;
+        }
+      }
+
+      .normCell {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        flex-grow: 1;
+        width: 170px;
+        display: flex;
+        justify-content: flex-start;
+        font-size: 13px;
+        color: #333;
+        padding: 5px 10px;
+        border-right: solid 1px #eee;
+      }
+
+      .bigCell {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        flex-grow: 1;
+        width: 250px;
+        display: flex;
+        justify-content: flex-start;
+        font-size: 13px;
+        color: #333;
+        padding: 5px 10px;
+        border-right: solid 1px #eee;
+      }
+    }
+  }
+}

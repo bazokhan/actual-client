@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 // import cx from 'classnames';
-import { FaExpand } from 'react-icons/fa';
+import ReactToPrint from 'react-to-print';
+import { FaExpand, FaPrint } from 'react-icons/fa';
 import mapSort from 'mapsort';
 import useInitialLoad from '../hooks/useInitialLoad';
 import styles from './App.module.scss';
@@ -23,6 +24,13 @@ import resolvePayees from '../helpers/resolvePayees';
 // import { sum, n } from '../helpers/mathHelpers';
 import TransactionFooter from './components/TransactionFooter';
 import ExcelExport from './components/ExcelExport';
+import Print from './components/Print';
+
+const PrintButton = () => (
+  <button type="button" className="btn btn-action s-square">
+    <FaPrint />
+  </button>
+);
 
 const App = () => {
   const {
@@ -42,6 +50,7 @@ const App = () => {
   const [activeCategory, setActiveCategory] = useState('');
   const [activePayee, setActivePayee] = useState('');
   const [searchString, setSearchString] = useState('');
+  const printRef = useRef();
 
   const allPayees = useMemo(
     () => (payees && !loading ? resolvePayees(payees, accounts) : []),
@@ -143,25 +152,24 @@ const App = () => {
               sortAmountsByAccount(allTransactions, accounts)[activeAccount] ||
               allTransactions.map(t => t.actualAmount)
             }
-            // categories={categories}
-            // payees={allPayees}
             title={
               activeAccount
                 ? accounts.find(a => a.id === activeAccount).name
                 : 'All accounts'
             }
-            // setSearch={setSearchString}
-            // setCategory={setActiveCategory}
-            // setPayee={setActivePayee}
-            // setDate={setDateFilter}
-            // setType={setActiveType}
-            // activeType={activeType}
           />
-          <ExcelExport
-            transactions={activeTransactions}
-            activeAccount={activeAccount}
-            activeType={activeType}
-          />
+          <div className={styles.actionButtons}>
+            <ExcelExport
+              transactions={activeTransactions}
+              activeAccount={activeAccount}
+              activeType={activeType}
+            />
+            <ReactToPrint
+              trigger={PrintButton}
+              content={() => printRef.current}
+              copyStyles
+            />
+          </div>
           <TransactionsHeader
             activeAccount={activeAccount}
             sortBy={sortBy}
@@ -184,6 +192,13 @@ const App = () => {
           <TransactionFooter
             activeAccount={activeAccount}
             activeTransactions={activeTransactions}
+            activeType={activeType}
+          />
+        </div>
+        <div className={styles.print} ref={printRef}>
+          <Print
+            transactions={activeTransactions}
+            activeAccount={activeAccount}
             activeType={activeType}
           />
         </div>
