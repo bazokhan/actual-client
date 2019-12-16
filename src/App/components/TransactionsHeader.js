@@ -40,7 +40,8 @@ const TransactionsHeader = ({
   sortBy,
   isAscending,
   activeAccount,
-  toggleSortMode
+  toggleSortMode,
+  activeType
 }) => {
   return (
     <div className={styles.row}>
@@ -116,7 +117,7 @@ const TransactionsHeader = ({
         <p>Category</p>
         {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
-      <button
+      {/* <button
         type="button"
         onClick={() => {
           sortBy(
@@ -129,35 +130,39 @@ const TransactionsHeader = ({
       >
         <p>Type</p>
         {isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          sortBy(
-            t => (t.amountType === 'Payment' ? t.actualAmount : null),
-            isAscending ? sortNumsAscending : sortNumsDescending
-          );
-          toggleSortMode();
-        }}
-        className={styles.midCell}
-      >
-        <p>Payment</p>
-        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button>
-      <button
-        type="button"
-        onClick={() => {
-          sortBy(
-            t => (t.amountType === 'Deposit' ? t.actualAmount : null),
-            isAscending ? sortNumsAscending : sortNumsDescending
-          );
-          toggleSortMode();
-        }}
-        className={styles.midCell}
-      >
-        <p>Deposit</p>
-        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button>
+      </button> */}
+      {(activeType === 'Payment' || activeType === '') && (
+        <button
+          type="button"
+          onClick={() => {
+            sortBy(
+              t => (t.amountType === 'Payment' ? t.actualAmount : null),
+              isAscending ? sortNumsAscending : sortNumsDescending
+            );
+            toggleSortMode();
+          }}
+          className={styles.midCell}
+        >
+          <p>Payment</p>
+          {isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        </button>
+      )}
+      {(activeType === 'Deposit' || activeType === '') && (
+        <button
+          type="button"
+          onClick={() => {
+            sortBy(
+              t => (t.amountType === 'Deposit' ? t.actualAmount : null),
+              isAscending ? sortNumsAscending : sortNumsDescending
+            );
+            toggleSortMode();
+          }}
+          className={styles.midCell}
+        >
+          <p>Deposit</p>
+          {isAscending ? <FaAngleUp /> : <FaAngleDown />}
+        </button>
+      )}
       {/* <button type="button" onClick={() => {}} className={styles.bigCell}>
         <p>Description</p>
         {isAscending ? <FaAngleUp /> : <FaAngleDown />}
@@ -170,7 +175,8 @@ TransactionsHeader.propTypes = {
   sortBy: PropTypes.func.isRequired,
   isAscending: PropTypes.bool.isRequired,
   activeAccount: PropTypes.string,
-  toggleSortMode: PropTypes.func
+  toggleSortMode: PropTypes.func,
+  activeType: PropTypes.string.isRequired
 };
 
 TransactionsHeader.defaultProps = {

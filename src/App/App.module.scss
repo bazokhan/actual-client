@@ -1,3 +1,12 @@
+.loading {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;
+}
+
 .container {
   width: 100%;
   height: 100vh;
@@ -11,6 +20,39 @@
     width: 250px;
     background: #102a43;
     color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+
+    .expandButton {
+      margin-top: auto;
+      margin-bottom: 10px;
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      color: #7289a1;
+
+      &:hover {
+        background: #243b53;
+      }
+    }
+
+    .filters {
+      padding: 5px;
+      height: 0;
+      overflow: hidden;
+      margin-bottom: 10px;
+
+      &.expanded {
+        height: auto;
+      }
+    }
 
     .accountsButton {
       width: 100%;
@@ -112,7 +154,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          margin: 10px 0;
+          margin: 10px 0 0;
 
           & h1 {
             font-size: 24px;
@@ -138,25 +180,31 @@
           }
         }
 
-        .balance {
+        .totalsRow {
           display: flex;
-          flex-direction: column;
           justify-content: center;
           align-items: center;
-          margin-top: 10px;
-          margin-bottom: 20px;
+          width: 100%;
 
-          & h2 {
-            font-size: 13px;
-            font-weight: 100;
-            color: #486581;
-            margin: 0 0 5px;
-          }
+          .balance {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 10px;
 
-          & p {
-            font-size: 18px;
-            margin: 0;
-            padding: 0;
+            & h2 {
+              font-size: 13px;
+              font-weight: 100;
+              color: #486581;
+              margin: 0 0 5px;
+            }
+
+            & p {
+              font-size: 18px;
+              margin: 0;
+              padding: 0;
+            }
           }
         }
       }

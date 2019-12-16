@@ -8,13 +8,13 @@ import { dateStringFromIsoString } from '../../helpers/dateHelpers';
 
 const n = num => numeral(num).format('0,0.00');
 
-const Transaction = ({ transaction, activeAccount }) => {
+const Transaction = ({ transaction, activeAccount, activeType }) => {
   const {
     id,
     account,
     actualAmount,
     categoryObj,
-    catGroup,
+    // catGroup,
     payee,
     transferAccount,
     dateString,
@@ -22,7 +22,7 @@ const Transaction = ({ transaction, activeAccount }) => {
     amountType
   } = transaction;
 
-  const isTransfer = useMemo(() => transferAccount.id, [transaction]);
+  const isTransfer = useMemo(() => transferAccount.id, [transferAccount]);
 
   return (
     <div key={id} className={styles.row}>
@@ -35,20 +35,27 @@ const Transaction = ({ transaction, activeAccount }) => {
       </div>
       <div className={styles.bigCell}>{notes}</div>
       <div className={styles.midCell}>{categoryObj.name}</div>
-      <div className={styles.midCell}>{isTransfer ? 'n/a' : catGroup.name}</div>
-      <div className={cx(styles.midCell, styles.right)}>
-        {amountType === 'Payment' && actualAmount ? n(actualAmount * -1) : null}
-      </div>
-      <div className={cx(styles.midCell, styles.right)}>
-        {amountType === 'Deposit' && actualAmount ? n(actualAmount) : null}
-      </div>
+      {/* <div className={styles.midCell}>{isTransfer ? 'n/a' : catGroup.name}</div> */}
+      {(activeType === 'Payment' || activeType === '') && (
+        <div className={cx(styles.midCell, styles.right)}>
+          {amountType === 'Payment' && actualAmount
+            ? n(actualAmount * -1)
+            : null}
+        </div>
+      )}
+      {(activeType === 'Deposit' || activeType === '') && (
+        <div className={cx(styles.midCell, styles.right)}>
+          {amountType === 'Deposit' && actualAmount ? n(actualAmount) : null}
+        </div>
+      )}
     </div>
   );
 };
 
 Transaction.propTypes = {
   transaction: PropTypes.object.isRequired,
-  activeAccount: PropTypes.string
+  activeAccount: PropTypes.string,
+  activeType: PropTypes.string.isRequired
 };
 
 Transaction.defaultProps = {
