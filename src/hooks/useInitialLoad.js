@@ -21,6 +21,12 @@ const dbRoutes = {
   transactions: 'transactions'
 };
 
+const formatContentRange = contentRange => {
+  const range = contentRange.split(' ')[1];
+  const startToEnd = contentRange.split('/');
+  const [startIndex, endIndex] = startToEnd.split('-');
+};
+
 const useInitialLoad = () => {
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -57,36 +63,42 @@ const useInitialLoad = () => {
         setCategoryMapping([]);
       });
     a.get(dbRoutes.payees)
-      .then(res => {
-        console.log(res.data.filter(payee => payee.transfer_acct));
-        setPayees(res.data);
-      })
+      .then(res => setPayees(res.data))
       .catch(e => {
         console.log(e);
         setPayees([]);
       });
     a.get(dbRoutes.payeeMapping)
-      .then(res => {
-        console.log(res.data.filter(payee => payee.id !== payee.targetId));
-        setPayeeMapping(res.data);
-      })
+      .then(res => setPayeeMapping(res.data))
       .catch(e => {
         console.log(e);
         setPayeeMapping([]);
       });
-    a.get(dbRoutes.transactions)
+    a.get(dbRoutes.transactions, {
+      headers: {
+        range: 'rows=0-',
+        order: 'date asc'
+      }
+    })
       .then(res => {
-        setTransactions(res.data);
+        console.log(res.headers['content-range']);
+        setTransactions([...transactions, ...res.data]);
       })
       .catch(e => {
         console.log(e);
-        setTransactions([]);
       });
-    // assigning headers: {
+    // a.get(dbRoutes.transactions, {
     //   headers: {
-    //     range: 'rows=0-200'
+    //     range: 'rows=700-',
+    //     order: 'date desc'
     //   }
-    // }
+    // })
+    //   .then(res => {
+    //     setTransactions([...transactions, ...res.data]);
+    //   })
+    //   .catch(e => {
+    //     console.log(e);
+    //   });
   }, []);
 
   useEffect(() => {
@@ -100,6 +112,42 @@ const useInitialLoad = () => {
       setLoading(false);
     }
   }, [accounts, categories, categoryGroups, payees, transactions]);
+
+  // useEffect(() => {
+  //   if (!loading) {
+  //     const notSameTarget = payeeMapping.filter(
+  //       payee => payee.id !== payee.targetId
+  //     );
+  //     console.log(
+  //       payees.filter(payee => notSameTarget.map(p => p.id).includes(payee.id))
+  //     );
+  //     console.log(
+  //       accounts.filter(acc =>
+  //         notSameTarget.map(p => p.targetId).includes(acc.id)
+  //       )
+  //     );
+  //     console.log(
+  //       categories.filter(acc =>
+  //         notSameTarget.map(p => p.targetId).includes(acc.id)
+  //       )
+  //     );
+  //     console.log(
+  //       categoryGroups.filter(acc =>
+  //         notSameTarget.map(p => p.targetId).includes(acc.id)
+  //       )
+  //     );
+  //     console.log(
+  //       payees.filter(acc =>
+  //         notSameTarget.map(p => p.targetId).includes(acc.id)
+  //       )
+  //     );
+  //     console.log(
+  //       transactions.filter(acc =>
+  //         notSameTarget.map(p => p.targetId).includes(acc.id)
+  //       )
+  //     );
+  //   }
+  // }, [loading]);
 
   return {
     loading,
