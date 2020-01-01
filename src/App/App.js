@@ -13,6 +13,7 @@ import {
 } from 'helpers';
 import Sidebar from 'components/Sidebar';
 import Home from 'pages/home';
+import { DataContext } from './context';
 import styles from './App.module.scss';
 
 const App = () => {
@@ -52,6 +53,75 @@ const App = () => {
     [transactions, loading, allPayees, accounts, categories, categoryGroups]
   );
 
+  const activeAccountAmount = useMemo(
+    () =>
+      sortAmountsByAccount(allTransactions, accounts)[activeAccount] ||
+      allTransactions.map(t => t.actualAmount),
+    [allTransactions, activeAccount, accounts]
+  );
+
+  const allAccountsAmounts = useMemo(
+    () => sortAmountsByAccount(allTransactions, accounts),
+    [allTransactions, accounts]
+  );
+
+  const activeAccountName = useMemo(
+    () =>
+      activeAccount
+        ? accounts.find(account => account.id === activeAccount).name
+        : 'all accounts',
+    [activeAccount]
+  );
+
+  const DataContextValue = useMemo(
+    () => ({
+      accounts,
+      categories,
+      categoryGroups,
+      payees: allPayees,
+      transactions: allTransactions,
+      activeTransactions,
+      allAccountsAmounts,
+      activeAccount,
+      activeAccountAmount,
+      activeType,
+      activeCategory,
+      activePayee,
+      dateFilter,
+      setActiveAccount,
+      setDateFilter,
+      setActiveType,
+      setActiveCategory,
+      setActivePayee,
+      setSearchString,
+      setActiveTransactions,
+      activeAccountName
+    }),
+    [
+      accounts,
+      categories,
+      categoryGroups,
+      allPayees,
+      allTransactions,
+      activeTransactions,
+      allAccountsAmounts,
+      activeAccount,
+      activeAccountAmount,
+      activeType,
+      activeCategory,
+      activePayee,
+      dateFilter,
+      setActiveAccount,
+      setDateFilter,
+      setActiveType,
+      setActiveCategory,
+      setActivePayee,
+      setSearchString,
+      setActiveTransactions,
+      activeAccountName
+    ]
+  );
+
   useEffect(() => {
     setActiveTransactions(
       allTransactions
@@ -79,52 +149,21 @@ const App = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (
-    <div className={styles.container}>
-      <Sidebar
-        transactions={
-          !loading
-            ? resolveTransactions(
-                transactions,
-                accounts,
-                categories,
-                categoryGroups,
-                allPayees
-              )
-            : []
-        }
-        setActiveAccount={setActiveAccount}
-        accounts={accounts}
-        amountsByAccount={sortAmountsByAccount(allTransactions, accounts)}
-        categories={categories}
-        payees={allPayees}
-        setSearch={setSearchString}
-        setCategory={setActiveCategory}
-        setPayee={setActivePayee}
-        setDate={setDateFilter}
-        setType={setActiveType}
-        activeType={activeType}
-      />
-      <div className={styles.main}>
-        <button
-          className={styles.topBar}
-          type="button"
-          onClick={toggleFullScreen}
-        >
-          <FaExpand />
-        </button>
-        <Home
-          data={{ accounts, categories, categoryGroups, payees, transactions }}
-          activeAccount={activeAccount}
-          dateFilter={dateFilter}
-          activeType={activeType}
-          activeCategory={activeCategory}
-          activePayee={activePayee}
-          searchString={searchString}
-          activeTransactions={activeTransactions}
-          setActiveTransactions={setActiveTransactions}
-        />
+    <DataContext.Provider value={DataContextValue}>
+      <div className={styles.container}>
+        <Sidebar />
+        <div className={styles.main}>
+          <button
+            className={styles.topBar}
+            type="button"
+            onClick={toggleFullScreen}
+          >
+            <FaExpand />
+          </button>
+          <Home searchString={searchString} />
+        </div>
       </div>
-    </div>
+    </DataContext.Provider>
   );
 };
 

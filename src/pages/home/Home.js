@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import ReactToPrint from 'react-to-print';
 import { FaPrint } from 'react-icons/fa';
 import mapSort from 'mapsort';
-import { resolveTransactions, sortAmountsByAccount } from 'helpers';
-import Header from 'components/Header';
 import ExcelExport from 'components/ExcelExport';
 import Print from 'components/Print';
 import TransactionsHeader from 'components/TransactionHeader';
 import Transaction from 'components/Transaction';
 import TransactionFooter from 'components/TransactionFooter';
-import resolvePayees from 'helpers/resolvePayees';
+import Header from 'components/Header';
+import { DataContext } from 'App/context';
 import styles from './Home.module.scss';
 
 const PrintButton = () => (
@@ -19,61 +18,18 @@ const PrintButton = () => (
   </button>
 );
 
-const Home = ({
-  activeTransactions,
-  setActiveTransactions,
-  activeAccount,
-  dateFilter,
-  activeType,
-  activeCategory,
-  activePayee,
-  searchString,
-  data: { accounts, categories, categoryGroups, payees, transactions }
-}) => {
+const Home = ({ searchString }) => {
   const printRef = useRef();
-  const [isAscending, setIsAscending] = useState(false);
-  const allPayees = useMemo(
-    () => (payees ? resolvePayees(payees, accounts) : []),
-    [payees, accounts]
-  );
-
-  const allTransactions = useMemo(
-    () =>
-      transactions && allPayees.length
-        ? resolveTransactions(
-            transactions,
-            accounts,
-            categories,
-            categoryGroups,
-            allPayees
-          )
-        : [],
-    [transactions, allPayees, accounts, categories, categoryGroups]
-  );
-
-  useEffect(() => {
-    setActiveTransactions(
-      allTransactions
-        .filter(t => (activeAccount ? t.account.id === activeAccount : t))
-        .filter(t =>
-          dateFilter.length === 2
-            ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
-            : t
-        )
-        .filter(t => (activeType ? t.amountType === activeType : t))
-        .filter(t => (activeCategory ? t.categoryObj.id === activeCategory : t))
-        .filter(t => (activePayee ? t.payee.id === activePayee : t))
-        .filter(t => t.searchString.includes(searchString))
-    );
-  }, [
+  const {
     activeAccount,
-    allTransactions,
-    dateFilter,
     activeType,
     activeCategory,
     activePayee,
-    searchString
-  ]);
+    activeTransactions,
+    dateFilter,
+    setActiveTransactions
+  } = useContext(DataContext);
+  const [isAscending, setIsAscending] = useState(false);
 
   const sortBy = (arrayMapFunc, sortFunc) =>
     setActiveTransactions(
@@ -92,18 +48,7 @@ const Home = ({
   return (
     <>
       <div className={styles.header}>
-        <Header
-          transactions={activeTransactions}
-          accountsAmounts={
-            sortAmountsByAccount(allTransactions, accounts)[activeAccount] ||
-            allTransactions.map(t => t.actualAmount)
-          }
-          title={
-            activeAccount
-              ? accounts.find(a => a.id === activeAccount).name
-              : 'All accounts'
-          }
-        />
+        <Header />
         <div className={styles.actionButtons}>
           <ExcelExport
             transactions={activeTransactions}
@@ -153,15 +98,7 @@ const Home = ({
 };
 
 Home.propTypes = {
-  activeAccount: PropTypes.string.isRequired,
-  dateFilter: PropTypes.array.isRequired,
-  activeType: PropTypes.string.isRequired,
-  activeCategory: PropTypes.string.isRequired,
-  activePayee: PropTypes.string.isRequired,
-  searchString: PropTypes.string.isRequired,
-  data: PropTypes.object.isRequired,
-  activeTransactions: PropTypes.array.isRequired,
-  setActiveTransactions: PropTypes.func.isRequired
+  searchString: PropTypes.string.isRequired
 };
 
 export default Home;

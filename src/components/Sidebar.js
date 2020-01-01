@@ -1,35 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import cx from 'classnames';
-import PropTypes from 'prop-types';
 import { FaCaretRight, FaCaretDown } from 'react-icons/fa';
 import { n } from 'helpers/mathHelpers';
+import { DataContext } from 'App/context';
 import styles from './Sidebar.module.scss';
 import Filters from './Filters';
 
-const Sidebar = ({
-  transactions,
-  accounts,
-  amountsByAccount,
-  setActiveAccount,
-  categories,
-  payees,
-  setDate,
-  activeType,
-  setType,
-  setCategory,
-  setPayee,
-  setSearch
-}) => {
-  const [totalBalance, setTotalBalance] = useState(0);
+const Sidebar = () => {
   const [filtersExpanded, setFiltersExpanded] = useState(true);
+  const {
+    accounts,
+    categories,
+    activeType,
+    payees,
+    allAccountsAmounts,
+    transactions,
+    setActiveAccount,
+    setDateFilter,
+    setActiveType,
+    setActiveCategory,
+    setActivePayee,
+    setSearch
+  } = useContext(DataContext);
 
-  useEffect(() => {
-    setTotalBalance(
+  const totalBalance = useMemo(
+    () =>
       transactions
         .map(t => t.actualAmount)
-        .reduce((sum, amount) => sum + amount, 0)
-    );
-  }, [transactions]);
+        .reduce((sum, amount) => sum + amount, 0),
+    [transactions]
+  );
+
   return (
     <div className={styles.sidebar}>
       <button
@@ -50,8 +51,8 @@ const Sidebar = ({
           <span>{account.name}</span>
           <span>
             {n(
-              amountsByAccount[account.id] &&
-                amountsByAccount[account.id].reduce(
+              allAccountsAmounts[account.id] &&
+                allAccountsAmounts[account.id].reduce(
                   (sum, amount) => sum + amount,
                   0
                 )
@@ -74,31 +75,16 @@ const Sidebar = ({
         <Filters
           categories={categories}
           payees={payees}
-          setDate={setDate}
+          setDate={setDateFilter}
           activeType={activeType}
-          setType={setType}
-          setCategory={setCategory}
-          setPayee={setPayee}
+          setType={setActiveType}
+          setCategory={setActiveCategory}
+          setPayee={setActivePayee}
           setSearch={setSearch}
         />
       </div>
     </div>
   );
-};
-
-Sidebar.propTypes = {
-  transactions: PropTypes.array.isRequired,
-  accounts: PropTypes.array.isRequired,
-  amountsByAccount: PropTypes.object.isRequired,
-  setActiveAccount: PropTypes.func.isRequired,
-  categories: PropTypes.array.isRequired,
-  payees: PropTypes.array.isRequired,
-  setDate: PropTypes.func.isRequired,
-  activeType: PropTypes.string.isRequired,
-  setType: PropTypes.func.isRequired,
-  setCategory: PropTypes.func.isRequired,
-  setPayee: PropTypes.func.isRequired,
-  setSearch: PropTypes.func.isRequired
 };
 
 export default Sidebar;

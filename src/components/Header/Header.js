@@ -1,23 +1,28 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo, useContext } from 'react';
 import { sum, n } from 'helpers/mathHelpers';
+import { DataContext } from 'App/context';
 import styles from './Header.module.scss';
 
-const Header = ({ transactions, accountsAmounts, title }) => {
+const Header = () => {
+  const {
+    activeTransactions,
+    activeAccountAmount,
+    activeAccountName
+  } = useContext(DataContext);
   const totalBalance = useMemo(
-    () => accountsAmounts.reduce((total, next) => total + next, 0),
-    [accountsAmounts]
+    () => activeAccountAmount.reduce((total, next) => total + next, 0),
+    [activeAccountAmount]
   );
-  const sheetNet = useMemo(() => sum(transactions), [transactions]);
+  const sheetNet = useMemo(() => sum(activeTransactions), [activeTransactions]);
 
   return (
     <div className={styles.headerContainer}>
       <div className={styles.transactionNum}>
-        <p>{transactions.length}</p>
+        <p>{activeTransactions.length}</p>
         <p>transactions</p>
       </div>
       <div className={styles.title}>
-        <h1>{title}</h1>
+        <h1>{activeAccountName}</h1>
       </div>
       <div className={styles.totalsRow}>
         <div className={styles.balance}>
@@ -31,12 +36,6 @@ const Header = ({ transactions, accountsAmounts, title }) => {
       </div>
     </div>
   );
-};
-
-Header.propTypes = {
-  transactions: PropTypes.array.isRequired,
-  accountsAmounts: PropTypes.array.isRequired,
-  title: PropTypes.string.isRequired
 };
 
 export default Header;

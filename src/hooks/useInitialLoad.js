@@ -32,12 +32,12 @@ const getAfter = contentRange => {
 };
 
 const useInitialLoad = () => {
-  const [accounts, setAccounts] = useState(null);
-  const [categories, setCategories] = useState(null);
-  const [categoryGroups, setCategoryGroups] = useState(null);
-  const [categoryMapping, setCategoryMapping] = useState(null);
-  const [payees, setPayees] = useState(null);
-  const [payeeMapping, setPayeeMapping] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoryGroups, setCategoryGroups] = useState([]);
+  const [categoryMapping, setCategoryMapping] = useState([]);
+  const [payees, setPayees] = useState([]);
+  const [payeeMapping, setPayeeMapping] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [after, setAfter] = useState(null);
