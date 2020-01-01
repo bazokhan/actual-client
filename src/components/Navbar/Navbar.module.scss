@@ -1,0 +1,19 @@
+.actionButtons {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  background: #e8ecf0;
+
+  .link {
+    margin-left: 0px;
+    margin-left: 0px;
+
+    &:last-of-type {
+      margin-right: auto;
+    }
+  }
+
+  .print {
+    display: none;
+  }
+}

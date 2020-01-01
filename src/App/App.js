@@ -12,11 +12,13 @@ import {
   resolvePayees
 } from 'helpers';
 import Sidebar from 'components/Sidebar';
+import Header from 'components/Header';
 import HomePage from 'pages/home';
 import HistoryPage from 'pages/history';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DataContext } from './context';
 import styles from './App.module.scss';
+import Navbar from '../components/Navbar';
 
 const App = () => {
   const {
@@ -165,7 +167,12 @@ const App = () => {
             >
               <FaExpand />
             </button>
-
+            <Header />
+            <Navbar
+              activeTransactions={activeTransactions}
+              activeAccount={activeAccount}
+              activeType={activeType}
+            />
             <Switch>
               <Route path="/history" component={HistoryPage} />
               <Route path="/" component={HomePage} />

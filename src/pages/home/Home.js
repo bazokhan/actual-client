@@ -1,24 +1,12 @@
-import React, { useState, useRef, useContext } from 'react';
-import ReactToPrint from 'react-to-print';
-import { FaPrint } from 'react-icons/fa';
+import React, { useState, useContext } from 'react';
 import mapSort from 'mapsort';
-import ExcelExport from 'components/ExcelExport';
-import Print from 'components/Print';
 import TransactionsHeader from 'components/TransactionHeader';
 import Transaction from 'components/Transaction';
 import TransactionFooter from 'components/TransactionFooter';
-import Header from 'components/Header';
 import { DataContext } from 'App/context';
 import styles from './Home.module.scss';
 
-const PrintButton = () => (
-  <button type="button" className="btn btn-action s-square">
-    <FaPrint />
-  </button>
-);
-
 const Home = () => {
-  const printRef = useRef();
   const {
     activeAccount,
     activeType,
@@ -48,19 +36,6 @@ const Home = () => {
   return (
     <>
       <div className={styles.header}>
-        <Header />
-        <div className={styles.actionButtons}>
-          <ExcelExport
-            transactions={activeTransactions}
-            activeAccount={activeAccount}
-            activeType={activeType}
-          />
-          <ReactToPrint
-            trigger={PrintButton}
-            content={() => printRef.current}
-            copyStyles
-          />
-        </div>
         <TransactionsHeader
           activeAccount={activeAccount}
           sortBy={sortBy}
@@ -83,13 +58,6 @@ const Home = () => {
         <TransactionFooter
           activeAccount={activeAccount}
           activeTransactions={activeTransactions}
-          activeType={activeType}
-        />
-      </div>
-      <div className={styles.print} ref={printRef}>
-        <Print
-          transactions={activeTransactions}
-          activeAccount={activeAccount}
           activeType={activeType}
         />
       </div>
