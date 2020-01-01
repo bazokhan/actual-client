@@ -23,7 +23,10 @@ const DataContext = React.createContext({
   setSearchString: () => {},
   setActiveTransactions: () => {},
   activeAccountName: 'all accounts',
-  searchString: ''
+  searchString: '',
+  sortBy: () => {},
+  totalBalance: 0,
+  deadTransactions: []
 });
 
 export { DataContext };

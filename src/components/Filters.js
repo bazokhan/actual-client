@@ -27,7 +27,7 @@ const Filters = ({
           className="form-select select-sm"
           onChange={e => setCategory(e.target.value)}
           id="categories"
-          style={{ background: '#243b53' }}
+          style={{ color: '#243b53' }}
         >
           <option value="">All Categories</option>
           {categories.map(cat => (
@@ -44,7 +44,7 @@ const Filters = ({
           className="form-select select-sm"
           onChange={e => setPayee(e.target.value)}
           id="payees"
-          style={{ background: '#243b53' }}
+          style={{ color: '#243b53' }}
         >
           <option value="">All Payees</option>
           {payees.map(payee => (
@@ -64,7 +64,6 @@ const Filters = ({
           type="text"
           onChange={e => setSearch(e.target.value)}
           placeholder="Search"
-          style={{ background: '#243b53', color: 'white' }}
         />
       </label>
 
@@ -78,7 +77,6 @@ const Filters = ({
             setStartDate(dateNumFromIsoString(e.target.value));
           }}
           value={startDate ? dateNumToString(startDate) : todayString()}
-          style={{ background: '#243b53', color: 'white' }}
         />
       </label>
 
@@ -92,7 +90,6 @@ const Filters = ({
             setEndDate(dateNumFromIsoString(e.target.value));
           }}
           value={endDate ? dateNumToString(endDate) : todayString()}
-          style={{ background: '#243b53', color: 'white' }}
         />
       </label>
       <div className="btn-group btn-group-block">

@@ -1,10 +1,10 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import cx from 'classnames';
 import { FaCaretRight, FaCaretDown } from 'react-icons/fa';
 import { n } from 'helpers/mathHelpers';
 import { DataContext } from 'App/context';
 import styles from './Sidebar.module.scss';
-import Filters from './Filters';
+import Filters from '../Filters';
 
 const Sidebar = () => {
   const [filtersExpanded, setFiltersExpanded] = useState(true);
@@ -14,7 +14,8 @@ const Sidebar = () => {
     activeType,
     payees,
     allAccountsAmounts,
-    transactions,
+    totalBalance,
+    activeAccount,
     setActiveAccount,
     setDateFilter,
     setActiveType,
@@ -23,18 +24,13 @@ const Sidebar = () => {
     setSearchString
   } = useContext(DataContext);
 
-  const totalBalance = useMemo(
-    () =>
-      transactions
-        .map(t => t.actualAmount)
-        .reduce((sum, amount) => sum + amount, 0),
-    [transactions]
-  );
-
   return (
     <div className={styles.sidebar}>
       <button
-        className={styles.accountsButton}
+        className={cx(
+          styles.accountsButton,
+          !activeAccount ? styles.active : ''
+        )}
         type="button"
         onClick={() => setActiveAccount(null)}
       >
@@ -44,7 +40,10 @@ const Sidebar = () => {
       {accounts.map(account => (
         <button
           key={account.id}
-          className={styles.accountButton}
+          className={cx(
+            styles.accountButton,
+            activeAccount === account.id ? styles.active : ''
+          )}
           type="button"
           onClick={() => setActiveAccount(account.id)}
         >

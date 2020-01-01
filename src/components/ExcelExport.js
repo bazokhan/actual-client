@@ -8,7 +8,7 @@ const { ExcelFile } = ReactExport;
 const { ExcelSheet, ExcelColumn } = ExcelFile;
 
 const DownloadButton = () => (
-  <button type="button" className="btn btn-action s-square">
+  <button type="button" className="btn btn-action btn-link btn-sm s-square">
     <FaTable />
   </button>
 );

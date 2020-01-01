@@ -1,6 +1,6 @@
 .sidebar {
   width: 250px;
-  background: #102a43;
+  background: #2d1d93;
   color: white;
   display: flex;
   flex-direction: column;
@@ -18,10 +18,10 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    color: #7289a1;
+    color: white;
 
     &:hover {
-      background: #243b53;
+      background: #4240d4;
     }
   }
 
@@ -40,7 +40,7 @@
     width: 100%;
     padding: 5px 10px;
     border: none;
-    background: #102a43;
+    background: #2d1d93;
     display: flex;
     justify-content: space-between;
     cursor: pointer;
@@ -49,11 +49,15 @@
     font-weight: 500;
 
     &:hover {
-      background: #243b53;
+      background: #4240d4;
+      color: white;
     }
 
-    & span {
-      color: #7289a1;
+ 
+
+    &.active {
+      background: #4240d4;
+      color: white;
     }
   }
 
@@ -61,7 +65,7 @@
     width: 100%;
     padding: 5px 10px;
     border: none;
-    background: #102a43;
+    background: #2d1d93;
     display: flex;
     justify-content: space-between;
     cursor: pointer;
@@ -70,11 +74,15 @@
     font-weight: 500;
 
     &:hover {
-      background: #243b53;
+      background: #4240d4;
+      color: white;
     }
 
-    & span {
-      color: #a4b1bf;
+  
+
+    &.active {
+      background: #4240d4;
+      color: white;
     }
   }
 }

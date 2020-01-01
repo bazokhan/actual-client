@@ -1,41 +1,20 @@
 import React, { useState, useContext } from 'react';
-import mapSort from 'mapsort';
 import TransactionsHeader from 'components/TransactionHeader';
 import Transaction from 'components/Transaction';
 import TransactionFooter from 'components/TransactionFooter';
 import { DataContext } from 'App/context';
+import Header from 'components/Header';
 import styles from './Home.module.scss';
 
 const Home = () => {
-  const {
-    activeAccount,
-    activeType,
-    activeCategory,
-    activePayee,
-    activeTransactions,
-    dateFilter,
-    setActiveTransactions,
-    searchString
-  } = useContext(DataContext);
+  const { activeAccount, activeType, activeTransactions, sortBy } = useContext(
+    DataContext
+  );
   const [isAscending, setIsAscending] = useState(false);
-
-  const sortBy = (arrayMapFunc, sortFunc) =>
-    setActiveTransactions(
-      mapSort(activeTransactions, arrayMapFunc, sortFunc)
-        .filter(t =>
-          dateFilter.length === 2
-            ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
-            : t
-        )
-        .filter(t => (activeType ? t.amountType === activeType : t))
-        .filter(t => (activeCategory ? t.categoryObj.id === activeCategory : t))
-        .filter(t => (activePayee ? t.payee.id === activePayee : t))
-        .filter(t => t.searchString.includes(searchString))
-    );
-
   return (
     <>
       <div className={styles.header}>
+        <Header />
         <TransactionsHeader
           activeAccount={activeAccount}
           sortBy={sortBy}
