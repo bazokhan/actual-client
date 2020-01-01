@@ -12,7 +12,9 @@ import {
   resolvePayees
 } from 'helpers';
 import Sidebar from 'components/Sidebar';
-import Home from 'pages/home';
+import HomePage from 'pages/home';
+import HistoryPage from 'pages/history';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DataContext } from './context';
 import styles from './App.module.scss';
 
@@ -95,7 +97,8 @@ const App = () => {
       setActivePayee,
       setSearchString,
       setActiveTransactions,
-      activeAccountName
+      activeAccountName,
+      searchString
     }),
     [
       accounts,
@@ -118,7 +121,8 @@ const App = () => {
       setActivePayee,
       setSearchString,
       setActiveTransactions,
-      activeAccountName
+      activeAccountName,
+      searchString
     ]
   );
 
@@ -149,21 +153,27 @@ const App = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (
-    <DataContext.Provider value={DataContextValue}>
-      <div className={styles.container}>
-        <Sidebar />
-        <div className={styles.main}>
-          <button
-            className={styles.topBar}
-            type="button"
-            onClick={toggleFullScreen}
-          >
-            <FaExpand />
-          </button>
-          <Home searchString={searchString} />
+    <BrowserRouter>
+      <DataContext.Provider value={DataContextValue}>
+        <div className={styles.container}>
+          <Sidebar />
+          <div className={styles.main}>
+            <button
+              className={styles.topBar}
+              type="button"
+              onClick={toggleFullScreen}
+            >
+              <FaExpand />
+            </button>
+
+            <Switch>
+              <Route path="/history" component={HistoryPage} />
+              <Route path="/" component={HomePage} />
+            </Switch>
+          </div>
         </div>
-      </div>
-    </DataContext.Provider>
+      </DataContext.Provider>
+    </BrowserRouter>
   );
 };
 

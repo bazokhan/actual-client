@@ -20,7 +20,7 @@ const Sidebar = () => {
     setActiveType,
     setActiveCategory,
     setActivePayee,
-    setSearch
+    setSearchString
   } = useContext(DataContext);
 
   const totalBalance = useMemo(
@@ -80,7 +80,7 @@ const Sidebar = () => {
           setType={setActiveType}
           setCategory={setActiveCategory}
           setPayee={setActivePayee}
-          setSearch={setSearch}
+          setSearch={setSearchString}
         />
       </div>
     </div>

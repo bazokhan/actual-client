@@ -22,7 +22,8 @@ const DataContext = React.createContext({
   setActivePayee: () => {},
   setSearchString: () => {},
   setActiveTransactions: () => {},
-  activeAccountName: 'all accounts'
+  activeAccountName: 'all accounts',
+  searchString: ''
 });
 
 export { DataContext };

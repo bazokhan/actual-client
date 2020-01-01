@@ -1,5 +1,4 @@
 import React, { useState, useRef, useContext } from 'react';
-import PropTypes from 'prop-types';
 import ReactToPrint from 'react-to-print';
 import { FaPrint } from 'react-icons/fa';
 import mapSort from 'mapsort';
@@ -18,7 +17,7 @@ const PrintButton = () => (
   </button>
 );
 
-const Home = ({ searchString }) => {
+const Home = () => {
   const printRef = useRef();
   const {
     activeAccount,
@@ -27,7 +26,8 @@ const Home = ({ searchString }) => {
     activePayee,
     activeTransactions,
     dateFilter,
-    setActiveTransactions
+    setActiveTransactions,
+    searchString
   } = useContext(DataContext);
   const [isAscending, setIsAscending] = useState(false);
 
@@ -95,10 +95,6 @@ const Home = ({ searchString }) => {
       </div>
     </>
   );
-};
-
-Home.propTypes = {
-  searchString: PropTypes.string.isRequired
 };
 
 export default Home;
