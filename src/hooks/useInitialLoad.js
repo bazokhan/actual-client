@@ -21,97 +21,97 @@ const dbRoutes = {
   transactions: 'transactions'
 };
 
-const formatContentRange = contentRange => {
+const getAfter = contentRange => {
   const range = contentRange.split(' ')[1];
-  const startToEnd = contentRange.split('/');
-  const [startIndex, endIndex] = startToEnd.split('-');
+  const [startToEnd, total] = range.split('/');
+  const [, currentEnd] = startToEnd.split('-');
+  if (Number(currentEnd) < Number(total)) {
+    return currentEnd;
+  }
+  return null;
 };
 
 const useInitialLoad = () => {
-  const [accounts, setAccounts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [categoryGroups, setCategoryGroups] = useState([]);
-  const [categoryMapping, setCategoryMapping] = useState([]);
-  const [payees, setPayees] = useState([]);
-  const [payeeMapping, setPayeeMapping] = useState([]);
+  const [accounts, setAccounts] = useState(null);
+  const [categories, setCategories] = useState(null);
+  const [categoryGroups, setCategoryGroups] = useState(null);
+  const [categoryMapping, setCategoryMapping] = useState(null);
+  const [payees, setPayees] = useState(null);
+  const [payeeMapping, setPayeeMapping] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [after, setAfter] = useState(null);
 
   useEffect(() => {
-    a.get(dbRoutes.accounts)
-      .then(res => setAccounts(res.data))
-      .catch(e => {
-        console.log(e);
-        setAccounts([]);
+    const fetch = async () => {
+      const accountsRes = await a.get(dbRoutes.accounts);
+      const categoriesRes = await a.get(dbRoutes.categories);
+      const categoryGroupsRes = await a.get(dbRoutes.categoryGroups);
+      const categoryMappingRes = await a.get(dbRoutes.categoryMapping);
+      const payeesRes = await a.get(dbRoutes.payees);
+      const payeeMappingRes = await a.get(dbRoutes.payeeMapping);
+      const initialTransactionsRes = await a.get(dbRoutes.transactions, {
+        headers: {
+          range: 'rows=0-',
+          order: 'date asc'
+        }
       });
-    a.get(dbRoutes.categories)
-      .then(res => setCategories(res.data))
-      .catch(e => {
-        console.log(e);
-        setCategories([]);
-      });
-    a.get(dbRoutes.categoryGroups)
-      .then(res => setCategoryGroups(res.data))
-      .catch(e => {
-        console.log(e);
-        setCategoryGroups([]);
-      });
-    a.get(dbRoutes.categoryMapping)
-      .then(res => setCategoryMapping(res.data))
-      .catch(e => {
-        console.log(e);
-        setCategoryMapping([]);
-      });
-    a.get(dbRoutes.payees)
-      .then(res => setPayees(res.data))
-      .catch(e => {
-        console.log(e);
-        setPayees([]);
-      });
-    a.get(dbRoutes.payeeMapping)
-      .then(res => setPayeeMapping(res.data))
-      .catch(e => {
-        console.log(e);
-        setPayeeMapping([]);
-      });
-    a.get(dbRoutes.transactions, {
-      headers: {
-        range: 'rows=0-',
-        order: 'date asc'
+      if (
+        accountsRes &&
+        categoriesRes &&
+        categoryGroupsRes &&
+        categoryMappingRes &&
+        payeesRes &&
+        payeeMappingRes &&
+        initialTransactionsRes
+      ) {
+        setAccounts(accountsRes.data ? accountsRes.data : []);
+        setCategories(categoriesRes.data ? categoriesRes.data : []);
+        setCategoryGroups(categoryGroupsRes.data ? categoryGroupsRes.data : []);
+        setCategoryMapping(
+          categoryMappingRes.data ? categoryMappingRes.data : []
+        );
+        setPayees(payeesRes.data ? payeesRes.data : []);
+        setPayeeMapping(payeeMappingRes.data ? payeeMappingRes.data : []);
+        setTransactions(
+          initialTransactionsRes.data ? initialTransactionsRes.data : []
+        );
+        const contentRange = initialTransactionsRes.headers['content-range'];
+        if (contentRange) {
+          setAfter(getAfter(contentRange));
+        }
+        setLoading(false);
       }
-    })
-      .then(res => {
-        console.log(res.headers['content-range']);
-        setTransactions([...transactions, ...res.data]);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-    // a.get(dbRoutes.transactions, {
-    //   headers: {
-    //     range: 'rows=700-',
-    //     order: 'date desc'
-    //   }
-    // })
-    //   .then(res => {
-    //     setTransactions([...transactions, ...res.data]);
-    //   })
-    //   .catch(e => {
-    //     console.log(e);
-    //   });
+    };
+    fetch();
   }, []);
 
-  useEffect(() => {
-    if (
-      accounts.length &&
-      categories.length &&
-      categoryGroups.length &&
-      payees.length &&
-      transactions.length
-    ) {
-      setLoading(false);
+  const fetchMoreTransactions = async transactionsAfter => {
+    const transactionRes = await a.get(dbRoutes.transactions, {
+      headers: {
+        range: `rows=${transactionsAfter + 1}-${transactionsAfter + 1000}`,
+        order: 'date asc'
+      }
+    });
+    if (transactionRes) {
+      try {
+        const contentRange = transactionRes.headers['content-range'];
+        if (contentRange) {
+          setAfter(getAfter(contentRange));
+        }
+      } catch (ex) {
+        console.log(ex);
+      }
+      const updateTransactions = [transactions, transactionRes.data].flat();
+      setTransactions(updateTransactions);
     }
-  }, [accounts, categories, categoryGroups, payees, transactions]);
+  };
+
+  useEffect(() => {
+    if (after) {
+      fetchMoreTransactions(Number(after));
+    }
+  }, [after]);
 
   // useEffect(() => {
   //   if (!loading) {
