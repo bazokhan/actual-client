@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { FaCaretRight, FaCaretDown } from 'react-icons/fa';
-import styles from '../App.module.scss';
+import { n } from 'helpers/mathHelpers';
+import styles from './Sidebar.module.scss';
 import Filters from './Filters';
-import { n } from '../../helpers/mathHelpers';
 
 const Sidebar = ({
   transactions,

@@ -1,36 +1,19 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-// import cx from 'classnames';
-import ReactToPrint from 'react-to-print';
-import { FaExpand, FaPrint } from 'react-icons/fa';
-import mapSort from 'mapsort';
-import useInitialLoad from '../hooks/useInitialLoad';
-import styles from './App.module.scss';
+import React, { useState, useEffect, useMemo } from 'react';
+import { FaExpand } from 'react-icons/fa';
+import useInitialLoad from 'hooks/useInitialLoad';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
 import {
   resolveTransactions,
-  // sortAmountsByAccount,
-  // sortTransactions,
   toggleFullScreen,
-  sortAmountsByAccount
-} from '../helpers';
-import Transaction from './components/Transaction';
-import TransactionsHeader from './components/TransactionsHeader';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import resolvePayees from '../helpers/resolvePayees';
-// import { sum, n } from '../helpers/mathHelpers';
-import TransactionFooter from './components/TransactionFooter';
-import ExcelExport from './components/ExcelExport';
-import Print from './components/Print';
-
-const PrintButton = () => (
-  <button type="button" className="btn btn-action s-square">
-    <FaPrint />
-  </button>
-);
+  sortAmountsByAccount,
+  resolvePayees
+} from 'helpers';
+import Sidebar from 'components/Sidebar';
+import Home from 'pages/home';
+import styles from './App.module.scss';
 
 const App = () => {
   const {
@@ -44,13 +27,11 @@ const App = () => {
 
   const [activeTransactions, setActiveTransactions] = useState([]);
   const [activeAccount, setActiveAccount] = useState('');
-  const [isAscending, setIsAscending] = useState(true);
   const [dateFilter, setDateFilter] = useState([]);
   const [activeType, setActiveType] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
   const [activePayee, setActivePayee] = useState('');
   const [searchString, setSearchString] = useState('');
-  const printRef = useRef();
 
   const allPayees = useMemo(
     () => (payees && !loading ? resolvePayees(payees, accounts) : []),
@@ -95,20 +76,6 @@ const App = () => {
     searchString
   ]);
 
-  const sortBy = (arrayMapFunc, sortFunc) =>
-    setActiveTransactions(
-      mapSort(activeTransactions, arrayMapFunc, sortFunc)
-        .filter(t =>
-          dateFilter.length === 2
-            ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
-            : t
-        )
-        .filter(t => (activeType ? t.amountType === activeType : t))
-        .filter(t => (activeCategory ? t.categoryObj.id === activeCategory : t))
-        .filter(t => (activePayee ? t.payee.id === activePayee : t))
-        .filter(t => t.searchString.includes(searchString))
-    );
-
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (
@@ -145,63 +112,17 @@ const App = () => {
         >
           <FaExpand />
         </button>
-        <div className={styles.header}>
-          <Header
-            transactions={activeTransactions}
-            accountsAmounts={
-              sortAmountsByAccount(allTransactions, accounts)[activeAccount] ||
-              allTransactions.map(t => t.actualAmount)
-            }
-            title={
-              activeAccount
-                ? accounts.find(a => a.id === activeAccount).name
-                : 'All accounts'
-            }
-          />
-          <div className={styles.actionButtons}>
-            <ExcelExport
-              transactions={activeTransactions}
-              activeAccount={activeAccount}
-              activeType={activeType}
-            />
-            <ReactToPrint
-              trigger={PrintButton}
-              content={() => printRef.current}
-              copyStyles
-            />
-          </div>
-          <TransactionsHeader
-            activeAccount={activeAccount}
-            sortBy={sortBy}
-            isAscending={isAscending}
-            toggleSortMode={() => setIsAscending(!isAscending)}
-            activeType={activeType}
-          />
-        </div>
-        <div className={styles.body}>
-          {activeTransactions.map(transaction => (
-            <Transaction
-              key={transaction.id}
-              transaction={transaction}
-              activeAccount={activeAccount}
-              activeType={activeType}
-            />
-          ))}
-        </div>
-        <div className={styles.footer}>
-          <TransactionFooter
-            activeAccount={activeAccount}
-            activeTransactions={activeTransactions}
-            activeType={activeType}
-          />
-        </div>
-        <div className={styles.print} ref={printRef}>
-          <Print
-            transactions={activeTransactions}
-            activeAccount={activeAccount}
-            activeType={activeType}
-          />
-        </div>
+        <Home
+          data={{ accounts, categories, categoryGroups, payees, transactions }}
+          activeAccount={activeAccount}
+          dateFilter={dateFilter}
+          activeType={activeType}
+          activeCategory={activeCategory}
+          activePayee={activePayee}
+          searchString={searchString}
+          activeTransactions={activeTransactions}
+          setActiveTransactions={setActiveTransactions}
+        />
       </div>
     </div>
   );

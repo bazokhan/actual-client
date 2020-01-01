@@ -1,0 +1,28 @@
+.header {
+  width: 100%;
+  background: #e8ecf0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+
+  .actionButtons {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+}
+
+.body {
+  width: 100%;
+  overflow-y: auto;
+}
+
+.footer {
+  width: 100%;
+  border-top: solid 1px #ddd;
+}
+
+.print {
+  display: none;
+}

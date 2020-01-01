@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
-import styles from '../App.module.scss';
+import styles from './TransactionHeader.module.scss';
 
 const sortNumsAscending = (a, b) => {
   if (!a) return 1;

@@ -1,8 +1,8 @@
 import React from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import styles from '../App.module.scss';
-import { n, sum } from '../../helpers/mathHelpers';
+import { n, sum } from 'helpers/mathHelpers';
+import styles from './TransactionFooter.module.scss';
 
 const TransactionFooter = ({
   activeAccount,

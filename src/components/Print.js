@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { n, sum } from '../../helpers/mathHelpers';
+import { n, sum } from 'helpers/mathHelpers';
 import styles from './Print.module.scss';
 
 const Print = ({ transactions, activeAccount, activeType }) => {

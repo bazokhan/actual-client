@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
-import styles from '../App.module.scss';
-import { sum, n } from '../../helpers/mathHelpers';
+import { sum, n } from 'helpers/mathHelpers';
+import styles from './Header.module.scss';
 
 const Header = ({ transactions, accountsAmounts, title }) => {
   const totalBalance = useMemo(

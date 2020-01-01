@@ -2,11 +2,9 @@
 import React, { useMemo } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
-import numeral from 'numeral';
-import styles from '../App.module.scss';
-import { dateStringFromIsoString } from '../../helpers/dateHelpers';
-
-const n = num => numeral(num).format('0,0.00');
+import { dateStringFromIsoString } from 'helpers/dateHelpers';
+import { n } from 'helpers/mathHelpers';
+import styles from './Transaction.module.scss';
 
 const Transaction = ({ transaction, activeAccount, activeType }) => {
   const {

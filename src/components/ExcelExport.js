@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FaTable } from 'react-icons/fa';
 import ReactExport from 'react-export-excel';
-import { n } from '../../helpers/mathHelpers';
+import { n } from 'helpers/mathHelpers';
 
 const { ExcelFile } = ReactExport;
 const { ExcelSheet, ExcelColumn } = ExcelFile;

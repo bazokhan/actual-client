@@ -4,7 +4,7 @@ import {
   dateNumFromIsoString,
   dateNumToString,
   todayString
-} from '../../helpers/dateHelpers';
+} from 'helpers/dateHelpers';
 
 const Filters = ({
   categories,
