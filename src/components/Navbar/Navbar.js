@@ -30,6 +30,14 @@ const Navbar = ({ activeTransactions, activeAccount, activeType }) => {
       <NavLink
         className={cx(styles.link, 'btn btn-sm')}
         activeClassName="btn-primary"
+        exact
+        to="/pivot"
+      >
+        Pivot
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn btn-sm')}
+        activeClassName="btn-primary"
         to="/history"
       >
         Deleted

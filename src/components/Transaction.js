@@ -53,11 +53,12 @@ const Transaction = ({ transaction, activeAccount, activeType }) => {
 Transaction.propTypes = {
   transaction: PropTypes.object.isRequired,
   activeAccount: PropTypes.string,
-  activeType: PropTypes.string.isRequired
+  activeType: PropTypes.string
 };
 
 Transaction.defaultProps = {
-  activeAccount: null
+  activeAccount: null,
+  activeType: ''
 };
 
 export default Transaction;

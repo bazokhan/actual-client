@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import React, { useState, useEffect, useMemo } from 'react';
 import useInitialLoad from 'hooks/useInitialLoad';
 import './styles/Main.scss';
@@ -12,11 +13,13 @@ import {
 import Sidebar from 'components/Sidebar';
 import HomePage from 'pages/home';
 import HistoryPage from 'pages/history';
+import Navbar from 'components/Navbar';
+import PivotPage from 'pages/pivot';
+import CategoryPage from 'pages/category';
 import mapSort from 'mapsort';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { DataContext } from './context';
 import styles from './App.module.scss';
-import Navbar from '../components/Navbar';
 
 const App = () => {
   const {
@@ -129,6 +132,94 @@ const App = () => {
     ]
   );
 
+  const transactionsByCategory = useMemo(
+    () =>
+      [
+        ...categories,
+        { id: 'transfer', type: 'in' },
+        { id: 'transfer', type: 'out' }
+      ]
+        .map(category =>
+          activeTransactions.filter(
+            t =>
+              t.categoryObj.id === category.id &&
+              t.categoryObj.type === category.type
+          )
+        )
+        .filter(category => category.length)
+        .map(category => ({
+          id: category.length
+            ? category.find(t => t.categoryObj).categoryObj.id
+            : 'NotFound',
+          name: category.length
+            ? category.find(t => t.categoryObj).categoryObj.name
+            : 'No name',
+          amount: category.reduce((sum, t) => sum + t.actualAmount, 0),
+          accounts: category.reduce(
+            (all, t) =>
+              all.includes(t.account.name) ? all : [...all, t.account.name],
+            []
+          ),
+          payees: category.reduce(
+            (all, t) =>
+              all.includes(t.payee.name || t.transferAccount.name)
+                ? all
+                : [
+                    ...all,
+                    t.payee.name
+                      ? t.payee.name
+                      : t.transferAccount.name
+                      ? t.transferAccount.name
+                      : null
+                  ],
+            []
+          ),
+          duration: category.reduce(
+            (startEnd, t) => [
+              Math.min(startEnd[0], t.date),
+              Math.max(startEnd[1], t.date)
+            ],
+            [100000000, 0]
+          ),
+          transactions: category
+        }))
+        .map(category =>
+          category.amount >= 0
+            ? { ...category, amountType: 'Deposit' }
+            : { ...category, amountType: 'Payment' }
+        ),
+    [categories, activeTransactions]
+  );
+
+  const totalPayment = useMemo(
+    () =>
+      transactionsByCategory.reduce(
+        (sum, category) =>
+          category.amountType === 'Payment' ? sum + category.amount : sum,
+        0
+      ),
+    [transactionsByCategory]
+  );
+
+  const totalDeposit = useMemo(
+    () =>
+      transactionsByCategory.reduce(
+        (sum, category) =>
+          category.amountType === 'Deposit' ? sum + category.amount : sum,
+        0
+      ),
+    [transactionsByCategory]
+  );
+
+  const totalTransactions = useMemo(
+    () =>
+      transactionsByCategory.reduce(
+        (sum, category) => sum + category.transactions.length,
+        0
+      ),
+    [transactionsByCategory]
+  );
+
   const DataContextValue = useMemo(
     () => ({
       accounts,
@@ -155,7 +246,11 @@ const App = () => {
       searchString,
       sortBy,
       totalBalance,
-      deadTransactions
+      deadTransactions,
+      transactionsByCategory,
+      totalPayment,
+      totalDeposit,
+      totalTransactions
     }),
     [
       accounts,
@@ -182,7 +277,11 @@ const App = () => {
       searchString,
       sortBy,
       totalBalance,
-      deadTransactions
+      deadTransactions,
+      transactionsByCategory,
+      totalPayment,
+      totalDeposit,
+      totalTransactions
     ]
   );
 
@@ -225,6 +324,8 @@ const App = () => {
             />
             <Switch>
               <Route path="/history" component={HistoryPage} />
+              <Route path="/pivot/:categoryid" component={CategoryPage} />
+              <Route path="/pivot" component={PivotPage} />
               <Route path="/" component={HomePage} />
             </Switch>
           </div>

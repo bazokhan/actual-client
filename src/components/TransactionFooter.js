@@ -34,9 +34,14 @@ const TransactionFooter = ({
 };
 
 TransactionFooter.propTypes = {
-  activeAccount: PropTypes.string.isRequired,
-  activeType: PropTypes.string.isRequired,
+  activeAccount: PropTypes.string,
+  activeType: PropTypes.string,
   activeTransactions: PropTypes.array.isRequired
+};
+
+TransactionFooter.defaultProps = {
+  activeAccount: null,
+  activeType: ''
 };
 
 export default TransactionFooter;
