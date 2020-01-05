@@ -15,11 +15,14 @@ import HomePage from 'pages/home';
 import HistoryPage from 'pages/history';
 import Navbar from 'components/Navbar';
 import PivotPage from 'pages/pivot';
+import MigratePage from 'pages/migrate';
 import CategoryPage from 'pages/category';
 import mapSort from 'mapsort';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/react-hooks';
 import { DataContext } from './context';
 import styles from './App.module.scss';
+import client from './client';
 
 const App = () => {
   const {
@@ -312,26 +315,29 @@ const App = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (
-    <BrowserRouter>
-      <DataContext.Provider value={DataContextValue}>
-        <div className={styles.container}>
-          <Sidebar />
-          <div className={styles.main}>
-            <Navbar
-              activeTransactions={activeTransactions}
-              activeAccount={activeAccount}
-              activeType={activeType}
-            />
-            <Switch>
-              <Route path="/history" component={HistoryPage} />
-              <Route path="/pivot/:categoryid" component={CategoryPage} />
-              <Route path="/pivot" component={PivotPage} />
-              <Route path="/" component={HomePage} />
-            </Switch>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <DataContext.Provider value={DataContextValue}>
+          <div className={styles.container}>
+            <Sidebar />
+            <div className={styles.main}>
+              <Navbar
+                activeTransactions={activeTransactions}
+                activeAccount={activeAccount}
+                activeType={activeType}
+              />
+              <Switch>
+                <Route path="/migrate" component={MigratePage} />
+                <Route path="/history" component={HistoryPage} />
+                <Route path="/pivot/:categoryid" component={CategoryPage} />
+                <Route path="/pivot" component={PivotPage} />
+                <Route path="/" component={HomePage} />
+              </Switch>
+            </div>
           </div>
-        </div>
-      </DataContext.Provider>
-    </BrowserRouter>
+        </DataContext.Provider>
+      </BrowserRouter>
+    </ApolloProvider>
   );
 };
 

@@ -1,19 +1,9 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useContext, useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import cx from 'classnames';
 import { DataContext } from 'App/context';
 import Header from 'components/Header';
-import { n } from 'helpers/mathHelpers';
-import { dateNumToString } from 'helpers/dateHelpers';
-import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
 import mapSort from 'mapsort';
-import {
-  sortStringsAscending,
-  sortStringsDescending,
-  sortNumsAscending,
-  sortNumsDescending
-} from 'helpers/sortHelpers';
 import TransactionsHeader from 'components/TransactionHeader';
 import Transaction from 'components/Transaction';
 import TransactionFooter from 'components/TransactionFooter';
