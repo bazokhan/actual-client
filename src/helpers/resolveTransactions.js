@@ -28,6 +28,7 @@ export default (transactions, accounts, categories, categoryGroups, payees) =>
             type: 'in',
             name: 'Transfer In'
           };
+          t.catGroup = { name: 'تحويلات' };
         }
         if (
           t.transferAccount.id &&
@@ -39,6 +40,7 @@ export default (transactions, accounts, categories, categoryGroups, payees) =>
             type: 'out',
             name: 'Transfer Out'
           };
+          t.catGroup = { name: 'تحويلات' };
         }
         t.searchString = [
           t.dateString,

@@ -9,16 +9,15 @@ const client = new ApolloClient({
   link: ApolloLink.from([
     onError(({ graphQLErrors, networkError }) => {
       if (graphQLErrors)
-        graphQLErrors.forEach(({ message, locations, path }) =>
+        graphQLErrors.forEach(({ message, locations, path }) => {
           console.log(
             `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-          )
-        );
+          );
+        });
       if (networkError) console.log(`[Network error]: ${networkError}`);
     }),
     new HttpLink({
-      uri: 'localhost/4000',
-      credentials: 'same-origin'
+      uri: '//localhost:4000/'
     })
   ]),
   cache: new InMemoryCache()

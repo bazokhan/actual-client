@@ -113,42 +113,6 @@ const useInitialLoad = () => {
     }
   }, [after]);
 
-  // useEffect(() => {
-  //   if (!loading) {
-  //     const notSameTarget = payeeMapping.filter(
-  //       payee => payee.id !== payee.targetId
-  //     );
-  //     console.log(
-  //       payees.filter(payee => notSameTarget.map(p => p.id).includes(payee.id))
-  //     );
-  //     console.log(
-  //       accounts.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       categories.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       categoryGroups.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       payees.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       transactions.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //   }
-  // }, [loading]);
-
   return {
     loading,
     accounts,
