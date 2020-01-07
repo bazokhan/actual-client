@@ -1,15 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect, useMemo } from 'react';
-import useInitialLoad from 'hooks/useInitialLoad';
+import useMigrationData from 'hooks/useMigrationData';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
-import {
-  resolveTransactions,
-  sortAmountsByAccount,
-  resolvePayees
-} from 'helpers';
+import { sortAmountsByAccount } from 'helpers';
 import Sidebar from 'components/Sidebar';
 import HomePage from 'pages/home';
 import HistoryPage from 'pages/history';
@@ -31,8 +27,9 @@ const App = () => {
     categories,
     categoryGroups,
     payees,
-    transactions
-  } = useInitialLoad();
+    transactions,
+    deadTransactions
+  } = useMigrationData();
 
   const [activeTransactions, setActiveTransactions] = useState([]);
   const [activeAccount, setActiveAccount] = useState('');
@@ -42,55 +39,16 @@ const App = () => {
   const [activePayee, setActivePayee] = useState('');
   const [searchString, setSearchString] = useState('');
 
-  const allPayees = useMemo(
-    () => (payees && !loading ? resolvePayees(payees, accounts) : []),
-    [payees, loading, accounts]
-  );
-
-  const allTransactions = useMemo(
-    () =>
-      transactions && allPayees.length && !loading
-        ? resolveTransactions(
-            transactions.filter(
-              transaction =>
-                !transaction.starting_balance_flag && !transaction.tombstone
-            ),
-            accounts,
-            categories,
-            categoryGroups,
-            allPayees
-          )
-        : [],
-    [transactions, loading, allPayees, accounts, categories, categoryGroups]
-  );
-
-  const deadTransactions = useMemo(
-    () =>
-      transactions && allPayees.length && !loading
-        ? resolveTransactions(
-            transactions.filter(
-              transaction =>
-                transaction.starting_balance_flag || transaction.tombstone
-            ),
-            accounts,
-            categories,
-            categoryGroups,
-            allPayees
-          )
-        : [],
-    [transactions, loading, allPayees, accounts, categories, categoryGroups]
-  );
-
   const activeAccountAmount = useMemo(
     () =>
-      sortAmountsByAccount(allTransactions, accounts)[activeAccount] ||
-      allTransactions.map(t => t.actualAmount),
-    [allTransactions, activeAccount, accounts]
+      sortAmountsByAccount(transactions, accounts)[activeAccount] ||
+      transactions.map(t => t.actualAmount),
+    [transactions, activeAccount, accounts]
   );
 
   const allAccountsAmounts = useMemo(
-    () => sortAmountsByAccount(allTransactions, accounts),
-    [allTransactions, accounts]
+    () => sortAmountsByAccount(transactions, accounts),
+    [transactions, accounts]
   );
 
   const activeAccountName = useMemo(
@@ -103,10 +61,10 @@ const App = () => {
 
   const totalBalance = useMemo(
     () =>
-      allTransactions
+      transactions
         .map(t => t.actualAmount)
         .reduce((sum, amount) => sum + amount, 0),
-    [allTransactions]
+    [transactions]
   );
 
   const sortBy = useMemo(
@@ -228,8 +186,8 @@ const App = () => {
       accounts,
       categories,
       categoryGroups,
-      payees: allPayees,
-      transactions: allTransactions,
+      payees,
+      transactions,
       activeTransactions,
       allAccountsAmounts,
       activeAccount,
@@ -259,8 +217,8 @@ const App = () => {
       accounts,
       categories,
       categoryGroups,
-      allPayees,
-      allTransactions,
+      payees,
+      transactions,
       activeTransactions,
       allAccountsAmounts,
       activeAccount,
@@ -290,7 +248,7 @@ const App = () => {
 
   useEffect(() => {
     setActiveTransactions(
-      allTransactions
+      transactions
         .filter(t => (activeAccount ? t.account.id === activeAccount : t))
         .filter(t =>
           dateFilter.length === 2
@@ -304,7 +262,7 @@ const App = () => {
     );
   }, [
     activeAccount,
-    allTransactions,
+    transactions,
     dateFilter,
     activeType,
     activeCategory,

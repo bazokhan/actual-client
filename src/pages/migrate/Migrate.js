@@ -1,13 +1,18 @@
 /* eslint-disable no-console */
-import React, { useContext, useState } from 'react';
-import { useMutation } from '@apollo/react-hooks';
-import { DataContext } from 'App/context';
+import React, { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import accountsGql from 'gql/accounts.gql';
+import groupsGql from 'gql/groups.gql';
+import categoriesGql from 'gql/categories.gql';
+import payeesGql from 'gql/payees.gql';
+import transactionsGql from 'gql/transactions.gql';
 import createAccountsGql from './gql/createAccounts.gql';
 import createCatGroupsGql from './gql/createCatGroups.gql';
 import createCategoriesGql from './gql/createCategories.gql';
 import createPayeesGql from './gql/createPayees.gql';
 import createTransactionsGql from './gql/createTransactions.gql';
 import { dateNumToString } from '../../helpers/dateHelpers';
+import useMigrationData from '../../hooks/useMigrationData';
 
 const Migrate = () => {
   const {
@@ -16,7 +21,8 @@ const Migrate = () => {
     categories,
     payees,
     transactions
-  } = useContext(DataContext);
+  } = useMigrationData();
+
   const [loading, setLoading] = useState({
     accounts: false,
     categoryGroups: false,
@@ -101,6 +107,41 @@ const Migrate = () => {
     }
   });
 
+  const { data: accountsData, loading: accountsLoading } = useQuery(
+    accountsGql,
+    {
+      fetchPolicy: 'cache-and-network'
+    }
+  );
+  const { data: groupsData, loading: groupsLoading } = useQuery(groupsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
+  const { data: categoriesData, loading: categoriesLoading } = useQuery(
+    categoriesGql,
+    {
+      fetchPolicy: 'cache-and-network'
+    }
+  );
+  const { data: payeesData, loading: payeesLoading } = useQuery(payeesGql, {
+    fetchPolicy: 'cache-and-network'
+  });
+  const { data: transactionsData, loading: transactionsLoading } = useQuery(
+    transactionsGql,
+    {
+      fetchPolicy: 'cache-and-network'
+    }
+  );
+
+  if (
+    accountsLoading ||
+    groupsLoading ||
+    categoriesLoading ||
+    payeesLoading ||
+    transactionsLoading
+  ) {
+    return <div>Loading ...</div>;
+  }
+
   return (
     <div>
       {/* {categories.map(group => (
@@ -109,6 +150,9 @@ const Migrate = () => {
         </p>
       ))} */}
       <p>Accounts: {accounts.length}</p>
+      <p>
+        Migrated {accountsData.accounts.length} of {accounts.length}
+      </p>
       <button
         type="button"
         disabled={loading.accounts || success.accounts}
@@ -134,6 +178,9 @@ const Migrate = () => {
           : 'Create All Accounts'}
       </button>
       <p>Category Groups: {categoryGroups.length}</p>
+      <p>
+        Migrated {groupsData.catGroups.length} of {categoryGroups.length}
+      </p>
       <button
         type="button"
         disabled={loading.categoryGroups || success.categoryGroups}
@@ -159,6 +206,9 @@ const Migrate = () => {
           : 'Create All Groups'}
       </button>
       <p>Categories: {categories.length}</p>
+      <p>
+        Migrated {categoriesData.categories.length} of {categories.length}
+      </p>
       <button
         type="button"
         disabled={loading.categories || success.categories}
@@ -212,6 +262,9 @@ const Migrate = () => {
           : 'Create Transfer Categories'}
       </button>
       <p>Payees: {payees.length}</p>
+      <p>
+        Migrated {payeesData.payees.length} of {payees.length}
+      </p>
       <button
         type="button"
         disabled={loading.payees || success.payees}
@@ -242,6 +295,9 @@ const Migrate = () => {
         {success.payees ? 'Payees successfully created' : 'Create All Payees'}
       </button>
       <p>Transactions: {transactions.length}</p>
+      <p>
+        Migrated {transactionsData.transactions.length} of {transactions.length}
+      </p>
       <button
         type="button"
         disabled={loading.transactions || success.transactions}
