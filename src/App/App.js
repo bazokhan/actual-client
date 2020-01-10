@@ -6,8 +6,8 @@ import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
 import { sortAmountsByAccount } from 'helpers';
-import Sidebar from 'components/Sidebar';
 import HomePage from 'pages/home';
+import HomeNew from 'pages/homeNew';
 import HistoryPage from 'pages/history';
 import Navbar from 'components/Navbar';
 import PivotPage from 'pages/pivot';
@@ -277,7 +277,7 @@ const App = () => {
       <BrowserRouter>
         <DataContext.Provider value={DataContextValue}>
           <div className={styles.container}>
-            <Sidebar />
+            {/* <Sidebar /> */}
             <div className={styles.main}>
               <Navbar
                 activeTransactions={activeTransactions}
@@ -285,6 +285,7 @@ const App = () => {
                 activeType={activeType}
               />
               <Switch>
+                <Route path="/new" component={HomeNew} />
                 <Route path="/migrate" component={MigratePage} />
                 <Route path="/history" component={HistoryPage} />
                 <Route path="/pivot/:categoryid" component={CategoryPage} />
