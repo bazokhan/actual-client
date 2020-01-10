@@ -1,36 +1,24 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
-// import cx from 'classnames';
-import ReactToPrint from 'react-to-print';
-import { FaExpand, FaPrint } from 'react-icons/fa';
-import mapSort from 'mapsort';
-import useInitialLoad from '../hooks/useInitialLoad';
-import styles from './App.module.scss';
+/* eslint-disable no-nested-ternary */
+import React, { useState, useEffect, useMemo } from 'react';
+import useMigrationData from 'hooks/useMigrationData';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
-import {
-  resolveTransactions,
-  // sortAmountsByAccount,
-  // sortTransactions,
-  toggleFullScreen,
-  sortAmountsByAccount
-} from '../helpers';
-import Transaction from './components/Transaction';
-import TransactionsHeader from './components/TransactionsHeader';
-import Sidebar from './components/Sidebar';
-import Header from './components/Header';
-import resolvePayees from '../helpers/resolvePayees';
-// import { sum, n } from '../helpers/mathHelpers';
-import TransactionFooter from './components/TransactionFooter';
-import ExcelExport from './components/ExcelExport';
-import Print from './components/Print';
-
-const PrintButton = () => (
-  <button type="button" className="btn btn-action s-square">
-    <FaPrint />
-  </button>
-);
+import { sortAmountsByAccount } from 'helpers';
+import HomePage from 'pages/home';
+import HomeNew from 'pages/homeNew';
+import HistoryPage from 'pages/history';
+import Navbar from 'components/Navbar';
+import PivotPage from 'pages/pivot';
+import MigratePage from 'pages/migrate';
+import CategoryPage from 'pages/category';
+import mapSort from 'mapsort';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/react-hooks';
+import { DataContext } from './context';
+import styles from './App.module.scss';
+import client from './client';
 
 const App = () => {
   const {
@@ -39,41 +27,228 @@ const App = () => {
     categories,
     categoryGroups,
     payees,
-    transactions
-  } = useInitialLoad();
+    transactions,
+    deadTransactions
+  } = useMigrationData();
 
   const [activeTransactions, setActiveTransactions] = useState([]);
   const [activeAccount, setActiveAccount] = useState('');
-  const [isAscending, setIsAscending] = useState(true);
   const [dateFilter, setDateFilter] = useState([]);
   const [activeType, setActiveType] = useState('');
   const [activeCategory, setActiveCategory] = useState('');
   const [activePayee, setActivePayee] = useState('');
   const [searchString, setSearchString] = useState('');
-  const printRef = useRef();
 
-  const allPayees = useMemo(
-    () => (payees && !loading ? resolvePayees(payees, accounts) : []),
-    [payees, loading, accounts]
+  const activeAccountAmount = useMemo(
+    () =>
+      sortAmountsByAccount(transactions, accounts)[activeAccount] ||
+      transactions.map(t => t.actualAmount),
+    [transactions, activeAccount, accounts]
   );
 
-  const allTransactions = useMemo(
+  const allAccountsAmounts = useMemo(
+    () => sortAmountsByAccount(transactions, accounts),
+    [transactions, accounts]
+  );
+
+  const activeAccountName = useMemo(
     () =>
-      transactions && allPayees.length && !loading
-        ? resolveTransactions(
-            transactions,
-            accounts,
-            categories,
-            categoryGroups,
-            allPayees
+      activeAccount
+        ? accounts.find(account => account.id === activeAccount).name
+        : 'all accounts',
+    [activeAccount, accounts]
+  );
+
+  const totalBalance = useMemo(
+    () =>
+      transactions
+        .map(t => t.actualAmount)
+        .reduce((sum, amount) => sum + amount, 0),
+    [transactions]
+  );
+
+  const sortBy = useMemo(
+    () => (arrayMapFunc, sortFunc) =>
+      setActiveTransactions(
+        mapSort(activeTransactions, arrayMapFunc, sortFunc)
+          .filter(t =>
+            dateFilter.length === 2
+              ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
+              : t
           )
-        : [],
-    [transactions, loading, allPayees, accounts, categories, categoryGroups]
+          .filter(t => (activeType ? t.amountType === activeType : t))
+          .filter(t =>
+            activeCategory ? t.categoryObj.id === activeCategory : t
+          )
+          .filter(t => (activePayee ? t.payee.id === activePayee : t))
+          .filter(t => t.searchString.includes(searchString))
+      ),
+    [
+      activeTransactions,
+      dateFilter,
+      activeType,
+      activeCategory,
+      activePayee,
+      searchString
+    ]
+  );
+
+  const transactionsByCategory = useMemo(
+    () =>
+      [
+        ...categories,
+        { id: 'transfer', type: 'in' },
+        { id: 'transfer', type: 'out' }
+      ]
+        .map(category =>
+          activeTransactions.filter(
+            t =>
+              t.categoryObj.id === category.id &&
+              t.categoryObj.type === category.type
+          )
+        )
+        .filter(category => category.length)
+        .map(category => ({
+          id: category.length
+            ? category.find(t => t.categoryObj).categoryObj.id
+            : 'NotFound',
+          name: category.length
+            ? category.find(t => t.categoryObj).categoryObj.name
+            : 'No name',
+          amount: category.reduce((sum, t) => sum + t.actualAmount, 0),
+          accounts: category.reduce(
+            (all, t) =>
+              all.includes(t.account.name) ? all : [...all, t.account.name],
+            []
+          ),
+          payees: category.reduce(
+            (all, t) =>
+              all.includes(t.payee.name || t.transferAccount.name)
+                ? all
+                : [
+                    ...all,
+                    t.payee.name
+                      ? t.payee.name
+                      : t.transferAccount.name
+                      ? t.transferAccount.name
+                      : null
+                  ],
+            []
+          ),
+          duration: category.reduce(
+            (startEnd, t) => [
+              Math.min(startEnd[0], t.date),
+              Math.max(startEnd[1], t.date)
+            ],
+            [100000000, 0]
+          ),
+          transactions: category
+        }))
+        .map(category =>
+          category.amount >= 0
+            ? { ...category, amountType: 'Deposit' }
+            : { ...category, amountType: 'Payment' }
+        ),
+    [categories, activeTransactions]
+  );
+
+  const totalPayment = useMemo(
+    () =>
+      transactionsByCategory.reduce(
+        (sum, category) =>
+          category.amountType === 'Payment' ? sum + category.amount : sum,
+        0
+      ),
+    [transactionsByCategory]
+  );
+
+  const totalDeposit = useMemo(
+    () =>
+      transactionsByCategory.reduce(
+        (sum, category) =>
+          category.amountType === 'Deposit' ? sum + category.amount : sum,
+        0
+      ),
+    [transactionsByCategory]
+  );
+
+  const totalTransactions = useMemo(
+    () =>
+      transactionsByCategory.reduce(
+        (sum, category) => sum + category.transactions.length,
+        0
+      ),
+    [transactionsByCategory]
+  );
+
+  const DataContextValue = useMemo(
+    () => ({
+      accounts,
+      categories,
+      categoryGroups,
+      payees,
+      transactions,
+      activeTransactions,
+      allAccountsAmounts,
+      activeAccount,
+      activeAccountAmount,
+      activeType,
+      activeCategory,
+      activePayee,
+      dateFilter,
+      setActiveAccount,
+      setDateFilter,
+      setActiveType,
+      setActiveCategory,
+      setActivePayee,
+      setSearchString,
+      setActiveTransactions,
+      activeAccountName,
+      searchString,
+      sortBy,
+      totalBalance,
+      deadTransactions,
+      transactionsByCategory,
+      totalPayment,
+      totalDeposit,
+      totalTransactions
+    }),
+    [
+      accounts,
+      categories,
+      categoryGroups,
+      payees,
+      transactions,
+      activeTransactions,
+      allAccountsAmounts,
+      activeAccount,
+      activeAccountAmount,
+      activeType,
+      activeCategory,
+      activePayee,
+      dateFilter,
+      setActiveAccount,
+      setDateFilter,
+      setActiveType,
+      setActiveCategory,
+      setActivePayee,
+      setSearchString,
+      setActiveTransactions,
+      activeAccountName,
+      searchString,
+      sortBy,
+      totalBalance,
+      deadTransactions,
+      transactionsByCategory,
+      totalPayment,
+      totalDeposit,
+      totalTransactions
+    ]
   );
 
   useEffect(() => {
     setActiveTransactions(
-      allTransactions
+      transactions
         .filter(t => (activeAccount ? t.account.id === activeAccount : t))
         .filter(t =>
           dateFilter.length === 2
@@ -87,7 +262,7 @@ const App = () => {
     );
   }, [
     activeAccount,
-    allTransactions,
+    transactions,
     dateFilter,
     activeType,
     activeCategory,
@@ -95,115 +270,33 @@ const App = () => {
     searchString
   ]);
 
-  const sortBy = (arrayMapFunc, sortFunc) =>
-    setActiveTransactions(
-      mapSort(activeTransactions, arrayMapFunc, sortFunc)
-        .filter(t =>
-          dateFilter.length === 2
-            ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
-            : t
-        )
-        .filter(t => (activeType ? t.amountType === activeType : t))
-        .filter(t => (activeCategory ? t.categoryObj.id === activeCategory : t))
-        .filter(t => (activePayee ? t.payee.id === activePayee : t))
-        .filter(t => t.searchString.includes(searchString))
-    );
-
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (
-    <div className={styles.container}>
-      <Sidebar
-        transactions={
-          !loading
-            ? resolveTransactions(
-                transactions,
-                accounts,
-                categories,
-                categoryGroups,
-                allPayees
-              )
-            : []
-        }
-        setActiveAccount={setActiveAccount}
-        accounts={accounts}
-        amountsByAccount={sortAmountsByAccount(allTransactions, accounts)}
-        categories={categories}
-        payees={allPayees}
-        setSearch={setSearchString}
-        setCategory={setActiveCategory}
-        setPayee={setActivePayee}
-        setDate={setDateFilter}
-        setType={setActiveType}
-        activeType={activeType}
-      />
-      <div className={styles.main}>
-        <button
-          className={styles.topBar}
-          type="button"
-          onClick={toggleFullScreen}
-        >
-          <FaExpand />
-        </button>
-        <div className={styles.header}>
-          <Header
-            transactions={activeTransactions}
-            accountsAmounts={
-              sortAmountsByAccount(allTransactions, accounts)[activeAccount] ||
-              allTransactions.map(t => t.actualAmount)
-            }
-            title={
-              activeAccount
-                ? accounts.find(a => a.id === activeAccount).name
-                : 'All accounts'
-            }
-          />
-          <div className={styles.actionButtons}>
-            <ExcelExport
-              transactions={activeTransactions}
-              activeAccount={activeAccount}
-              activeType={activeType}
-            />
-            <ReactToPrint
-              trigger={PrintButton}
-              content={() => printRef.current}
-              copyStyles
-            />
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <DataContext.Provider value={DataContextValue}>
+          <div className={styles.container}>
+            {/* <Sidebar /> */}
+            <div className={styles.main}>
+              <Navbar
+                activeTransactions={activeTransactions}
+                activeAccount={activeAccount}
+                activeType={activeType}
+              />
+              <Switch>
+                <Route path="/new" component={HomeNew} />
+                <Route path="/migrate" component={MigratePage} />
+                <Route path="/history" component={HistoryPage} />
+                <Route path="/pivot/:categoryid" component={CategoryPage} />
+                <Route path="/pivot" component={PivotPage} />
+                <Route path="/" component={HomePage} />
+              </Switch>
+            </div>
           </div>
-          <TransactionsHeader
-            activeAccount={activeAccount}
-            sortBy={sortBy}
-            isAscending={isAscending}
-            toggleSortMode={() => setIsAscending(!isAscending)}
-            activeType={activeType}
-          />
-        </div>
-        <div className={styles.body}>
-          {activeTransactions.map(transaction => (
-            <Transaction
-              key={transaction.id}
-              transaction={transaction}
-              activeAccount={activeAccount}
-              activeType={activeType}
-            />
-          ))}
-        </div>
-        <div className={styles.footer}>
-          <TransactionFooter
-            activeAccount={activeAccount}
-            activeTransactions={activeTransactions}
-            activeType={activeType}
-          />
-        </div>
-        <div className={styles.print} ref={printRef}>
-          <Print
-            transactions={activeTransactions}
-            activeAccount={activeAccount}
-            activeType={activeType}
-          />
-        </div>
-      </div>
-    </div>
+        </DataContext.Provider>
+      </BrowserRouter>
+    </ApolloProvider>
   );
 };
 

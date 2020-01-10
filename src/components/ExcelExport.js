@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { FaTable } from 'react-icons/fa';
 import ReactExport from 'react-export-excel';
-import { n } from '../../helpers/mathHelpers';
+import { n } from 'helpers/mathHelpers';
 
 const { ExcelFile } = ReactExport;
 const { ExcelSheet, ExcelColumn } = ExcelFile;
 
 const DownloadButton = () => (
-  <button type="button" className="btn btn-action s-square">
+  <button type="button" className="btn btn-action btn-link btn-sm s-square">
     <FaTable />
   </button>
 );

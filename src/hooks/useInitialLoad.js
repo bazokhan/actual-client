@@ -32,12 +32,12 @@ const getAfter = contentRange => {
 };
 
 const useInitialLoad = () => {
-  const [accounts, setAccounts] = useState(null);
-  const [categories, setCategories] = useState(null);
-  const [categoryGroups, setCategoryGroups] = useState(null);
-  const [categoryMapping, setCategoryMapping] = useState(null);
-  const [payees, setPayees] = useState(null);
-  const [payeeMapping, setPayeeMapping] = useState(null);
+  const [accounts, setAccounts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [categoryGroups, setCategoryGroups] = useState([]);
+  const [categoryMapping, setCategoryMapping] = useState([]);
+  const [payees, setPayees] = useState([]);
+  const [payeeMapping, setPayeeMapping] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [after, setAfter] = useState(null);
@@ -112,42 +112,6 @@ const useInitialLoad = () => {
       fetchMoreTransactions(Number(after));
     }
   }, [after]);
-
-  // useEffect(() => {
-  //   if (!loading) {
-  //     const notSameTarget = payeeMapping.filter(
-  //       payee => payee.id !== payee.targetId
-  //     );
-  //     console.log(
-  //       payees.filter(payee => notSameTarget.map(p => p.id).includes(payee.id))
-  //     );
-  //     console.log(
-  //       accounts.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       categories.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       categoryGroups.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       payees.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //     console.log(
-  //       transactions.filter(acc =>
-  //         notSameTarget.map(p => p.targetId).includes(acc.id)
-  //       )
-  //     );
-  //   }
-  // }, [loading]);
 
   return {
     loading,

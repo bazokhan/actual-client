@@ -1,33 +1,37 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   dateNumFromIsoString,
-  dateNumToString,
-  todayString
-} from '../../helpers/dateHelpers';
+  todayString,
+  numerizeDate
+} from 'helpers/dateHelpers';
 
 const Filters = ({
   categories,
   payees,
-  setDate,
   activeType,
-  setType,
-  setCategory,
-  setPayee,
-  setSearch
+  filterByType,
+  filterByCategory,
+  filterByPayee,
+  filterByAfter,
+  filterByBefore,
+  startDate,
+  endDate
 }) => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
   return (
     <div className="form-group">
       <label className="form-label label-sm" htmlFor="categories">
         Select Category
         <select
           className="form-select select-sm"
-          onChange={e => setCategory(e.target.value)}
+          onChange={e => {
+            const categoryId = e.target.value;
+            return categoryId
+              ? filterByCategory(t => t.category.id === categoryId)
+              : filterByCategory(t => t);
+          }}
           id="categories"
-          style={{ background: '#243b53' }}
+          style={{ color: '#243b53' }}
         >
           <option value="">All Categories</option>
           {categories.map(cat => (
@@ -35,37 +39,28 @@ const Filters = ({
               {cat.name}
             </option>
           ))}
-          <option value="transfer">Transfer</option>
         </select>
       </label>
       <label className="form-label label-sm" htmlFor="payees">
         Select Payee
         <select
           className="form-select select-sm"
-          onChange={e => setPayee(e.target.value)}
+          onChange={e => {
+            const payeeId = e.target.value;
+            return payeeId
+              ? filterByPayee(t => t.payee.id === payeeId)
+              : filterByPayee(t => t);
+          }}
           id="payees"
-          style={{ background: '#243b53' }}
+          style={{ color: '#243b53' }}
         >
           <option value="">All Payees</option>
           {payees.map(payee => (
             <option key={payee.id} value={payee.id}>
-              {payee.type === 'Account'
-                ? payee.transferAccount.name
-                : payee.name}
+              {payee.name}
             </option>
           ))}
         </select>
-      </label>
-      <label className="form-label label-sm" htmlFor="search">
-        Search
-        <input
-          className="form-input input-sm"
-          id="search"
-          type="text"
-          onChange={e => setSearch(e.target.value)}
-          placeholder="Search"
-          style={{ background: '#243b53', color: 'white' }}
-        />
       </label>
 
       <label className="form-label label-sm" htmlFor="startdate">
@@ -75,10 +70,14 @@ const Filters = ({
           type="date"
           className="form-input input-sm"
           onChange={e => {
-            setStartDate(dateNumFromIsoString(e.target.value));
+            const date = e.target.value;
+            const requiredDateNum = dateNumFromIsoString(date);
+            filterByAfter([
+              date,
+              t => numerizeDate(t.date) - requiredDateNum >= 0
+            ]);
           }}
-          value={startDate ? dateNumToString(startDate) : todayString()}
-          style={{ background: '#243b53', color: 'white' }}
+          value={startDate || todayString()}
         />
       </label>
 
@@ -89,22 +88,26 @@ const Filters = ({
           type="date"
           className="form-input input-sm"
           onChange={e => {
-            setEndDate(dateNumFromIsoString(e.target.value));
+            const date = e.target.value;
+            const requiredDateNum = dateNumFromIsoString(date);
+            filterByBefore([
+              date,
+              t => requiredDateNum - numerizeDate(t.date) >= 0
+            ]);
           }}
-          value={endDate ? dateNumToString(endDate) : todayString()}
-          style={{ background: '#243b53', color: 'white' }}
+          value={endDate || todayString()}
         />
       </label>
       <div className="btn-group btn-group-block">
-        <button
+        {/* <button
           type="button"
           className="btn btn-primary btn-sm"
           disabled={!startDate || !endDate}
           onClick={() => setDate([startDate, endDate])}
         >
           Go
-        </button>
-        <button
+        </button> */}
+        {/* <button
           type="button"
           className="btn btn-sm"
           disabled={!startDate || !endDate}
@@ -115,7 +118,7 @@ const Filters = ({
           }}
         >
           Clear
-        </button>
+        </button> */}
       </div>
       <div>
         <label className="form-radio input-sm" htmlFor="all">
@@ -125,7 +128,9 @@ const Filters = ({
             name="amountType"
             value=""
             checked={!activeType}
-            onChange={e => setType(e.target.value)}
+            onChange={() => {
+              filterByType([null, t => t]);
+            }}
           />
           <i className="form-icon" /> All
         </label>
@@ -136,7 +141,9 @@ const Filters = ({
             name="amountType"
             value="Payment"
             checked={activeType === 'Payment'}
-            onChange={e => setType(e.target.value)}
+            onChange={() => {
+              filterByType(['Payment', t => t.amount < 0]);
+            }}
           />
           <i className="form-icon" /> Payments
         </label>
@@ -147,7 +154,9 @@ const Filters = ({
             name="amountType"
             value="Deposit"
             checked={activeType === 'Deposit'}
-            onChange={e => setType(e.target.value)}
+            onChange={() => {
+              filterByType(['Deposit', t => t.amount >= 0]);
+            }}
           />
           <i className="form-icon" /> Deposits
         </label>
@@ -159,16 +168,20 @@ const Filters = ({
 Filters.propTypes = {
   categories: PropTypes.array.isRequired,
   payees: PropTypes.array.isRequired,
-  setDate: PropTypes.func.isRequired,
   activeType: PropTypes.string,
-  setType: PropTypes.func.isRequired,
-  setCategory: PropTypes.func.isRequired,
-  setPayee: PropTypes.func.isRequired,
-  setSearch: PropTypes.func.isRequired
+  filterByType: PropTypes.func.isRequired,
+  filterByCategory: PropTypes.func.isRequired,
+  filterByPayee: PropTypes.func.isRequired,
+  filterByAfter: PropTypes.func.isRequired,
+  filterByBefore: PropTypes.func.isRequired,
+  startDate: PropTypes.string,
+  endDate: PropTypes.string
 };
 
 Filters.defaultProps = {
-  activeType: ''
+  activeType: null,
+  startDate: null,
+  endDate: null
 };
 
 export default Filters;

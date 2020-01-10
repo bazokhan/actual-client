@@ -15,6 +15,13 @@ const dateNumFromIsoString = str => {
   return Number(str.split('-').join(''));
 };
 
+const numerizeDate = str => {
+  if (!str) return 0;
+  const [day, month, year] = str.split('-');
+  const formattedDate = `${year}${month}${day}`;
+  return Number(formattedDate);
+};
+
 const todayString = () => new Date().toISOString().split('T')[0];
 
 const dateStringFromIsoString = (isoString, format = 'YMD', sep = '-') => {
@@ -32,5 +39,6 @@ export {
   dateNumToString,
   dateNumFromIsoString,
   todayString,
-  dateStringFromIsoString
+  dateStringFromIsoString,
+  numerizeDate
 };

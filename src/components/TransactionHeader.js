@@ -1,40 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
-import styles from '../App.module.scss';
-
-const sortNumsAscending = (a, b) => {
-  if (!a) return 1;
-  if (!b) return -1;
-  return a - b;
-};
-const sortNumsDescending = (a, b) => {
-  if (!a) return 1;
-  if (!b) return -1;
-  return b - a;
-};
-const sortStringsAscending = (a, b) => {
-  if (!a) return 1;
-  if (!b) return -1;
-  if (a.toLowerCase() < b.toLowerCase()) {
-    return -1;
-  }
-  if (a.toLowerCase() > b.toLowerCase()) {
-    return 1;
-  }
-  return 0;
-};
-const sortStringsDescending = (a, b) => {
-  if (!a) return 1;
-  if (!b) return -1;
-  if (a.toLowerCase() < b.toLowerCase()) {
-    return 1;
-  }
-  if (a.toLowerCase() > b.toLowerCase()) {
-    return -1;
-  }
-  return 0;
-};
+import {
+  sortNumsAscending,
+  sortNumsDescending,
+  sortStringsAscending,
+  sortStringsDescending
+} from 'helpers/sortHelpers';
+import styles from './TransactionHeader.module.scss';
 
 const TransactionsHeader = ({
   sortBy,
@@ -176,11 +149,12 @@ TransactionsHeader.propTypes = {
   isAscending: PropTypes.bool.isRequired,
   activeAccount: PropTypes.string,
   toggleSortMode: PropTypes.func,
-  activeType: PropTypes.string.isRequired
+  activeType: PropTypes.string
 };
 
 TransactionsHeader.defaultProps = {
   activeAccount: null,
+  activeType: '',
   toggleSortMode: () => {}
 };
 
