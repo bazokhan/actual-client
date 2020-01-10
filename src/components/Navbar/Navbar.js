@@ -1,11 +1,9 @@
 import React, { useRef } from 'react';
-import cx from 'classnames';
 import PropTypes from 'prop-types';
 import ExcelExport from 'components/ExcelExport';
 import ReactToPrint from 'react-to-print';
 import Print from 'components/Print';
 import { FaPrint, FaExpand } from 'react-icons/fa';
-import { NavLink } from 'react-router-dom';
 import { toggleFullScreen } from 'helpers';
 import styles from './Navbar.module.scss';
 
@@ -19,29 +17,6 @@ const Navbar = ({ activeTransactions, activeAccount, activeType }) => {
   const printRef = useRef();
   return (
     <div className={styles.actionButtons}>
-      <NavLink
-        className={cx(styles.link, 'btn btn-sm')}
-        activeClassName="btn-primary"
-        exact
-        to="/"
-      >
-        Home
-      </NavLink>
-      <NavLink
-        className={cx(styles.link, 'btn btn-sm')}
-        activeClassName="btn-primary"
-        exact
-        to="/pivot"
-      >
-        Pivot
-      </NavLink>
-      <NavLink
-        className={cx(styles.link, 'btn btn-sm')}
-        activeClassName="btn-primary"
-        to="/history"
-      >
-        Deleted
-      </NavLink>
       <ExcelExport
         transactions={activeTransactions}
         activeAccount={activeAccount}

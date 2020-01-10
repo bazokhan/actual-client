@@ -1,87 +1,50 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import cx from 'classnames';
-import { FaCaretRight, FaCaretDown } from 'react-icons/fa';
-import { n } from 'helpers/mathHelpers';
-import { DataContext } from 'App/context';
+import { NavLink } from 'react-router-dom';
 import styles from './Sidebar.module.scss';
-import Filters from '../Filters';
 
 const Sidebar = () => {
-  const [filtersExpanded, setFiltersExpanded] = useState(true);
-  const {
-    accounts,
-    categories,
-    activeType,
-    payees,
-    allAccountsAmounts,
-    totalBalance,
-    activeAccount,
-    setActiveAccount,
-    setDateFilter,
-    setActiveType,
-    setActiveCategory,
-    setActivePayee,
-    setSearchString
-  } = useContext(DataContext);
-
   return (
     <div className={styles.sidebar}>
-      <button
-        className={cx(
-          styles.accountsButton,
-          !activeAccount ? styles.active : ''
-        )}
-        type="button"
-        onClick={() => setActiveAccount(null)}
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/"
       >
-        <span>All accounts</span>
-        <span>{n(totalBalance)} EGP</span>
-      </button>
-      {accounts.map(account => (
-        <button
-          key={account.id}
-          className={cx(
-            styles.accountButton,
-            activeAccount === account.id ? styles.active : ''
-          )}
-          type="button"
-          onClick={() => setActiveAccount(account.id)}
-        >
-          <span>{account.name}</span>
-          <span>
-            {n(
-              allAccountsAmounts[account.id] &&
-                allAccountsAmounts[account.id].reduce(
-                  (sum, amount) => sum + amount,
-                  0
-                )
-            )}{' '}
-            EGP
-          </span>
-        </button>
-      ))}
-      <button
-        type="button"
-        className={styles.expandButton}
-        onClick={() => setFiltersExpanded(!filtersExpanded)}
+        Home
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/new"
       >
-        <span style={{ marginRight: '4px' }}>Filters</span>
-        {filtersExpanded ? <FaCaretDown /> : <FaCaretRight />}
-      </button>
-      <div
-        className={cx(styles.filters, filtersExpanded ? styles.expanded : '')}
+        New Home
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/migrate"
       >
-        <Filters
-          categories={categories}
-          payees={payees}
-          setDate={setDateFilter}
-          activeType={activeType}
-          setType={setActiveType}
-          setCategory={setActiveCategory}
-          setPayee={setActivePayee}
-          setSearch={setSearchString}
-        />
-      </div>
+        Migrate
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/pivot"
+      >
+        Pivot
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        to="/history"
+      >
+        Deleted
+      </NavLink>
     </div>
   );
 };

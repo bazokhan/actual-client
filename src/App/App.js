@@ -9,7 +9,8 @@ import { sortAmountsByAccount } from 'helpers';
 import HomePage from 'pages/home';
 import HomeNew from 'pages/homeNew';
 import HistoryPage from 'pages/history';
-import Navbar from 'components/Navbar';
+// import Navbar from 'components/Navbar';
+import Sidebar from 'components/Sidebar';
 import PivotPage from 'pages/pivot';
 import MigratePage from 'pages/migrate';
 import CategoryPage from 'pages/category';
@@ -277,13 +278,13 @@ const App = () => {
       <BrowserRouter>
         <DataContext.Provider value={DataContextValue}>
           <div className={styles.container}>
-            {/* <Sidebar /> */}
+            <Sidebar />
             <div className={styles.main}>
-              <Navbar
+              {/* <Navbar
                 activeTransactions={activeTransactions}
                 activeAccount={activeAccount}
                 activeType={activeType}
-              />
+              /> */}
               <Switch>
                 <Route path="/new" component={HomeNew} />
                 <Route path="/migrate" component={MigratePage} />

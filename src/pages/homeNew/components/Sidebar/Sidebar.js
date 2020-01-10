@@ -39,8 +39,8 @@ const Sidebar = ({
   endDate
 }) => {
   const [isExapanded, setIsExpanded] = useState({
-    filters: true,
-    search: false
+    search: true,
+    filters: false
   });
 
   const expand = keyName => {
@@ -58,7 +58,7 @@ const Sidebar = ({
   };
   const { accounts, balance } = useAccounts();
 
-  const { data, loading, error } = useQuery(sidebarGql, {
+  const { data, error } = useQuery(sidebarGql, {
     fetchPolicy: 'cache-and-network'
   });
 
@@ -68,6 +68,12 @@ const Sidebar = ({
   );
 
   const payees = useMemo(() => (data && data.payees ? data.payees : []), [
+    data
+  ]);
+
+  const loading = useMemo(() => (!categories || !payees) && !data, [
+    categories,
+    payees,
     data
   ]);
 
@@ -107,6 +113,19 @@ const Sidebar = ({
       ))}
       <div className={styles.tabs}>
         <ToggleButton
+          expanded={isExapanded.search}
+          text="Search"
+          onClick={() => expand('search')}
+        />
+        <div
+          className={cx(
+            styles.filters,
+            isExapanded.search ? styles.expanded : ''
+          )}
+        >
+          <Search filterBySearch={filterBySearch} />
+        </div>
+        <ToggleButton
           expanded={isExapanded.filters}
           text="Filters"
           onClick={() => expand('filters')}
@@ -129,19 +148,6 @@ const Sidebar = ({
             startDate={startDate}
             endDate={endDate}
           />
-        </div>
-        <ToggleButton
-          expanded={isExapanded.search}
-          text="Search"
-          onClick={() => expand('search')}
-        />
-        <div
-          className={cx(
-            styles.filters,
-            isExapanded.search ? styles.expanded : ''
-          )}
-        >
-          <Search filterBySearch={filterBySearch} />
         </div>
       </div>
     </div>

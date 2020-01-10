@@ -27,7 +27,7 @@ const Home = () => {
     search: null
   });
 
-  const { data, loading, error } = useQuery(transactionsGql, {
+  const { data, error } = useQuery(transactionsGql, {
     fetchPolicy: 'cache-and-network'
   });
 
@@ -49,6 +49,8 @@ const Home = () => {
         : [],
     [data]
   );
+
+  const loading = useMemo(() => !transactions && !data, [transactions, data]);
 
   const [activeTransactions, setActiveTransactions] = useState(transactions);
 
