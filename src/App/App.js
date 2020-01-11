@@ -35,9 +35,7 @@ const App = () => {
     deadTransactions
   } = useMigrationData();
 
-  const authToken = useMemo(() => localStorage.getItem('auth_token'), [
-    localStorage
-  ]);
+  const authToken = localStorage.getItem('auth_token');
 
   const [activeTransactions, setActiveTransactions] = useState([]);
   const [activeAccount, setActiveAccount] = useState('');
