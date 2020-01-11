@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
+import { DataContext } from 'App/context';
 import styles from './Sidebar.module.scss';
 
 const Sidebar = () => {
+  const { authToken } = useContext(DataContext);
   return (
     <div className={styles.sidebar}>
       <NavLink
@@ -45,6 +47,15 @@ const Sidebar = () => {
       >
         Deleted
       </NavLink>
+      {authToken && (
+        <NavLink
+          className={cx(styles.link, 'btn')}
+          activeClassName="btn-primary"
+          to="/auth/logout"
+        >
+          Logout
+        </NavLink>
+      )}
     </div>
   );
 };

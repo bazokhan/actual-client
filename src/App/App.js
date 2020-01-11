@@ -1,5 +1,7 @@
+/* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect, useMemo } from 'react';
+// import PropTypes from 'prop-types';
 import useMigrationData from 'hooks/useMigrationData';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
@@ -11,15 +13,26 @@ import HomeNew from 'pages/homeNew';
 import HistoryPage from 'pages/history';
 // import Navbar from 'components/Navbar';
 import Sidebar from 'components/Sidebar';
+import AuthPage from 'pages/auth';
 import PivotPage from 'pages/pivot';
 import MigratePage from 'pages/migrate';
 import CategoryPage from 'pages/category';
 import mapSort from 'mapsort';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { DataContext } from './context';
 import styles from './App.module.scss';
 import client from './client';
+
+const AuthRoute = props => {
+  const authToken = useMemo(() => localStorage.getItem('auth_token'), [
+    localStorage
+  ]);
+  const history = useHistory();
+  if (!authToken && history) history.push('/auth');
+  if (!authToken && !history) return null;
+  return <Route {...props} />;
+};
 
 const App = () => {
   const {
@@ -39,6 +52,7 @@ const App = () => {
   const [activeCategory, setActiveCategory] = useState('');
   const [activePayee, setActivePayee] = useState('');
   const [searchString, setSearchString] = useState('');
+  const [authToken, setAuthToken] = useState(null);
 
   const activeAccountAmount = useMemo(
     () =>
@@ -212,7 +226,9 @@ const App = () => {
       transactionsByCategory,
       totalPayment,
       totalDeposit,
-      totalTransactions
+      totalTransactions,
+      authToken,
+      setAuthToken
     }),
     [
       accounts,
@@ -243,7 +259,9 @@ const App = () => {
       transactionsByCategory,
       totalPayment,
       totalDeposit,
-      totalTransactions
+      totalTransactions,
+      authToken,
+      setAuthToken
     ]
   );
 
@@ -286,12 +304,13 @@ const App = () => {
                 activeType={activeType}
               /> */}
               <Switch>
-                <Route path="/new" component={HomeNew} />
-                <Route path="/migrate" component={MigratePage} />
-                <Route path="/history" component={HistoryPage} />
-                <Route path="/pivot/:categoryid" component={CategoryPage} />
-                <Route path="/pivot" component={PivotPage} />
-                <Route path="/" component={HomePage} />
+                <Route path="/auth" component={AuthPage} />
+                <AuthRoute path="/new" component={HomeNew} />
+                <AuthRoute path="/migrate" component={MigratePage} />
+                <AuthRoute path="/history" component={HistoryPage} />
+                <AuthRoute path="/pivot/:categoryid" component={CategoryPage} />
+                <AuthRoute path="/pivot" component={PivotPage} />
+                <AuthRoute path="/" component={HomePage} />
               </Switch>
             </div>
           </div>

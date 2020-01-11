@@ -30,7 +30,9 @@ const DataContext = React.createContext({
   transactionsByCategory: [],
   totalPayment: 0,
   totalDeposit: 0,
-  totalTransactions: 0
+  totalTransactions: 0,
+  authToken: null,
+  setAuthToken: () => {}
 });
 
 export { DataContext };

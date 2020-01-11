@@ -16,6 +16,20 @@ const client = new ApolloClient({
         });
       if (networkError) console.log(`[Network error]: ${networkError}`);
     }),
+    new ApolloLink((operation, forward) => {
+      // Retrieve the authorization token from local storage.
+      const token = localStorage.getItem('auth_token');
+
+      // Use the setContext method to set the HTTP headers.
+      operation.setContext({
+        headers: {
+          authorization: token ? `Bearer ${token}` : ''
+        }
+      });
+
+      // Call the next link in the middleware chain.
+      return forward(operation);
+    }),
     new HttpLink({
       uri: '//localhost:4000/'
     })
