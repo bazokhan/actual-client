@@ -1,12 +1,11 @@
-import React, { useState, useContext } from 'react';
-import { DataContext } from 'App/context';
+import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 import styles from './Login.module.scss';
 import loginGql from '../gql/login.gql';
+import signupGql from '../gql/signup.gql';
 
 const Login = () => {
-  const { setAuthToken } = useContext(DataContext);
   const [login, setLogin] = useState(true);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -24,7 +23,6 @@ const Login = () => {
   const [loginMutation] = useMutation(loginGql, {
     onCompleted: data => {
       if (data && data.login) {
-        setAuthToken(data.login);
         localStorage.setItem('auth_token', data.login);
         history.push('/');
       }
@@ -37,15 +35,15 @@ const Login = () => {
     }
   });
 
-  const [signupMutation] = useMutation(loginGql, {
-    onCompleted: data => {
+  const [signupMutation] = useMutation(signupGql, {
+    onCompleted: async data => {
       if (data && data.createUser) {
         setMessage({
           type: 'success',
           text: `User ${data.createUser.name} created successfully. Please login.`
         });
-        setLogin(true);
       }
+      await loginMutation();
     },
     onError: err => {
       setMessage({ type: 'error', text: err.message });

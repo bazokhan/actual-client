@@ -1,7 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect, useMemo } from 'react';
-// import PropTypes from 'prop-types';
 import useMigrationData from 'hooks/useMigrationData';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
@@ -18,21 +17,12 @@ import PivotPage from 'pages/pivot';
 import MigratePage from 'pages/migrate';
 import CategoryPage from 'pages/category';
 import mapSort from 'mapsort';
-import { BrowserRouter, Switch, Route, useHistory } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { DataContext } from './context';
 import styles from './App.module.scss';
 import client from './client';
-
-const AuthRoute = props => {
-  const authToken = useMemo(() => localStorage.getItem('auth_token'), [
-    localStorage
-  ]);
-  const history = useHistory();
-  if (!authToken && history) history.push('/auth');
-  if (!authToken && !history) return null;
-  return <Route {...props} />;
-};
+import AuthRoute from './AuthRoute';
 
 const App = () => {
   const {
@@ -45,6 +35,10 @@ const App = () => {
     deadTransactions
   } = useMigrationData();
 
+  const authToken = useMemo(() => localStorage.getItem('auth_token'), [
+    localStorage
+  ]);
+
   const [activeTransactions, setActiveTransactions] = useState([]);
   const [activeAccount, setActiveAccount] = useState('');
   const [dateFilter, setDateFilter] = useState([]);
@@ -52,7 +46,6 @@ const App = () => {
   const [activeCategory, setActiveCategory] = useState('');
   const [activePayee, setActivePayee] = useState('');
   const [searchString, setSearchString] = useState('');
-  const [authToken, setAuthToken] = useState(null);
 
   const activeAccountAmount = useMemo(
     () =>
@@ -227,8 +220,7 @@ const App = () => {
       totalPayment,
       totalDeposit,
       totalTransactions,
-      authToken,
-      setAuthToken
+      authToken
     }),
     [
       accounts,
@@ -260,8 +252,7 @@ const App = () => {
       totalPayment,
       totalDeposit,
       totalTransactions,
-      authToken,
-      setAuthToken
+      authToken
     ]
   );
 
