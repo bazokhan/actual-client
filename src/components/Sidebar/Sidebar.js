@@ -20,7 +20,7 @@ const Sidebar = () => {
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         exact
-        to="/new"
+        to="/newHome"
       >
         New Home
       </NavLink>
@@ -39,6 +39,14 @@ const Sidebar = () => {
         to="/pivot"
       >
         Pivot
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/newPivot"
+      >
+        New Pivot
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}

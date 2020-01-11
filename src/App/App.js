@@ -14,6 +14,7 @@ import HistoryPage from 'pages/history';
 import Sidebar from 'components/Sidebar';
 import AuthPage from 'pages/auth';
 import PivotPage from 'pages/pivot';
+import PivotNew from 'pages/pivotNew';
 import MigratePage from 'pages/migrate';
 import CategoryPage from 'pages/category';
 import mapSort from 'mapsort';
@@ -294,11 +295,12 @@ const App = () => {
               /> */}
               <Switch>
                 <Route path="/auth" component={AuthPage} />
-                <AuthRoute path="/new" component={HomeNew} />
+                <AuthRoute path="/newHome" component={HomeNew} />
                 <AuthRoute path="/migrate" component={MigratePage} />
                 <AuthRoute path="/history" component={HistoryPage} />
                 <AuthRoute path="/pivot/:categoryid" component={CategoryPage} />
                 <AuthRoute path="/pivot" component={PivotPage} />
+                <AuthRoute path="/newPivot" component={PivotNew} />
                 <AuthRoute path="/" component={HomePage} />
               </Switch>
             </div>
