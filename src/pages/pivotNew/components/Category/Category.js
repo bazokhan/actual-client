@@ -22,7 +22,7 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
 
   useEffect(() => {
     handleCategoryFilter({ ...category, transactions });
-  }, [transactions, category]);
+  }, [filters]);
 
   const balance = useMemo(
     () => transactions.reduce((prev, t) => prev + t.amount, 0),
@@ -58,6 +58,7 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
     [transactions]
   );
 
+  if (!category.transactions.length) return null;
   return (
     <div className={cx(styles.row, collapsed ? styles.collapsed : '')}>
       <div className={cx(styles.cell, styles.tiny)}>

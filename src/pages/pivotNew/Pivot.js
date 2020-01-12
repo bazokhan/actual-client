@@ -1,15 +1,16 @@
 /* eslint-disable no-nested-ternary */
 import React, { useMemo, useState, useEffect } from 'react';
 import cx from 'classnames';
-import Header from 'components/Header';
 import { n } from 'helpers/mathHelpers';
 import { useQuery } from '@apollo/react-hooks';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
+import Header from './components/Header';
 import styles from './Pivot.module.scss';
 import categoriesGql from './gql/categories.gql';
 import Category from './components/Category';
 
 const Pivot = () => {
+  const [activeAccount, setActiveAccount] = useState(null);
   const [collapseAll, setCollapseAll] = useState(true);
   const { data, error } = useQuery(categoriesGql);
 
@@ -31,6 +32,21 @@ const Pivot = () => {
   useEffect(() => {
     setTransactions(categoriesTransactions);
   }, [categoriesTransactions]);
+
+  useEffect(() => {
+    setTransactions(
+      categoriesTransactions.map(category =>
+        activeAccount
+          ? {
+              ...category,
+              transactions: category.transactions.filter(
+                t => t.account.id === activeAccount.id
+              )
+            }
+          : category
+      )
+    );
+  }, [activeAccount]);
 
   const handleCategoryFilter = category => {
     setTransactions([
@@ -78,7 +94,11 @@ const Pivot = () => {
   return (
     <>
       <div className={styles.header}>
-        <Header />
+        <Header
+          account={activeAccount}
+          setActiveAccount={setActiveAccount}
+          totalTransactions={totalTransactions}
+        />
         <div className={styles.row}>
           <button
             type="button"
@@ -116,8 +136,8 @@ const Pivot = () => {
         </div>
       </div>
       <div className={styles.body}>
-        {categoriesTransactions &&
-          categoriesTransactions.map((category, index) => (
+        {transactions &&
+          transactions.map((category, index) => (
             <Category
               key={category.id}
               category={category}
