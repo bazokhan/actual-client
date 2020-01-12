@@ -10,6 +10,7 @@ import { sortAmountsByAccount } from 'helpers';
 import HomePage from 'pages/home';
 import HomeNew from 'pages/homeNew';
 import HistoryPage from 'pages/history';
+import OrderPage from 'pages/order';
 // import Navbar from 'components/Navbar';
 import Sidebar from 'components/Sidebar';
 import AuthPage from 'pages/auth';
@@ -295,6 +296,7 @@ const App = () => {
               /> */}
               <Switch>
                 <Route path="/auth" component={AuthPage} />
+                <AuthRoute path="/order" component={OrderPage} />
                 <AuthRoute path="/newHome" component={HomeNew} />
                 <AuthRoute path="/migrate" component={MigratePage} />
                 <AuthRoute path="/history" component={HistoryPage} />

@@ -55,6 +55,13 @@ const Sidebar = () => {
       >
         Deleted
       </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        to="/order"
+      >
+        Job orders
+      </NavLink>
       {authToken && (
         <NavLink
           className={cx(styles.link, 'btn')}
