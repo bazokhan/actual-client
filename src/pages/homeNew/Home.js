@@ -10,12 +10,14 @@ import Transaction from './components/Transaction';
 import TransactionFooter from './components/TransactionFooter';
 import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
+import TransactionInput from './components/TransactionInput';
 
 const Home = () => {
   const [activeAccount, setActiveAccount] = useState(null);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [activeType, setActiveType] = useState(null);
+  const [show, setShow] = useState(false);
   const [filters, setFilters] = useState({
     sort: [t => numerizeDate(t.date), sortNumsDescending],
     account: [null, t => t],
@@ -144,6 +146,7 @@ const Home = () => {
             account={activeAccount}
             activeType={activeType}
             transactions={activeTransactions}
+            setShow={setShow}
           />
           <TransactionsHeader
             account={activeAccount}
@@ -152,6 +155,12 @@ const Home = () => {
           />
         </div>
         <div className={styles.body}>
+          <TransactionInput
+            account={activeAccount}
+            activeType={activeType}
+            show={show}
+            setShow={setShow}
+          />
           {activeTransactions.map(transaction => (
             <Transaction
               key={transaction.id}

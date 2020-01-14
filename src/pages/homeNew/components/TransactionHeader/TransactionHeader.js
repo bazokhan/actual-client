@@ -36,6 +36,7 @@ SortButton.propTypes = {
 const TransactionsHeader = ({ sortBy, account, activeType }) => {
   return (
     <div className={styles.row}>
+      <div style={{ width: '30px' }} />
       <SortButton
         text="Date"
         className={styles.midCell}
