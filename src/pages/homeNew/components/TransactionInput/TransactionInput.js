@@ -4,18 +4,18 @@ import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useQuery } from '@apollo/react-hooks';
 import styles from './TransactionInput.module.scss';
-import createTransactionGql from './gql/createTransaction.gql';
+// import createTransactionGql from './gql/createTransaction.gql';
 import transactionListsGql from './gql/transactionLists.gql';
 import InputCell from './components/InputCell';
 import SelectCell from './components/SelectCell';
 
 const TransactionInput = ({ show, setShow, account, activeType }) => {
-  const { data, loading, error } = useQuery(transactionListsGql);
-  const [createTransactionMutation] = useMutation(createTransactionGql);
+  const { data } = useQuery(transactionListsGql);
+  // const [createTransactionMutation] = useMutation(createTransactionGql);
 
-  const [inputDate, setDate] = useState('');
+  const [inputDate /* , setDate */] = useState('');
   const [inputAccount, setAccount] = useState(null);
   const [inputPayee, setPayee] = useState(null);
   const [inputCategory, setCategory] = useState(null);
