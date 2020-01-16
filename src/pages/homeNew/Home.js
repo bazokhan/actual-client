@@ -191,7 +191,7 @@ const Home = () => {
             />
           ))} */}
           <List
-            height={1000}
+            height={740}
             useIsScrolling
             itemCount={activeTransactions.length}
             itemSize={35}
