@@ -5,17 +5,34 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
 import { useQuery } from '@apollo/react-hooks';
+import DatePicker from 'react-datepicker';
 import styles from './TransactionInput.module.scss';
 // import createTransactionGql from './gql/createTransaction.gql';
 import transactionListsGql from './gql/transactionLists.gql';
 import InputCell from './components/InputCell';
 import SelectCell from './components/SelectCell';
 
+const ExampleCustomInput = ({ value, onClick }) => (
+  <button
+    type="button"
+    style={{ background: 'none', padding: '0', margin: '0', border: 'none' }}
+    className={styles.midCell}
+    onClick={onClick}
+  >
+    {value}
+  </button>
+);
+
+ExampleCustomInput.propTypes = {
+  value: PropTypes.string.isRequired,
+  onClick: PropTypes.func.isRequired
+};
+
 const TransactionInput = ({ show, setShow, account, activeType }) => {
   const { data } = useQuery(transactionListsGql);
   // const [createTransactionMutation] = useMutation(createTransactionGql);
 
-  const [inputDate /* , setDate */] = useState('');
+  const [inputDate, setDate] = useState(new Date());
   const [inputAccount, setAccount] = useState(null);
   const [inputPayee, setPayee] = useState(null);
   const [inputCategory, setCategory] = useState(null);
@@ -63,7 +80,17 @@ const TransactionInput = ({ show, setShow, account, activeType }) => {
     <>
       <div className={styles.row}>
         <div style={{ width: '30px' }} />
-        <div className={styles.midCell}>{inputDate}</div>
+        <div className={styles.midCell}>
+          <DatePicker
+            dateFormat="dd-MM-yyyy"
+            selected={inputDate}
+            onChange={date => {
+              console.log(date);
+              setDate(date);
+            }}
+            customInput={<ExampleCustomInput />}
+          />
+        </div>
         {!account && (
           <SelectCell
             className={styles.midCell}

@@ -2,6 +2,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import useMigrationData from 'hooks/useMigrationData';
+import 'react-datepicker/dist/react-datepicker.css';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
