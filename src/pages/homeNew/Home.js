@@ -1,4 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, memo } from 'react';
+import PropTypes from 'prop-types';
+import { FixedSizeList as List, areEqual } from 'react-window';
 import { useQuery } from '@apollo/react-hooks';
 import mapSort from 'mapsort';
 import { numerizeDate } from 'helpers/dateHelpers';
@@ -123,6 +125,25 @@ const Home = () => {
   const filterBySearch = searchFilter =>
     setFilters({ ...filters, search: searchFilter });
 
+  const Row = memo(
+    ({ data: transactionsList, index, style }) => (
+      <div key={transactionsList[index].id} style={style}>
+        <Transaction
+          account={activeAccount}
+          activeType={activeType}
+          transaction={transactionsList[index]}
+        />
+      </div>
+    ),
+    areEqual
+  );
+
+  Row.propTypes = {
+    data: PropTypes.object.isRequired,
+    index: PropTypes.number.isRequired,
+    style: PropTypes.object.isRequired
+  };
+
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading</div>;
   return (
@@ -161,14 +182,24 @@ const Home = () => {
             show={show}
             setShow={setShow}
           />
-          {activeTransactions.map(transaction => (
+          {/* {activeTransactions.map(transaction => (
             <Transaction
               key={transaction.id}
               account={activeAccount}
               activeType={activeType}
               transaction={transaction}
             />
-          ))}
+          ))} */}
+          <List
+            height={1000}
+            useIsScrolling
+            itemCount={activeTransactions.length}
+            itemSize={35}
+            itemData={activeTransactions}
+            width="100%"
+          >
+            {Row}
+          </List>
         </div>
         <div className={styles.footer}>
           <TransactionFooter
