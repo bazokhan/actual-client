@@ -1,23 +1,16 @@
 /* eslint-disable react/jsx-props-no-spreading */
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
 import useMigrationData from 'hooks/useMigrationData';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
 import { sortAmountsByAccount } from 'helpers';
-import HomePage from 'pages/home';
-import HomeNew from 'pages/homeNew';
-import HistoryPage from 'pages/history';
-import OrderPage from 'pages/order';
+
 // import Navbar from 'components/Navbar';
 import Sidebar from 'components/Sidebar';
-import AuthPage from 'pages/auth';
-import PivotPage from 'pages/pivot';
-import PivotNew from 'pages/pivotNew';
-import MigratePage from 'pages/migrate';
-import CategoryPage from 'pages/category';
+
 import mapSort from 'mapsort';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
@@ -25,6 +18,19 @@ import { DataContext } from './context';
 import styles from './App.module.scss';
 import client from './client';
 import AuthRoute from './AuthRoute';
+
+const routes = {
+  AuthPage: lazy(() => import('pages/auth')),
+  PivotPage: lazy(() => import('pages/pivot')),
+  PivotNew: lazy(() => import('pages/pivotNew')),
+  MigratePage: lazy(() => import('pages/migrate')),
+  CategoryPage: lazy(() => import('pages/category')),
+  AdminPage: lazy(() => import('pages/admin')),
+  HomePage: lazy(() => import('pages/home')),
+  HomeNew: lazy(() => import('pages/homeNew')),
+  HistoryPage: lazy(() => import('pages/history')),
+  OrderPage: lazy(() => import('pages/order'))
+};
 
 const App = () => {
   const {
@@ -294,17 +300,25 @@ const App = () => {
                 activeAccount={activeAccount}
                 activeType={activeType}
               /> */}
-              <Switch>
-                <Route path="/auth" component={AuthPage} />
-                <AuthRoute path="/order" component={OrderPage} />
-                <AuthRoute path="/newHome" component={HomeNew} />
-                <AuthRoute path="/migrate" component={MigratePage} />
-                <AuthRoute path="/history" component={HistoryPage} />
-                <AuthRoute path="/pivot/:categoryid" component={CategoryPage} />
-                <AuthRoute path="/pivot" component={PivotPage} />
-                <AuthRoute path="/newPivot" component={PivotNew} />
-                <AuthRoute path="/" component={HomePage} />
-              </Switch>
+              <Suspense
+                fallback={<div className={styles.loading}>Loading..</div>}
+              >
+                <Switch>
+                  <Route path="/auth" component={routes.AuthPage} />
+                  <AuthRoute path="/admin" component={routes.AdminPage} />
+                  <AuthRoute path="/order" component={routes.OrderPage} />
+                  <AuthRoute path="/newHome" component={routes.HomeNew} />
+                  <AuthRoute path="/migrate" component={routes.MigratePage} />
+                  <AuthRoute path="/history" component={routes.HistoryPage} />
+                  <AuthRoute
+                    path="/pivot/:categoryid"
+                    component={routes.CategoryPage}
+                  />
+                  <AuthRoute path="/pivot" component={routes.PivotPage} />
+                  <AuthRoute path="/newPivot" component={routes.PivotNew} />
+                  <AuthRoute path="/" component={routes.HomePage} />
+                </Switch>
+              </Suspense>
             </div>
           </div>
         </DataContext.Provider>

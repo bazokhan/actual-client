@@ -5,6 +5,12 @@ export default gql`
     categories {
       id
       name
+      count
+      balance
+      group {
+        id
+        name
+      }
     }
   }
 `;

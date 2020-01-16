@@ -5,6 +5,12 @@ export default gql`
     catGroups {
       id
       name
+      categories {
+        id
+        name
+      }
+      count
+      balance
     }
   }
 `;

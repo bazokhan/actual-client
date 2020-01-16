@@ -1,0 +1,108 @@
+.adminContainer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  overflow-y: hidden;
+
+  .adminNavbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    border-bottom: solid 1px #ddd;
+
+    .adminLink {
+      text-decoration: none;
+      font-weight: 600;
+      min-width: 120px;
+      padding: 10px;
+      color: #999;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      margin-top: 5px;
+      margin-right: 5px;
+      border-width: 1px 1px 0 1px;
+      border-style: solid;
+      border-color: #ddd;
+
+      &:hover {
+        background-color: #ddd;
+        color: #333;
+      }
+
+      &.active {
+        background-color: #ddd;
+        color: #333;
+      }
+    }
+  }
+
+  .adminBody {
+    overflow-y: auto;
+  }
+}
+
+.loading {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: hidden;
+}
+
+.cardsContainer {
+  padding: 40px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  .card {
+    width: 300px;
+    max-width: 30%;
+    margin: 20px;
+    border-radius: 5px;
+    border: solid 1px #ddd;
+    box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.16);
+    transition: box-shadow 0.3s;
+
+    &:hover {
+      box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.32);
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    .cardAction {
+      padding: 0;
+      margin: 0;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .cardTitle {
+      padding: 10px;
+      font-size: 18px;
+      font-weight: 500;
+      text-align: center;
+      border-bottom: solid 1px #eee;
+      margin-bottom: 5px;
+    }
+
+    .cardBody {
+      padding: 5px 10px;
+      font-size: 14px;
+      text-align: left;
+      margin-bottom: 5px;
+    }
+
+    .cardFooter {
+      padding: 5px 10px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: left;
+      margin: 5px 0;
+      border-top: solid 1px #eee;
+    }
+  }
+}

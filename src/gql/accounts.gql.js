@@ -4,6 +4,7 @@ export default gql`
   query ACCOUNTS {
     accounts {
       id
+      name
     }
   }
 `;

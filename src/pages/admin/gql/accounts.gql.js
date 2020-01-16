@@ -1,10 +1,12 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query CATEGORIES {
-    categories {
+  query ACCOUNTS_ADMIN {
+    accounts {
       id
       name
+      count
+      balance
     }
   }
 `;

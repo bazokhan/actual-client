@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query CATEGORIES {
-    categories {
+  mutation DELETE_PAYEE($id: ID!) {
+    deletePayee(id: $id) {
       id
       name
     }

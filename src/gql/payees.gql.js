@@ -4,6 +4,7 @@ export default gql`
   query PAYEES {
     payees {
       id
+      name
     }
   }
 `;
