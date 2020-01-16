@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-globals */
 /* eslint-disable no-console */
 import React, { useMemo, useState } from 'react';
@@ -5,10 +8,12 @@ import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
 import ContentEditable from 'react-contenteditable';
-import { useMutation } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import { FaTimes } from 'react-icons/fa';
 import styles from './Transaction.module.scss';
 import updateTransactionGql from './gql/updateTransaction.gql';
+import transactionListsGql from './gql/transactionLists.gql';
+import SelectCell from './components/SelectCell';
 
 const InputCell = ({ html, className, mutate }) => {
   const [loading, setLoading] = useState(false);
@@ -38,6 +43,13 @@ InputCell.propTypes = {
 };
 
 const Transaction = ({ transaction, account, activeType }) => {
+  const { data } = useQuery(transactionListsGql);
+  const [accountEdit, setAccountEdit] = useState(false);
+  const [payeeEdit, setPayeeEdit] = useState(false);
+  const [categoryEdit, setCategoryEdit] = useState(false);
+  const [tAccount, setAccount] = useState(transaction.account);
+  const [tPayee, setPayee] = useState(transaction.payee);
+  const [tCategory, setCategory] = useState(transaction.category);
   const {
     id,
     amount,
@@ -48,11 +60,44 @@ const Transaction = ({ transaction, account, activeType }) => {
     payee: { name: payeeName }
   } = transaction;
 
-  const [updateTransactionMutation] = useMutation(updateTransactionGql);
+  const [updateTransactionMutation] = useMutation(updateTransactionGql, {
+    onCompleted: res => {
+      if (res.updateTransaction) {
+        setAccount(res.updateTransaction.account);
+        setPayee(res.updateTransaction.payee);
+        setCategory(res.updateTransaction.category);
+      }
+    },
+    onError: e => console.log(e)
+  });
 
   const amountType = useMemo(() => (amount >= 0 ? 'Deposit' : 'Payment'), [
     amount
   ]);
+
+  const accounts = useMemo(
+    () =>
+      data && data.accounts
+        ? data.accounts.map(a => ({ label: a.name, value: a.id }))
+        : [],
+    [data]
+  );
+
+  const payees = useMemo(
+    () =>
+      data && data.payees
+        ? data.payees.map(a => ({ label: a.name, value: a.id }))
+        : [],
+    [data]
+  );
+
+  const categories = useMemo(
+    () =>
+      data && data.categories
+        ? data.categories.map(a => ({ label: a.name, value: a.id }))
+        : [],
+    [data]
+  );
 
   return (
     <div key={id} className={styles.row}>
@@ -64,9 +109,75 @@ const Transaction = ({ transaction, account, activeType }) => {
       >
         <FaTimes />
       </button>
-      <div className={styles.midCell}>{date}</div>
-      {!account && <div className={styles.midCell}>{accountName}</div>}
-      <div className={styles.normCell}>{payeeName}</div>
+      <div className={styles.midCell} tabIndex={0}>
+        {date}
+      </div>
+      {!account && accountEdit ? (
+        <SelectCell
+          onBlur={() => setAccountEdit(false)}
+          className={styles.midCell}
+          value={{ label: tAccount.name, value: tAccount.id }}
+          onChange={async a => {
+            try {
+              if (!a) return;
+              if (a.value === tAccount.id) return;
+              await updateTransactionMutation({
+                variables: {
+                  id,
+                  transaction: { accountId: a.value }
+                }
+              });
+            } catch (ex) {
+              console.log(ex);
+            }
+            setAccountEdit(false);
+          }}
+          options={accounts}
+        />
+      ) : (
+        <div
+          className={styles.midCell}
+          onClick={() => setAccountEdit(true)}
+          onFocus={() => setAccountEdit(true)}
+          tabIndex={0}
+        >
+          {accountName}
+        </div>
+      )}
+
+      {payeeEdit ? (
+        <SelectCell
+          className={styles.normCell}
+          value={{ label: tPayee.name, value: tPayee.id }}
+          onBlur={() => setPayeeEdit(false)}
+          onChange={async p => {
+            try {
+              if (!p) return;
+              if (p.value === tPayee.id) return;
+              await updateTransactionMutation({
+                variables: {
+                  id,
+                  transaction: { payeeId: p.value }
+                }
+              });
+            } catch (ex) {
+              console.log(ex);
+            }
+            setPayeeEdit(false);
+          }}
+          options={payees}
+        />
+      ) : (
+        <div
+          className={styles.normCell}
+          onClick={() => setPayeeEdit(true)}
+          onFocus={() => setPayeeEdit(true)}
+          tabIndex={0}
+        >
+          {payeeName}
+        </div>
+      )}
+
       <InputCell
         className={styles.bigCell}
         mutate={async newNotes => {
@@ -80,7 +191,38 @@ const Transaction = ({ transaction, account, activeType }) => {
         }}
         html={notes || ''}
       />
-      <div className={styles.midCell}>{categoryName}</div>
+      {categoryEdit ? (
+        <SelectCell
+          className={styles.midCell}
+          value={{ label: tCategory.name, value: tCategory.id }}
+          onBlur={() => setCategoryEdit(false)}
+          onChange={async c => {
+            try {
+              if (!c) return;
+              if (c.value === tCategory.id) return;
+              await updateTransactionMutation({
+                variables: {
+                  id,
+                  transaction: { categoryId: c.value }
+                }
+              });
+            } catch (ex) {
+              console.log(ex);
+            }
+            setCategoryEdit(false);
+          }}
+          options={categories}
+        />
+      ) : (
+        <div
+          className={styles.midCell}
+          onClick={() => setCategoryEdit(true)}
+          onFocus={() => setCategoryEdit(true)}
+          tabIndex={0}
+        >
+          {categoryName}
+        </div>
+      )}
       {(activeType === 'Payment' || !activeType) && (
         <InputCell
           className={cx(styles.midCell, styles.right)}
@@ -88,7 +230,7 @@ const Transaction = ({ transaction, account, activeType }) => {
             try {
               if (!newAmountString) return;
               const newAmount = Number(newAmountString.replace(/,/g, ''));
-              if (newAmount === amount) return;
+              if (newAmount === amount * -1) return;
               if (!typeof newAmount === 'number' || isNaN(newAmount)) return;
               await updateTransactionMutation({
                 variables: {

@@ -139,7 +139,7 @@ const Home = () => {
   );
 
   Row.propTypes = {
-    data: PropTypes.object.isRequired,
+    data: PropTypes.array.isRequired,
     index: PropTypes.number.isRequired,
     style: PropTypes.object.isRequired
   };

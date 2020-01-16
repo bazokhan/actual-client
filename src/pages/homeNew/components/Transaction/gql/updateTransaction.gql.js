@@ -6,6 +6,18 @@ export default gql`
       id
       notes
       amount
+      account {
+        id
+        name
+      }
+      payee {
+        id
+        name
+      }
+      category {
+        id
+        name
+      }
     }
   }
 `;
