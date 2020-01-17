@@ -44,42 +44,56 @@ const useInitialLoad = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const accountsRes = await a.get(dbRoutes.accounts);
-      const categoriesRes = await a.get(dbRoutes.categories);
-      const categoryGroupsRes = await a.get(dbRoutes.categoryGroups);
-      const categoryMappingRes = await a.get(dbRoutes.categoryMapping);
-      const payeesRes = await a.get(dbRoutes.payees);
-      const payeeMappingRes = await a.get(dbRoutes.payeeMapping);
-      const initialTransactionsRes = await a.get(dbRoutes.transactions, {
-        headers: {
-          range: 'rows=0-',
-          order: 'date asc'
+      try {
+        const accountsRes = await a.get(dbRoutes.accounts);
+        const categoriesRes = await a.get(dbRoutes.categories);
+        const categoryGroupsRes = await a.get(dbRoutes.categoryGroups);
+        const categoryMappingRes = await a.get(dbRoutes.categoryMapping);
+        const payeesRes = await a.get(dbRoutes.payees);
+        const payeeMappingRes = await a.get(dbRoutes.payeeMapping);
+        const initialTransactionsRes = await a.get(dbRoutes.transactions, {
+          headers: {
+            range: 'rows=0-',
+            order: 'date asc'
+          }
+        });
+        if (
+          accountsRes &&
+          categoriesRes &&
+          categoryGroupsRes &&
+          categoryMappingRes &&
+          payeesRes &&
+          payeeMappingRes &&
+          initialTransactionsRes
+        ) {
+          setAccounts(accountsRes.data ? accountsRes.data : []);
+          setCategories(categoriesRes.data ? categoriesRes.data : []);
+          setCategoryGroups(
+            categoryGroupsRes.data ? categoryGroupsRes.data : []
+          );
+          setCategoryMapping(
+            categoryMappingRes.data ? categoryMappingRes.data : []
+          );
+          setPayees(payeesRes.data ? payeesRes.data : []);
+          setPayeeMapping(payeeMappingRes.data ? payeeMappingRes.data : []);
+          setTransactions(
+            initialTransactionsRes.data ? initialTransactionsRes.data : []
+          );
+          const contentRange = initialTransactionsRes.headers['content-range'];
+          if (contentRange) {
+            setAfter(getAfter(contentRange));
+          }
+          setLoading(false);
         }
-      });
-      if (
-        accountsRes &&
-        categoriesRes &&
-        categoryGroupsRes &&
-        categoryMappingRes &&
-        payeesRes &&
-        payeeMappingRes &&
-        initialTransactionsRes
-      ) {
-        setAccounts(accountsRes.data ? accountsRes.data : []);
-        setCategories(categoriesRes.data ? categoriesRes.data : []);
-        setCategoryGroups(categoryGroupsRes.data ? categoryGroupsRes.data : []);
-        setCategoryMapping(
-          categoryMappingRes.data ? categoryMappingRes.data : []
-        );
-        setPayees(payeesRes.data ? payeesRes.data : []);
-        setPayeeMapping(payeeMappingRes.data ? payeeMappingRes.data : []);
-        setTransactions(
-          initialTransactionsRes.data ? initialTransactionsRes.data : []
-        );
-        const contentRange = initialTransactionsRes.headers['content-range'];
-        if (contentRange) {
-          setAfter(getAfter(contentRange));
-        }
+      } catch (ex) {
+        console.log(ex);
+        setAccounts([]);
+        setCategories([]);
+        setCategoryGroups([]);
+        setCategoryMapping([]);
+        setPayees([]);
+        setPayeeMapping([]);
+        setTransactions([]);
         setLoading(false);
       }
     };

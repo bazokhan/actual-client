@@ -30,13 +30,15 @@
     "react-to-print": "^2.5.0",
     "react-window": "^1.8.5"
   },
+  "main": "src/electron-starter.js",
   "scripts": {
     "start": "react-scripts start",
     "dev": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src"
+    "lint": "eslint src",
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -55,6 +57,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",
+    "electron": "^7.1.9",
     "eslint-config-airbnb": "^18.0.1",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
