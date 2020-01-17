@@ -1,0 +1,49 @@
+.navbar {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border-bottom: solid 1px #ddd;
+
+  .collapseButton {
+    margin-right: 10px;
+    margin-left: auto;
+  }
+
+  .navbarLink {
+    text-decoration: none;
+    font-weight: 600;
+    min-width: 120px;
+    padding: 10px;
+    color: #999;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 10px;
+    margin: 15px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #ddd;
+    background: linear-gradient(#3734d209, transparent);
+
+    & div {
+      font-size: 20px;
+      color: #3634d2;
+    }
+
+    &:hover {
+      background: #3734d209;
+      box-shadow: 0px 4px 6px 0px #3734d220;
+      color: #333;
+    }
+
+    &.active {
+      background: #3734d209;
+      box-shadow: 0px 4px 6px 0px #3734d220;
+      border-color: #3734d260;
+      border-width: 2px;
+      color: #333;
+    }
+  }
+}

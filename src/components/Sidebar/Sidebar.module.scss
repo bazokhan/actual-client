@@ -1,23 +1,35 @@
 .sidebar {
-  background: #eee;
+  background: rgb(17, 16, 44);
   color: #2d1d93;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-  border-right: solid 1px #ccc;
 
   .link {
     min-height: 60px;
-    min-width: 70px;
+    min-width: 50px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    font-weight: 600;
-    font-size: 12px;
+    font-weight: normal;
+    font-size: 20px;
     border-radius: 0;
     margin: 0;
     border: none;
-    border-bottom: solid 1px #ccc;
+    border-bottom: solid 1px rgba(17, 16, 44, 0.2);
+    background: none;
+    color: rgb(199, 198, 248);
+    padding-left: 10px;
+
+    span {
+      font-size: 14px;
+      margin-left: 15px;
+    }
+
+    &:hover {
+      background: rgba(87, 85, 217, 0.2);
+      color: rgb(231, 231, 255);
+    }
   }
 }

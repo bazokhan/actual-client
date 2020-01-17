@@ -8,7 +8,10 @@ import deleteCategoryGql from '../gql/deleteCategory.gql';
 import Toast from './Toast';
 
 const Categories = () => {
-  const [tableMode, setTableMode] = useState(false);
+  const [viewMode, setViewMode] = useState(
+    localStorage.getItem('view_mode') || 'cards'
+  );
+  const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
   const { data, loading, error } = useQuery(categoriesGql);
   const [deleteCategoryMutation] = useMutation(deleteCategoryGql, {
@@ -24,11 +27,15 @@ const Categories = () => {
   return (
     <>
       <div className={styles.adminSubheader}>
-        <h6>{tableMode ? 'Table view' : 'Card view'}</h6>
+        <h6>Categories - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
           type="button"
-          onClick={() => setTableMode(!tableMode)}
-          className="btn btn-link"
+          onClick={() => {
+            const targetMode = tableMode ? 'cards' : 'table';
+            setViewMode(targetMode);
+            localStorage.setItem('view_mode', targetMode);
+          }}
+          className="btn btn-action btn-sm btn-primary"
         >
           {tableMode ? <FaIdCard /> : <FaTable />}
         </button>

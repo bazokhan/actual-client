@@ -112,38 +112,39 @@ const Transaction = ({ transaction, account, activeType }) => {
       <div className={styles.midCell} tabIndex={0}>
         {date}
       </div>
-      {!account && accountEdit ? (
-        <SelectCell
-          onBlur={() => setAccountEdit(false)}
-          className={styles.midCell}
-          value={{ label: tAccount.name, value: tAccount.id }}
-          onChange={async a => {
-            try {
-              if (!a) return;
-              if (a.value === tAccount.id) return;
-              await updateTransactionMutation({
-                variables: {
-                  id,
-                  transaction: { accountId: a.value }
-                }
-              });
-            } catch (ex) {
-              console.log(ex);
-            }
-            setAccountEdit(false);
-          }}
-          options={accounts}
-        />
-      ) : (
-        <div
-          className={styles.midCell}
-          onClick={() => setAccountEdit(true)}
-          onFocus={() => setAccountEdit(true)}
-          tabIndex={0}
-        >
-          {accountName}
-        </div>
-      )}
+      {!account &&
+        (accountEdit ? (
+          <SelectCell
+            onBlur={() => setAccountEdit(false)}
+            className={styles.midCell}
+            value={{ label: tAccount.name, value: tAccount.id }}
+            onChange={async a => {
+              try {
+                if (!a) return;
+                if (a.value === tAccount.id) return;
+                await updateTransactionMutation({
+                  variables: {
+                    id,
+                    transaction: { accountId: a.value }
+                  }
+                });
+              } catch (ex) {
+                console.log(ex);
+              }
+              setAccountEdit(false);
+            }}
+            options={accounts}
+          />
+        ) : (
+          <div
+            className={styles.midCell}
+            onClick={() => setAccountEdit(true)}
+            onFocus={() => setAccountEdit(true)}
+            tabIndex={0}
+          >
+            {accountName}
+          </div>
+        ))}
 
       {payeeEdit ? (
         <SelectCell

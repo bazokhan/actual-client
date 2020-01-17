@@ -8,7 +8,10 @@ import deletePayeeGql from '../gql/deletePayee.gql';
 import Toast from './Toast';
 
 const Payees = () => {
-  const [tableMode, setTableMode] = useState(false);
+  const [viewMode, setViewMode] = useState(
+    localStorage.getItem('view_mode') || 'cards'
+  );
+  const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
   const { data, loading, error } = useQuery(payeesGql);
   const [deletePayeeMutation] = useMutation(deletePayeeGql, {
@@ -22,11 +25,15 @@ const Payees = () => {
   return (
     <>
       <div className={styles.adminSubheader}>
-        <h6>{tableMode ? 'Table view' : 'Card view'}</h6>
+        <h6>Payees - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
           type="button"
-          onClick={() => setTableMode(!tableMode)}
-          className="btn btn-link"
+          onClick={() => {
+            const targetMode = tableMode ? 'cards' : 'table';
+            setViewMode(targetMode);
+            localStorage.setItem('view_mode', targetMode);
+          }}
+          className="btn btn-action btn-sm btn-primary"
         >
           {tableMode ? <FaIdCard /> : <FaTable />}
         </button>

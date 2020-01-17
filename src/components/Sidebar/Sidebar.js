@@ -1,20 +1,39 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
 import { DataContext } from 'App/context';
+import {
+  FaHome,
+  FaUserCog,
+  FaChartBar,
+  FaExclamationTriangle,
+  FaSignOutAlt,
+  FaTimes,
+  FaFileAlt,
+  FaBars
+} from 'react-icons/fa';
 import styles from './Sidebar.module.scss';
 
 const Sidebar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const { authToken } = useContext(DataContext);
   return (
-    <div className={styles.sidebar}>
+    <div className={cx(styles.sidebar, isOpen ? styles.open : '')}>
+      <button
+        type="button"
+        className={cx(styles.link, 'btn')}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <FaBars />
+      </button>
       <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         exact
         to="/"
       >
-        Home
+        <FaHome />
+        {isOpen && <span>_Home</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -22,15 +41,8 @@ const Sidebar = () => {
         exact
         to="/newHome"
       >
-        New Home
-      </NavLink>
-      <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
-        exact
-        to="/migrate"
-      >
-        Migrate
+        <FaHome />
+        {isOpen && <span>Home</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -38,7 +50,8 @@ const Sidebar = () => {
         exact
         to="/pivot"
       >
-        Pivot
+        <FaChartBar />
+        {isOpen && <span>_Reports</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -46,28 +59,41 @@ const Sidebar = () => {
         exact
         to="/newPivot"
       >
-        New Pivot
+        <FaChartBar />
+        {isOpen && <span>Reports</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         to="/history"
       >
-        Deleted
+        <FaTimes />
+        {isOpen && <span>_Deleted</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         to="/order"
       >
-        Job orders
+        <FaFileAlt />
+        {isOpen && <span>Orders</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         to="/admin"
       >
-        Admin
+        <FaUserCog />
+        {isOpen && <span>Admin</span>}
+      </NavLink>
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/migrate"
+      >
+        <FaExclamationTriangle />
+        {isOpen && <span>Migrate</span>}
       </NavLink>
       {authToken && (
         <NavLink
@@ -75,7 +101,8 @@ const Sidebar = () => {
           activeClassName="btn-primary"
           to="/auth/logout"
         >
-          Logout
+          <FaSignOutAlt />
+          {isOpen && <span>Log out</span>}
         </NavLink>
       )}
     </div>
