@@ -5,7 +5,7 @@ import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import styles from '../Admin.module.scss';
 import categoriesGql from '../gql/categories.gql';
 import deleteCategoryGql from '../gql/deleteCategory.gql';
-import Toast from './Toast';
+import Toast from '../components/Toast';
 
 const Categories = () => {
   const [viewMode, setViewMode] = useState(

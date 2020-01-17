@@ -53,11 +53,20 @@ const Sidebar = () => {
         <FaChartBar />
         {isOpen && <span>_Reports</span>}
       </NavLink>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         exact
         to="/newPivot"
+      >
+        <FaChartBar />
+        {isOpen && <span>Reports</span>}
+      </NavLink> */}
+      <NavLink
+        className={cx(styles.link, 'btn')}
+        activeClassName="btn-primary"
+        exact
+        to="/reports"
       >
         <FaChartBar />
         {isOpen && <span>Reports</span>}

@@ -2,30 +2,30 @@ import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
+import accountsGql from '../gql/accounts.gql';
 import styles from '../Admin.module.scss';
-import payeesGql from '../gql/payees.gql';
-import deletePayeeGql from '../gql/deletePayee.gql';
-import Toast from './Toast';
+import deleteAccountGql from '../gql/deleteAccount.gql';
+import Toast from '../components/Toast';
 
-const Payees = () => {
+const Accounts = () => {
   const [viewMode, setViewMode] = useState(
     localStorage.getItem('view_mode') || 'cards'
   );
   const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(payeesGql);
-  const [deletePayeeMutation] = useMutation(deletePayeeGql, {
-    refetchQueries: [{ query: payeesGql }],
+  const { data, loading, error } = useQuery(accountsGql);
+  const [deleteAccountMutation] = useMutation(deleteAccountGql, {
+    refetchQueries: [{ query: accountsGql }],
     awaitRefetchQueries: true
   });
 
-  const payees = useMemo(() => (data && data.payees ? data.payees : []));
+  const accounts = useMemo(() => (data && data.accounts ? data.accounts : []));
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
       <div className={styles.adminSubheader}>
-        <h6>Payees - {tableMode ? 'Table view' : 'Card view'}</h6>
+        <h6>Accounts - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
           type="button"
           onClick={() => {
@@ -43,11 +43,11 @@ const Payees = () => {
       )}
       {tableMode ? (
         <div className={styles.rowsContainer}>
-          {payees.map(payee => (
-            <div className={styles.row} key={payee.id}>
-              <div className={styles.rowTitle}>{payee.name}</div>
-              <div className={styles.rowBody}>{payee.count} Transactions</div>
-              <div className={styles.rowBody}>{n(payee.balance)} EGP</div>
+          {accounts.map(account => (
+            <div className={styles.row} key={account.id}>
+              <div className={styles.rowTitle}>{account.name}</div>
+              <div className={styles.rowBody}>{account.count} Transactions</div>
+              <div className={styles.rowBody}>{n(account.balance)} EGP</div>
               <div className={styles.rowTail} />
               <div className={styles.rowAction}>
                 <button
@@ -55,8 +55,8 @@ const Payees = () => {
                   className="btn btn-link"
                   onClick={async () => {
                     try {
-                      await deletePayeeMutation({
-                        variables: { id: payee.id }
+                      await deleteAccountMutation({
+                        variables: { id: account.id }
                       });
                     } catch (ex) {
                       setErrorMessage(ex.message);
@@ -71,16 +71,16 @@ const Payees = () => {
         </div>
       ) : (
         <div className={styles.cardsContainer}>
-          {payees.map(payee => (
-            <div className={styles.card} key={payee.id}>
+          {accounts.map(account => (
+            <div className={styles.card} key={account.id}>
               <div className={styles.cardAction}>
                 <button
                   type="button"
                   className="btn btn-link"
                   onClick={async () => {
                     try {
-                      await deletePayeeMutation({
-                        variables: { id: payee.id }
+                      await deleteAccountMutation({
+                        variables: { id: account.id }
                       });
                     } catch (ex) {
                       setErrorMessage(ex.message);
@@ -90,9 +90,11 @@ const Payees = () => {
                   <FaTrashAlt />
                 </button>
               </div>
-              <div className={styles.cardTitle}>{payee.name}</div>
-              <div className={styles.cardBody}>{payee.count} Transactions</div>
-              <div className={styles.cardBody}>{n(payee.balance)} EGP</div>
+              <div className={styles.cardTitle}>{account.name}</div>
+              <div className={styles.cardBody}>
+                {account.count} Transactions
+              </div>
+              <div className={styles.cardBody}>{n(account.balance)} EGP</div>
             </div>
           ))}
         </div>
@@ -101,4 +103,4 @@ const Payees = () => {
   );
 };
 
-export default Payees;
+export default Accounts;

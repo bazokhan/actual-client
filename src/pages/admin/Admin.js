@@ -10,10 +10,10 @@ import styles from './Admin.module.scss';
 import Navbar from './components/Navbar';
 
 const routes = {
-  Accounts: lazy(() => import('./components/Accounts')),
-  Payees: lazy(() => import('./components/Payees')),
-  Categories: lazy(() => import('./components/Categories')),
-  Groups: lazy(() => import('./components/Groups'))
+  Accounts: lazy(() => import('./pages/Accounts')),
+  Payees: lazy(() => import('./pages/Payees')),
+  Categories: lazy(() => import('./pages/Categories')),
+  Groups: lazy(() => import('./pages/Groups'))
 };
 
 const links = [

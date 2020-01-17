@@ -5,7 +5,7 @@ import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import styles from '../Admin.module.scss';
 import deleteGroupGql from '../gql/deleteGroup.gql';
 import groupsGql from '../gql/groups.gql';
-import Toast from './Toast';
+import Toast from '../components/Toast';
 
 const Groups = () => {
   const [viewMode, setViewMode] = useState(
