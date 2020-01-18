@@ -14,7 +14,7 @@ const a = {
 const dbRoutes = {
   accounts: 'accounts',
   categories: 'categories',
-  categoryGroups: 'category_groups',
+  groups: 'category_groups',
   categoryMapping: 'category_mapping',
   payees: 'payees',
   payeeMapping: 'payee_mapping',
@@ -34,7 +34,7 @@ const getAfter = contentRange => {
 const useInitialLoad = () => {
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [categoryGroups, setCategoryGroups] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [categoryMapping, setCategoryMapping] = useState([]);
   const [payees, setPayees] = useState([]);
   const [payeeMapping, setPayeeMapping] = useState([]);
@@ -47,7 +47,7 @@ const useInitialLoad = () => {
       try {
         const accountsRes = await a.get(dbRoutes.accounts);
         const categoriesRes = await a.get(dbRoutes.categories);
-        const categoryGroupsRes = await a.get(dbRoutes.categoryGroups);
+        const groupsRes = await a.get(dbRoutes.groups);
         const categoryMappingRes = await a.get(dbRoutes.categoryMapping);
         const payeesRes = await a.get(dbRoutes.payees);
         const payeeMappingRes = await a.get(dbRoutes.payeeMapping);
@@ -60,7 +60,7 @@ const useInitialLoad = () => {
         if (
           accountsRes &&
           categoriesRes &&
-          categoryGroupsRes &&
+          groupsRes &&
           categoryMappingRes &&
           payeesRes &&
           payeeMappingRes &&
@@ -68,9 +68,7 @@ const useInitialLoad = () => {
         ) {
           setAccounts(accountsRes.data ? accountsRes.data : []);
           setCategories(categoriesRes.data ? categoriesRes.data : []);
-          setCategoryGroups(
-            categoryGroupsRes.data ? categoryGroupsRes.data : []
-          );
+          setGroups(groupsRes.data ? groupsRes.data : []);
           setCategoryMapping(
             categoryMappingRes.data ? categoryMappingRes.data : []
           );
@@ -89,7 +87,7 @@ const useInitialLoad = () => {
         console.log(ex);
         setAccounts([]);
         setCategories([]);
-        setCategoryGroups([]);
+        setGroups([]);
         setCategoryMapping([]);
         setPayees([]);
         setPayeeMapping([]);
@@ -131,7 +129,7 @@ const useInitialLoad = () => {
     loading,
     accounts,
     categories,
-    categoryGroups,
+    groups,
     categoryMapping,
     payees,
     payeeMapping,

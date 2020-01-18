@@ -13,7 +13,9 @@ const Accounts = () => {
   );
   const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(accountsGql);
+  const { data, loading, error } = useQuery(accountsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   const [deleteAccountMutation] = useMutation(deleteAccountGql, {
     refetchQueries: [{ query: accountsGql }],
     awaitRefetchQueries: true

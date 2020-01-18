@@ -1,15 +1,10 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query GROUPS {
-    groups {
+  query ACCOUNTS {
+    accounts {
       id
       name
-      categories {
-        id
-        name
-      }
-      count
       balance
     }
   }

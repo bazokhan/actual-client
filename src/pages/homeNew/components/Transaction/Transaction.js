@@ -43,7 +43,9 @@ InputCell.propTypes = {
 };
 
 const Transaction = ({ transaction, account, activeType }) => {
-  const { data } = useQuery(transactionListsGql);
+  const { data } = useQuery(transactionListsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   const [accountEdit, setAccountEdit] = useState(false);
   const [payeeEdit, setPayeeEdit] = useState(false);
   const [categoryEdit, setCategoryEdit] = useState(false);

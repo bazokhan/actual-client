@@ -39,7 +39,7 @@ const App = () => {
     loading,
     accounts,
     categories,
-    categoryGroups,
+    groups,
     payees,
     transactions,
     deadTransactions
@@ -201,7 +201,7 @@ const App = () => {
     () => ({
       accounts,
       categories,
-      categoryGroups,
+      groups,
       payees,
       transactions,
       activeTransactions,
@@ -233,7 +233,7 @@ const App = () => {
     [
       accounts,
       categories,
-      categoryGroups,
+      groups,
       payees,
       transactions,
       activeTransactions,

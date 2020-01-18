@@ -13,7 +13,9 @@ const Payees = () => {
   );
   const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(payeesGql);
+  const { data, loading, error } = useQuery(payeesGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   const [deletePayeeMutation] = useMutation(deletePayeeGql, {
     refetchQueries: [{ query: payeesGql }],
     awaitRefetchQueries: true

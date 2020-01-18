@@ -29,7 +29,9 @@ ExampleCustomInput.propTypes = {
 };
 
 const TransactionInput = ({ show, setShow, account, activeType }) => {
-  const { data } = useQuery(transactionListsGql);
+  const { data } = useQuery(transactionListsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   // const [createTransactionMutation] = useMutation(createTransactionGql);
 
   const [inputDate, setDate] = useState(new Date());

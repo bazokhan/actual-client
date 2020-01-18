@@ -13,13 +13,15 @@ const Groups = () => {
   );
   const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(groupsGql);
+  const { data, loading, error } = useQuery(groupsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   const [deleteGroupMutation] = useMutation(deleteGroupGql, {
     refetchQueries: [{ query: groupsGql }],
     awaitRefetchQueries: true
   });
 
-  const groups = useMemo(() => (data && data.catGroups ? data.catGroups : []));
+  const groups = useMemo(() => (data && data.groups ? data.groups : []));
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (

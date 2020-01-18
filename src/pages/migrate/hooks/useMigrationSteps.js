@@ -9,7 +9,7 @@ import transactionsGql from 'gql/transactions.gql';
 import { dateNumToString } from 'helpers/dateHelpers';
 import useMigrationData from 'hooks/useMigrationData';
 import createAccountsGql from '../gql/createAccounts.gql';
-import createCatGroupsGql from '../gql/createCatGroups.gql';
+import createGroupsGql from '../gql/createGroups.gql';
 import createCategoriesGql from '../gql/createCategories.gql';
 import createPayeesGql from '../gql/createPayees.gql';
 import createTransactionsGql from '../gql/createTransactions.gql';
@@ -17,7 +17,7 @@ import createTransactionsGql from '../gql/createTransactions.gql';
 const useMigrationSteps = () => {
   const {
     accounts,
-    categoryGroups: groups,
+    groups,
     categories,
     payees,
     transactions
@@ -25,7 +25,7 @@ const useMigrationSteps = () => {
 
   const [loading, setLoading] = useState({
     accounts: false,
-    categoryGroups: false,
+    groups: false,
     categories: false,
     payees: false,
     transactions: false,
@@ -37,7 +37,7 @@ const useMigrationSteps = () => {
     awaitRefetchQueries: true
   });
 
-  const [createCatGroupsMutation] = useMutation(createCatGroupsGql, {
+  const [createGroupsMutation] = useMutation(createGroupsGql, {
     refetchQueries: [{ query: groupsGql }],
     awaitRefetchQueries: true
   });
@@ -106,8 +106,8 @@ const useMigrationSteps = () => {
   const successGroups = useMemo(
     () =>
       groupsData &&
-      groupsData.catGroups &&
-      groupsData.catGroups.length >= groups.length,
+      groupsData.groups &&
+      groupsData.groups.length >= groups.length,
     [groupsData, groups]
   );
 
@@ -174,15 +174,15 @@ const useMigrationSteps = () => {
       index: 1,
       name: 'groups',
       label: 'Groups',
-      newRecords: groupsData ? groupsData.catGroups.length : 0,
+      newRecords: groupsData ? groupsData.groups.length : 0,
       oldRecords: groups.length,
-      loading: loading.categoryGroups,
+      loading: loading.groups,
       success: successGroups,
       prevSuccess: successAccounts,
       onClick: async () => {
-        setLoading({ ...loading, categoryGroups: true });
+        setLoading({ ...loading, groups: true });
         try {
-          await createCatGroupsMutation({
+          await createGroupsMutation({
             variables: {
               groups: groups.map(g => ({
                 name: g.name,
@@ -193,7 +193,7 @@ const useMigrationSteps = () => {
         } catch (ex) {
           console.log(ex);
         }
-        setLoading({ ...loading, categoryGroups: false });
+        setLoading({ ...loading, groups: false });
       }
     },
     {
@@ -286,7 +286,7 @@ const useMigrationSteps = () => {
                 date: dateNumToString(t.date, 'DMY'),
                 accountName: t.account.name,
                 categoryName: t.categoryObj.name,
-                categoryGroupName: t.catGroup.name,
+                groupName: t.group.name,
                 payeeName: t.payee.name || t.transferAccount.name
               }))
             }
