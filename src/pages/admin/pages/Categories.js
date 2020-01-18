@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useMemo, useState } from 'react';
@@ -50,9 +51,6 @@ const Categories = () => {
   ]);
 
   const [updateCategoryMutation] = useMutation(updateCategoryGql, {
-    onCompleted: d => {
-      console.log(d);
-    },
     refetchQueries: [{ query: categoriesGql }],
     awaitRefetchQueries: true
   });

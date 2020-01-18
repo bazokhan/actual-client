@@ -5,7 +5,11 @@ import PropTypes from 'prop-types';
 import styles from './SelectCell.module.scss';
 
 const customStyles = {
-  container: originalStyles => ({ ...originalStyles, width: '100%' }),
+  container: originalStyles => ({
+    ...originalStyles,
+    width: '120px',
+    position: 'absolute'
+  }),
   control: () => ({
     display: 'flex',
     flexGrow: '1',
