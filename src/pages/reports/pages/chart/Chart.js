@@ -9,6 +9,7 @@ import accountsGql from './gql/accounts.gql';
 import groupsGql from './gql/groups.gql';
 
 const Charts = () => {
+  const [chartType, setChartType] = useState('line');
   const [activeAccount, setActiveAccount] = useState({
     label: 'All accounts',
     value: ''
@@ -104,6 +105,57 @@ const Charts = () => {
     [transactions, activeAccount, activeGroup]
   );
 
+  const apexData2 = useMemo(
+    () =>
+      transactions
+        .sort((a, b) =>
+          moment(a.date, 'DD-MM-YYYY').diff(moment(b.date, 'DD-MM-YYYY'))
+        )
+        .filter(t =>
+          activeAccount.value ? t.account.id === activeAccount.value : t
+        )
+        .filter(t =>
+          activeGroup.value ? t.category.group.id === activeGroup.value : t
+        )
+        .reduce((prev, next) => {
+          const dateString = moment(next.date, 'DD-MM-YYYY').format(
+            'MM/DD/YYYY'
+          );
+          if (!dateString) {
+            return prev;
+          }
+          const targetSeries = prev.find(
+            series => series.name === next.category.group.name
+          );
+          if (targetSeries) {
+            const targetDate = targetSeries.data.find(
+              transaction => transaction.x === dateString
+            );
+
+            if (targetDate) {
+              targetDate.y += next.amount;
+              return prev;
+            }
+
+            const accumulated = targetSeries.data[
+              targetSeries.data.length - 1
+            ] || { y: 0 };
+
+            targetSeries.data.push({
+              x: dateString,
+              y: next.amount + accumulated.y
+            });
+            return prev;
+          }
+          prev.push({
+            name: next.category.group.name,
+            data: [{ x: dateString, y: next.amount }]
+          });
+          return prev;
+        }, []),
+    [transactions, activeAccount, activeGroup]
+  );
+
   if (error) return <div>Error!</div>;
 
   return (
@@ -118,67 +170,173 @@ const Charts = () => {
         value={activeGroup}
         onChange={value => setActiveGroup(value)}
       />
-      <ApexChart
-        series={apexData}
-        type="area"
-        height={750}
-        options={{
-          chart: {
-            type: 'area',
-            stacked: false,
-            height: 350,
-            zoom: {
-              type: 'x',
-              enabled: true,
-              autoScaleYaxis: true
-            },
-            toolbar: {
-              autoSelected: 'zoom'
-            }
-          },
-          dataLabels: {
-            enabled: false
-          },
-          markers: {
-            size: 0
-          },
-          title: {
-            text: 'Transactions',
-            align: 'left'
-          },
-          fill: {
-            type: 'gradient',
-            gradient: {
-              shadeIntensity: 1,
-              inverseColors: false,
-              opacityFrom: 0.5,
-              opacityTo: 0,
-              stops: [0, 90, 100]
-            }
-          },
-          yaxis: {
-            labels: {
-              formatter: val => {
-                return `${(val / 1000).toFixed(0)}k`;
+      <div className="form-group">
+        <label className="form-radio input-sm form-inline" htmlFor="line">
+          <input
+            id="line"
+            type="radio"
+            name="line"
+            value="line"
+            checked={chartType === 'line'}
+            onChange={() => {
+              setChartType('line');
+            }}
+          />
+          <i className="form-icon" /> Line chart
+        </label>
+        <label className="form-radio input-sm form-inline" htmlFor="columns">
+          <input
+            id="columns"
+            type="radio"
+            name="columns"
+            value="columns"
+            checked={chartType === 'columns'}
+            onChange={() => {
+              setChartType('columns');
+            }}
+          />
+          <i className="form-icon" /> Columns chart
+        </label>
+        <label className="form-radio input-sm form-inline" htmlFor="pie">
+          <input
+            id="pie"
+            type="radio"
+            name="pie"
+            value="pie"
+            checked={chartType === 'pie'}
+            onChange={() => {
+              setChartType('pie');
+            }}
+          />
+          <i className="form-icon" /> Pie chart
+        </label>
+      </div>
+      {chartType === 'line' && (
+        <ApexChart
+          series={apexData}
+          type="area"
+          height={350}
+          options={{
+            chart: {
+              type: 'area',
+              stacked: false,
+              height: 350,
+              zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true
+              },
+              toolbar: {
+                autoSelected: 'zoom'
               }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            markers: {
+              size: 0
             },
             title: {
-              text: 'Price'
-            }
-          },
-          xaxis: {
-            type: 'datetime'
-          },
-          tooltip: {
-            shared: false,
-            y: {
-              formatter: val => {
-                return `${(val / 1000).toFixed(0)}k`;
+              text: 'Transactions',
+              align: 'left'
+            },
+            fill: {
+              type: 'gradient',
+              gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.5,
+                opacityTo: 0,
+                stops: [0, 90, 100]
+              }
+            },
+            yaxis: {
+              labels: {
+                formatter: val => {
+                  return `${(val / 1000).toFixed(0)}k`;
+                }
+              },
+              title: {
+                text: 'EGP'
+              }
+            },
+            xaxis: {
+              type: 'datetime'
+            },
+            tooltip: {
+              shared: false,
+              y: {
+                formatter: val => {
+                  return `${(val / 1000).toFixed(0)}k`;
+                }
               }
             }
-          }
-        }}
-      />
+          }}
+        />
+      )}
+      {chartType === 'pie' && (
+        <ApexChart
+          series={apexData2}
+          type="area"
+          height={350}
+          options={{
+            chart: {
+              type: 'area',
+              stacked: false,
+              height: 350,
+              zoom: {
+                type: 'x',
+                enabled: true,
+                autoScaleYaxis: true
+              },
+              toolbar: {
+                autoSelected: 'zoom'
+              }
+            },
+            dataLabels: {
+              enabled: false
+            },
+            markers: {
+              size: 0
+            },
+            title: {
+              text: 'Transactions',
+              align: 'left'
+            },
+            fill: {
+              type: 'gradient',
+              gradient: {
+                shadeIntensity: 1,
+                inverseColors: false,
+                opacityFrom: 0.5,
+                opacityTo: 0,
+                stops: [0, 90, 100]
+              }
+            },
+            yaxis: {
+              labels: {
+                formatter: val => {
+                  return `${(val / 1000).toFixed(0)}k`;
+                }
+              },
+              title: {
+                text: 'EGP'
+              }
+            },
+            xaxis: {
+              type: 'datetime'
+            },
+            tooltip: {
+              shared: false,
+              y: {
+                formatter: val => {
+                  return `${(val / 1000).toFixed(0)}k`;
+                }
+              }
+            }
+          }}
+        />
+      )}
     </div>
   );
 };
