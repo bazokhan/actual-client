@@ -21,7 +21,9 @@ const Groups = () => {
     awaitRefetchQueries: true
   });
 
-  const groups = useMemo(() => (data && data.groups ? data.groups : []));
+  const groups = useMemo(() => (data && data.groups ? data.groups : []), [
+    data
+  ]);
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (

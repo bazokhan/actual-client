@@ -21,7 +21,9 @@ const Accounts = () => {
     awaitRefetchQueries: true
   });
 
-  const accounts = useMemo(() => (data && data.accounts ? data.accounts : []));
+  const accounts = useMemo(() => (data && data.accounts ? data.accounts : []), [
+    data
+  ]);
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (

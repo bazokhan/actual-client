@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useMemo, useState } from 'react';
@@ -42,13 +41,16 @@ const Categories = () => {
     [groupsData]
   );
 
-  const groupsOptions = useMemo(() => [
-    {
-      label: 'All groups',
-      value: ''
-    },
-    ...groups.map(group => ({ label: group.name, value: group.id }), [groups])
-  ]);
+  const groupsOptions = useMemo(
+    () => [
+      {
+        label: 'All groups',
+        value: ''
+      },
+      ...groups.map(group => ({ label: group.name, value: group.id }), [groups])
+    ],
+    [groups]
+  );
 
   const [updateCategoryMutation] = useMutation(updateCategoryGql, {
     refetchQueries: [{ query: categoriesGql }],

@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-globals */
-/* eslint-disable no-console */
 import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';

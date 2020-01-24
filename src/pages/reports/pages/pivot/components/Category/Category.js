@@ -22,22 +22,24 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
 
   useEffect(() => {
     handleCategoryFilter({ ...category, transactions });
-  }, [filters]);
+  }, [category, filters, handleCategoryFilter, transactions]);
 
   const balance = useMemo(
     () => transactions.reduce((prev, t) => prev + t.amount, 0),
     [transactions]
   );
-  const [startDate, endDate] = useMemo(() =>
-    transactions
-      .reduce(
-        (startEnd, t) => [
-          Math.min(startEnd[0], numerizeDate(t.date)),
-          Math.max(startEnd[1], numerizeDate(t.date))
-        ],
-        [100000000, 0]
-      )
-      .map(date => dateNumToString(date, 'DMY'))
+  const [startDate, endDate] = useMemo(
+    () =>
+      transactions
+        .reduce(
+          (startEnd, t) => [
+            Math.min(startEnd[0], numerizeDate(t.date)),
+            Math.max(startEnd[1], numerizeDate(t.date))
+          ],
+          [100000000, 0]
+        )
+        .map(date => dateNumToString(date, 'DMY')),
+    [transactions]
   );
 
   const accounts = useMemo(

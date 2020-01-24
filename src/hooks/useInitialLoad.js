@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
 import axios from 'axios';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 const server = process.env.REACT_APP_SERVER_URL;
 
@@ -98,32 +97,35 @@ const useInitialLoad = () => {
     fetch();
   }, []);
 
-  const fetchMoreTransactions = async transactionsAfter => {
-    const transactionRes = await a.get(dbRoutes.transactions, {
-      headers: {
-        range: `rows=${transactionsAfter + 1}-${transactionsAfter + 1000}`,
-        order: 'date asc'
-      }
-    });
-    if (transactionRes) {
-      try {
-        const contentRange = transactionRes.headers['content-range'];
-        if (contentRange) {
-          setAfter(getAfter(contentRange));
+  const fetchMoreTransactions = useCallback(
+    async transactionsAfter => {
+      const transactionRes = await a.get(dbRoutes.transactions, {
+        headers: {
+          range: `rows=${transactionsAfter + 1}-${transactionsAfter + 1000}`,
+          order: 'date asc'
         }
-      } catch (ex) {
-        console.log(ex);
+      });
+      if (transactionRes) {
+        try {
+          const contentRange = transactionRes.headers['content-range'];
+          if (contentRange) {
+            setAfter(getAfter(contentRange));
+          }
+        } catch (ex) {
+          console.log(ex);
+        }
+        const updateTransactions = [transactions, transactionRes.data].flat();
+        setTransactions(updateTransactions);
       }
-      const updateTransactions = [transactions, transactionRes.data].flat();
-      setTransactions(updateTransactions);
-    }
-  };
+    },
+    [transactions]
+  );
 
   useEffect(() => {
     if (after) {
       fetchMoreTransactions(Number(after));
     }
-  }, [after]);
+  }, [after, fetchMoreTransactions]);
 
   return {
     loading,

@@ -21,7 +21,9 @@ const Payees = () => {
     awaitRefetchQueries: true
   });
 
-  const payees = useMemo(() => (data && data.payees ? data.payees : []));
+  const payees = useMemo(() => (data && data.payees ? data.payees : []), [
+    data
+  ]);
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (

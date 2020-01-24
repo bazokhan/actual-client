@@ -41,23 +41,29 @@ const Charts = () => {
     [groupsData]
   );
 
-  const accountsOptions = useMemo(() => [
-    {
-      label: 'All accounts',
-      value: ''
-    },
-    ...accounts.map(account => ({ label: account.name, value: account.id }), [
-      accounts
-    ])
-  ]);
+  const accountsOptions = useMemo(
+    () => [
+      {
+        label: 'All accounts',
+        value: ''
+      },
+      ...accounts.map(account => ({ label: account.name, value: account.id }), [
+        accounts
+      ])
+    ],
+    [accounts]
+  );
 
-  const groupsOptions = useMemo(() => [
-    {
-      label: 'All groups',
-      value: ''
-    },
-    ...groups.map(group => ({ label: group.name, value: group.id }), [groups])
-  ]);
+  const groupsOptions = useMemo(
+    () => [
+      {
+        label: 'All groups',
+        value: ''
+      },
+      ...groups.map(group => ({ label: group.name, value: group.id }), [groups])
+    ],
+    [groups]
+  );
 
   const transactions = useMemo(
     () => (data && data.transactions ? data.transactions : []),

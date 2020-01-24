@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { useState, useMemo } from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import accountsGql from 'gql/accounts.gql';

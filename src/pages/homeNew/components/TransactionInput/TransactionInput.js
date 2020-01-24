@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-restricted-globals */
 import React, { useMemo, useState } from 'react';
 import cx from 'classnames';

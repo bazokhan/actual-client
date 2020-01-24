@@ -48,7 +48,7 @@ const Pivot = () => {
           : category
       )
     );
-  }, [activeAccount]);
+  }, [activeAccount, categoriesTransactions]);
 
   const handleCategoryFilter = category => {
     setTransactions([
