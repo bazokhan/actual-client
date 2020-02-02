@@ -1,47 +1,48 @@
 import React, { lazy, Suspense } from 'react';
-import { Switch, Route, NavLink } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
+import {
+  FaObjectGroup,
+  FaList,
+  FaUserFriends,
+  FaMoneyBill
+} from 'react-icons/fa';
 import styles from './Admin.module.scss';
+import Navbar from './components/Navbar';
 
 const routes = {
-  Accounts: lazy(() => import('./components/Accounts')),
-  Payees: lazy(() => import('./components/Payees')),
-  Categories: lazy(() => import('./components/Categories')),
-  Groups: lazy(() => import('./components/Groups'))
+  Accounts: lazy(() => import('./pages/Accounts')),
+  Payees: lazy(() => import('./pages/Payees')),
+  Categories: lazy(() => import('./pages/Categories')),
+  Groups: lazy(() => import('./pages/Groups'))
 };
+
+const links = [
+  {
+    path: '/admin/accounts',
+    icon: <FaMoneyBill />,
+    label: 'Accounts'
+  },
+  {
+    path: '/admin/payees',
+    icon: <FaUserFriends />,
+    label: 'Payees'
+  },
+  {
+    path: '/admin/categories',
+    icon: <FaList />,
+    label: 'Categories'
+  },
+  {
+    path: '/admin/groups',
+    icon: <FaObjectGroup />,
+    label: 'Groups'
+  }
+];
 
 const Admin = () => {
   return (
     <div className={styles.adminContainer}>
-      <div className={styles.adminNavbar}>
-        <NavLink
-          className={styles.adminLink}
-          activeClassName={styles.active}
-          to="/admin/accounts"
-        >
-          Accounts
-        </NavLink>
-        <NavLink
-          className={styles.adminLink}
-          activeClassName={styles.active}
-          to="/admin/payees"
-        >
-          Payees
-        </NavLink>
-        <NavLink
-          className={styles.adminLink}
-          activeClassName={styles.active}
-          to="/admin/categories"
-        >
-          Categories
-        </NavLink>
-        <NavLink
-          className={styles.adminLink}
-          activeClassName={styles.active}
-          to="/admin/groups"
-        >
-          Groups
-        </NavLink>
-      </div>
+      <Navbar links={links} />
       <div className={styles.adminBody}>
         <Suspense fallback={<div>Loading..</div>}>
           <Switch>

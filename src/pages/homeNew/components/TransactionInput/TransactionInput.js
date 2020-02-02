@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /* eslint-disable no-restricted-globals */
 import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
@@ -29,7 +28,9 @@ ExampleCustomInput.propTypes = {
 };
 
 const TransactionInput = ({ show, setShow, account, activeType }) => {
-  const { data } = useQuery(transactionListsGql);
+  const { data } = useQuery(transactionListsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   // const [createTransactionMutation] = useMutation(createTransactionGql);
 
   const [inputDate, setDate] = useState(new Date());

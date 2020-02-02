@@ -90,20 +90,6 @@ const TransactionsHeader = ({
         <p>Category</p>
         {isAscending ? <FaAngleUp /> : <FaAngleDown />}
       </button>
-      {/* <button
-        type="button"
-        onClick={() => {
-          sortBy(
-            t => t.catGroup.name,
-            isAscending ? sortStringsAscending : sortStringsDescending
-          );
-          toggleSortMode();
-        }}
-        className={styles.midCell}
-      >
-        <p>Type</p>
-        {isAscending ? <FaAngleUp /> : <FaAngleDown />}
-      </button> */}
       {(activeType === 'Payment' || activeType === '') && (
         <button
           type="button"

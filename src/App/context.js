@@ -4,7 +4,7 @@ import React from 'react';
 const DataContext = React.createContext({
   accounts: [],
   categories: [],
-  categoryGroups: [],
+  groups: [],
   payees: [],
   transactions: [],
   activeTransactions: [],

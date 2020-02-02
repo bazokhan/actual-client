@@ -1,0 +1,97 @@
+.headerContainer {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-bottom: solid 1px #ddd;
+
+  .columnLeft {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: calc(100% - 300px);
+    padding: 10px 20px;
+
+    .title {
+      flex-grow: 1;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-start;
+      margin: 10px 0 0;
+
+      & h1 {
+        font-size: 24px;
+        font-weight: 500;
+        color: #102a43;
+        margin: 0;
+
+        &::first-letter {
+          text-transform: uppercase;
+        }
+      }
+    }
+  }
+  .columnRight {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    width: 300px;
+    padding: 10px;
+    border-left: solid 1px #ddd;
+
+    .transactionNum {
+      display: flex;
+      justify-content: flex-end;
+      padding: 2px 10px;
+
+      & p {
+        font-size: 14px;
+        margin: 0 3px;
+
+        &:first-of-type {
+          font-weight: 900;
+        }
+      }
+    }
+
+    .formSelect {
+      display: flex;
+      justify-content: flex-end;
+      padding: 2px 10px;
+
+      label {
+        text-align: right;
+      }
+    }
+
+    .balance {
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      padding: 2px 10px;
+
+      & h2 {
+        font-size: 13px;
+        font-weight: 100;
+        color: #486581;
+        margin: 0 10px 5px;
+      }
+
+      & p {
+        font-size: 18px;
+        margin: 0;
+        padding: 0;
+      }
+    }
+  }
+
+  .row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+}

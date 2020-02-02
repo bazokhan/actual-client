@@ -2,31 +2,42 @@ import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
+import accountsGql from '../gql/accounts.gql';
 import styles from '../Admin.module.scss';
-import deleteGroupGql from '../gql/deleteGroup.gql';
-import groupsGql from '../gql/groups.gql';
-import Toast from './Toast';
+import deleteAccountGql from '../gql/deleteAccount.gql';
+import Toast from '../components/Toast';
 
-const Groups = () => {
-  const [tableMode, setTableMode] = useState(false);
+const Accounts = () => {
+  const [viewMode, setViewMode] = useState(
+    localStorage.getItem('view_mode') || 'cards'
+  );
+  const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(groupsGql);
-  const [deleteGroupMutation] = useMutation(deleteGroupGql, {
-    refetchQueries: [{ query: groupsGql }],
+  const { data, loading, error } = useQuery(accountsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
+  const [deleteAccountMutation] = useMutation(deleteAccountGql, {
+    refetchQueries: [{ query: accountsGql }],
     awaitRefetchQueries: true
   });
 
-  const groups = useMemo(() => (data && data.catGroups ? data.catGroups : []));
+  const accounts = useMemo(() => (data && data.accounts ? data.accounts : []), [
+    data
+  ]);
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
       <div className={styles.adminSubheader}>
-        <h6>{tableMode ? 'Table view' : 'Card view'}</h6>
+        <h6>Accounts - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
           type="button"
-          onClick={() => setTableMode(!tableMode)}
-          className="btn btn-link"
+          onClick={() => {
+            const targetMode = tableMode ? 'cards' : 'table';
+            setViewMode(targetMode);
+            localStorage.setItem('view_mode', targetMode);
+          }}
+          className="btn btn-action btn-sm btn-primary"
         >
           {tableMode ? <FaIdCard /> : <FaTable />}
         </button>
@@ -36,27 +47,20 @@ const Groups = () => {
       )}
       {tableMode ? (
         <div className={styles.rowsContainer}>
-          {groups.map(group => (
-            <div className={styles.row} key={group.id}>
-              <div className={styles.rowTitle}>{group.name}</div>
-              <div className={styles.rowBody}>{group.count} Transactions</div>
-              <div className={styles.rowBody}>
-                {group.categories.length} Categories
-              </div>
-              <div className={styles.rowBody}>{n(group.balance)} EGP</div>
-              <div className={styles.rowTail}>
-                {group.categories.map(category => (
-                  <div key={category.id}>{category.name}</div>
-                ))}
-              </div>
+          {accounts.map(account => (
+            <div className={styles.row} key={account.id}>
+              <div className={styles.rowTitle}>{account.name}</div>
+              <div className={styles.rowBody}>{account.count} Transactions</div>
+              <div className={styles.rowBody}>{n(account.balance)} EGP</div>
+              <div className={styles.rowTail} />
               <div className={styles.rowAction}>
                 <button
                   type="button"
                   className="btn btn-link"
                   onClick={async () => {
                     try {
-                      await deleteGroupMutation({
-                        variables: { id: group.id }
+                      await deleteAccountMutation({
+                        variables: { id: account.id }
                       });
                     } catch (ex) {
                       setErrorMessage(ex.message);
@@ -71,16 +75,16 @@ const Groups = () => {
         </div>
       ) : (
         <div className={styles.cardsContainer}>
-          {groups.map(group => (
-            <div className={styles.card} key={group.id}>
+          {accounts.map(account => (
+            <div className={styles.card} key={account.id}>
               <div className={styles.cardAction}>
                 <button
                   type="button"
                   className="btn btn-link"
                   onClick={async () => {
                     try {
-                      await deleteGroupMutation({
-                        variables: { id: group.id }
+                      await deleteAccountMutation({
+                        variables: { id: account.id }
                       });
                     } catch (ex) {
                       setErrorMessage(ex.message);
@@ -90,17 +94,11 @@ const Groups = () => {
                   <FaTrashAlt />
                 </button>
               </div>
-              <div className={styles.cardTitle}>{group.name}</div>
-              <div className={styles.cardBody}>{group.count} Transactions</div>
+              <div className={styles.cardTitle}>{account.name}</div>
               <div className={styles.cardBody}>
-                {group.categories.length} Categories
+                {account.count} Transactions
               </div>
-              <div className={styles.cardBody}>{n(group.balance)} EGP</div>
-              <div className={styles.cardFooter}>
-                {group.categories.map(category => (
-                  <div key={category.id}>{category.name}</div>
-                ))}
-              </div>
+              <div className={styles.cardBody}>{n(account.balance)} EGP</div>
             </div>
           ))}
         </div>
@@ -109,4 +107,4 @@ const Groups = () => {
   );
 };
 
-export default Groups;
+export default Accounts;

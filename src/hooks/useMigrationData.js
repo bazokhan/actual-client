@@ -7,7 +7,7 @@ const useMigrationData = () => {
     loading,
     accounts,
     categories,
-    categoryGroups,
+    groups,
     payees,
     transactions
   } = useInitialLoad();
@@ -27,11 +27,11 @@ const useMigrationData = () => {
             ),
             accounts,
             categories,
-            categoryGroups,
+            groups,
             allPayees
           )
         : [],
-    [transactions, loading, allPayees, accounts, categories, categoryGroups]
+    [transactions, loading, allPayees, accounts, categories, groups]
   );
 
   const deadTransactions = useMemo(
@@ -44,18 +44,18 @@ const useMigrationData = () => {
             ),
             accounts,
             categories,
-            categoryGroups,
+            groups,
             allPayees
           )
         : [],
-    [transactions, loading, allPayees, accounts, categories, categoryGroups]
+    [transactions, loading, allPayees, accounts, categories, groups]
   );
 
   return {
     loading,
     accounts,
     categories,
-    categoryGroups,
+    groups,
     payees: allPayees,
     transactions: allTransactions,
     deadTransactions

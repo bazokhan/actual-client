@@ -2,7 +2,7 @@ import gql from 'graphql-tag';
 
 export default gql`
   query GROUPS {
-    catGroups {
+    groups {
       id
       name
     }

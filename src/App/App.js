@@ -30,7 +30,8 @@ const routes = {
   HomePage: lazy(() => import('pages/home')),
   HomeNew: lazy(() => import('pages/homeNew')),
   HistoryPage: lazy(() => import('pages/history')),
-  OrderPage: lazy(() => import('pages/order'))
+  OrderPage: lazy(() => import('pages/order')),
+  ReportsPage: lazy(() => import('pages/reports'))
 };
 
 const App = () => {
@@ -38,7 +39,7 @@ const App = () => {
     loading,
     accounts,
     categories,
-    categoryGroups,
+    groups,
     payees,
     transactions,
     deadTransactions
@@ -200,7 +201,7 @@ const App = () => {
     () => ({
       accounts,
       categories,
-      categoryGroups,
+      groups,
       payees,
       transactions,
       activeTransactions,
@@ -232,7 +233,7 @@ const App = () => {
     [
       accounts,
       categories,
-      categoryGroups,
+      groups,
       payees,
       transactions,
       activeTransactions,
@@ -316,7 +317,8 @@ const App = () => {
                     component={routes.CategoryPage}
                   />
                   <AuthRoute path="/pivot" component={routes.PivotPage} />
-                  <AuthRoute path="/newPivot" component={routes.PivotNew} />
+                  {/* <AuthRoute path="/newPivot" component={routes.PivotNew} /> */}
+                  <AuthRoute path="/reports" component={routes.ReportsPage} />
                   <AuthRoute path="/" component={routes.HomePage} />
                 </Switch>
               </Suspense>

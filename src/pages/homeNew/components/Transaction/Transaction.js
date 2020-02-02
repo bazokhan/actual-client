@@ -2,7 +2,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-globals */
-/* eslint-disable no-console */
 import React, { useMemo, useState } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
@@ -43,7 +42,9 @@ InputCell.propTypes = {
 };
 
 const Transaction = ({ transaction, account, activeType }) => {
-  const { data } = useQuery(transactionListsGql);
+  const { data } = useQuery(transactionListsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   const [accountEdit, setAccountEdit] = useState(false);
   const [payeeEdit, setPayeeEdit] = useState(false);
   const [categoryEdit, setCategoryEdit] = useState(false);
@@ -112,38 +113,39 @@ const Transaction = ({ transaction, account, activeType }) => {
       <div className={styles.midCell} tabIndex={0}>
         {date}
       </div>
-      {!account && accountEdit ? (
-        <SelectCell
-          onBlur={() => setAccountEdit(false)}
-          className={styles.midCell}
-          value={{ label: tAccount.name, value: tAccount.id }}
-          onChange={async a => {
-            try {
-              if (!a) return;
-              if (a.value === tAccount.id) return;
-              await updateTransactionMutation({
-                variables: {
-                  id,
-                  transaction: { accountId: a.value }
-                }
-              });
-            } catch (ex) {
-              console.log(ex);
-            }
-            setAccountEdit(false);
-          }}
-          options={accounts}
-        />
-      ) : (
-        <div
-          className={styles.midCell}
-          onClick={() => setAccountEdit(true)}
-          onFocus={() => setAccountEdit(true)}
-          tabIndex={0}
-        >
-          {accountName}
-        </div>
-      )}
+      {!account &&
+        (accountEdit ? (
+          <SelectCell
+            onBlur={() => setAccountEdit(false)}
+            className={styles.midCell}
+            value={{ label: tAccount.name, value: tAccount.id }}
+            onChange={async a => {
+              try {
+                if (!a) return;
+                if (a.value === tAccount.id) return;
+                await updateTransactionMutation({
+                  variables: {
+                    id,
+                    transaction: { accountId: a.value }
+                  }
+                });
+              } catch (ex) {
+                console.log(ex);
+              }
+              setAccountEdit(false);
+            }}
+            options={accounts}
+          />
+        ) : (
+          <div
+            className={styles.midCell}
+            onClick={() => setAccountEdit(true)}
+            onFocus={() => setAccountEdit(true)}
+            tabIndex={0}
+          >
+            {accountName}
+          </div>
+        ))}
 
       {payeeEdit ? (
         <SelectCell

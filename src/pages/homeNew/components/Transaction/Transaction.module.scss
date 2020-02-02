@@ -1,11 +1,14 @@
 .row {
   box-sizing: border-box;
   margin: 0;
+  padding: 0;
   display: flex;
   width: 100%;
   justify-content: flex-start;
   align-items: stretch;
   border-bottom: solid 1px #ddd;
+  height: 35px;
+  overflow-y: hidden;
 
   .deleteButton {
     background: none;

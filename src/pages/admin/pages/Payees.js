@@ -5,28 +5,39 @@ import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import styles from '../Admin.module.scss';
 import payeesGql from '../gql/payees.gql';
 import deletePayeeGql from '../gql/deletePayee.gql';
-import Toast from './Toast';
+import Toast from '../components/Toast';
 
 const Payees = () => {
-  const [tableMode, setTableMode] = useState(false);
+  const [viewMode, setViewMode] = useState(
+    localStorage.getItem('view_mode') || 'cards'
+  );
+  const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(payeesGql);
+  const { data, loading, error } = useQuery(payeesGql, {
+    fetchPolicy: 'cache-and-network'
+  });
   const [deletePayeeMutation] = useMutation(deletePayeeGql, {
     refetchQueries: [{ query: payeesGql }],
     awaitRefetchQueries: true
   });
 
-  const payees = useMemo(() => (data && data.payees ? data.payees : []));
+  const payees = useMemo(() => (data && data.payees ? data.payees : []), [
+    data
+  ]);
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
       <div className={styles.adminSubheader}>
-        <h6>{tableMode ? 'Table view' : 'Card view'}</h6>
+        <h6>Payees - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
           type="button"
-          onClick={() => setTableMode(!tableMode)}
-          className="btn btn-link"
+          onClick={() => {
+            const targetMode = tableMode ? 'cards' : 'table';
+            setViewMode(targetMode);
+            localStorage.setItem('view_mode', targetMode);
+          }}
+          className="btn btn-action btn-sm btn-primary"
         >
           {tableMode ? <FaIdCard /> : <FaTable />}
         </button>

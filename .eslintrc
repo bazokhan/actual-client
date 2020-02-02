@@ -1,10 +1,6 @@
 {
   "extends": ["airbnb", "prettier", "prettier/react"],
-  "plugins": [
-    "import",
-    "react",
-    "prettier"
-  ],
+  "plugins": ["import", "react", "prettier", "react-hooks"],
   "parser": "babel-eslint",
   "env": {
     "browser": true,
@@ -17,7 +13,10 @@
     "react/forbid-prop-types": "off",
     "import/no-extraneous-dependencies": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "prettier/prettier": "error"
+    "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/rules-of-hooks": "error",
+    "prettier/prettier": "error",
+    "no-console": "off"
   },
   "settings": {
     "import/resolver": {

@@ -12,7 +12,9 @@ import Category from './components/Category';
 const Pivot = () => {
   const [activeAccount, setActiveAccount] = useState(null);
   const [collapseAll, setCollapseAll] = useState(true);
-  const { data, error } = useQuery(categoriesGql);
+  const { data, error } = useQuery(categoriesGql, {
+    fetchPolicy: 'cache-and-network'
+  });
 
   const categoriesTransactions = useMemo(
     () =>
@@ -46,7 +48,7 @@ const Pivot = () => {
           : category
       )
     );
-  }, [activeAccount]);
+  }, [activeAccount, categoriesTransactions]);
 
   const handleCategoryFilter = category => {
     setTransactions([

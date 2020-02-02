@@ -2,7 +2,7 @@ export default (transactions, sortState) => {
   if (
     sortState.prop === 'account' ||
     sortState.prop === 'categoryObj' ||
-    sortState.prop === 'catGroup'
+    sortState.prop === 'group'
   ) {
     if (sortState.isAscending) {
       return [...transactions].sort(

@@ -35,10 +35,16 @@ const dateStringFromIsoString = (isoString, format = 'YMD', sep = '-') => {
   return [year, month, day].join(sep);
 };
 
+const isoStringFromDate = str => {
+  const [day, month, year] = str.split('-');
+  return [year, month, day].join('-');
+};
+
 export {
   dateNumToString,
   dateNumFromIsoString,
   todayString,
   dateStringFromIsoString,
-  numerizeDate
+  numerizeDate,
+  isoStringFromDate
 };

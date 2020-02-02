@@ -3,32 +3,41 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import styles from '../Admin.module.scss';
-import categoriesGql from '../gql/categories.gql';
-import deleteCategoryGql from '../gql/deleteCategory.gql';
-import Toast from './Toast';
+import deleteGroupGql from '../gql/deleteGroup.gql';
+import groupsGql from '../gql/groups.gql';
+import Toast from '../components/Toast';
 
-const Categories = () => {
-  const [tableMode, setTableMode] = useState(false);
+const Groups = () => {
+  const [viewMode, setViewMode] = useState(
+    localStorage.getItem('view_mode') || 'cards'
+  );
+  const tableMode = useMemo(() => viewMode === 'table', [viewMode]);
   const [errorMessage, setErrorMessage] = useState(null);
-  const { data, loading, error } = useQuery(categoriesGql);
-  const [deleteCategoryMutation] = useMutation(deleteCategoryGql, {
-    refetchQueries: [{ query: categoriesGql }],
+  const { data, loading, error } = useQuery(groupsGql, {
+    fetchPolicy: 'cache-and-network'
+  });
+  const [deleteGroupMutation] = useMutation(deleteGroupGql, {
+    refetchQueries: [{ query: groupsGql }],
     awaitRefetchQueries: true
   });
 
-  const categories = useMemo(() =>
-    data && data.categories ? data.categories : []
-  );
+  const groups = useMemo(() => (data && data.groups ? data.groups : []), [
+    data
+  ]);
   if (error) return <div className={styles.loading}>Error!</div>;
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
       <div className={styles.adminSubheader}>
-        <h6>{tableMode ? 'Table view' : 'Card view'}</h6>
+        <h6>Groups - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
           type="button"
-          onClick={() => setTableMode(!tableMode)}
-          className="btn btn-link"
+          onClick={() => {
+            const targetMode = tableMode ? 'cards' : 'table';
+            setViewMode(targetMode);
+            localStorage.setItem('view_mode', targetMode);
+          }}
+          className="btn btn-action btn-sm btn-primary"
         >
           {tableMode ? <FaIdCard /> : <FaTable />}
         </button>
@@ -38,15 +47,18 @@ const Categories = () => {
       )}
       {tableMode ? (
         <div className={styles.rowsContainer}>
-          {categories.map(cagtegory => (
-            <div className={styles.row} key={cagtegory.id}>
-              <div className={styles.rowTitle}>{cagtegory.name}</div>
+          {groups.map(group => (
+            <div className={styles.row} key={group.id}>
+              <div className={styles.rowTitle}>{group.name}</div>
+              <div className={styles.rowBody}>{group.count} Transactions</div>
               <div className={styles.rowBody}>
-                {cagtegory.count} Transactions
+                {group.categories.length} Categories
               </div>
-              <div className={styles.rowBody}>{n(cagtegory.balance)} EGP</div>
+              <div className={styles.rowBody}>{n(group.balance)} EGP</div>
               <div className={styles.rowTail}>
-                Group: {cagtegory.group.name}
+                {group.categories.map(category => (
+                  <div key={category.id}>{category.name}</div>
+                ))}
               </div>
               <div className={styles.rowAction}>
                 <button
@@ -54,8 +66,8 @@ const Categories = () => {
                   className="btn btn-link"
                   onClick={async () => {
                     try {
-                      await deleteCategoryMutation({
-                        variables: { id: cagtegory.id }
+                      await deleteGroupMutation({
+                        variables: { id: group.id }
                       });
                     } catch (ex) {
                       setErrorMessage(ex.message);
@@ -70,16 +82,16 @@ const Categories = () => {
         </div>
       ) : (
         <div className={styles.cardsContainer}>
-          {categories.map(cagtegory => (
-            <div className={styles.card} key={cagtegory.id}>
+          {groups.map(group => (
+            <div className={styles.card} key={group.id}>
               <div className={styles.cardAction}>
                 <button
                   type="button"
                   className="btn btn-link"
                   onClick={async () => {
                     try {
-                      await deleteCategoryMutation({
-                        variables: { id: cagtegory.id }
+                      await deleteGroupMutation({
+                        variables: { id: group.id }
                       });
                     } catch (ex) {
                       setErrorMessage(ex.message);
@@ -89,13 +101,16 @@ const Categories = () => {
                   <FaTrashAlt />
                 </button>
               </div>
-              <div className={styles.cardTitle}>{cagtegory.name}</div>
+              <div className={styles.cardTitle}>{group.name}</div>
+              <div className={styles.cardBody}>{group.count} Transactions</div>
               <div className={styles.cardBody}>
-                {cagtegory.count} Transactions
+                {group.categories.length} Categories
               </div>
-              <div className={styles.cardBody}>{n(cagtegory.balance)} EGP</div>
+              <div className={styles.cardBody}>{n(group.balance)} EGP</div>
               <div className={styles.cardFooter}>
-                Group: {cagtegory.group.name}
+                {group.categories.map(category => (
+                  <div key={category.id}>{category.name}</div>
+                ))}
               </div>
             </div>
           ))}
@@ -105,4 +120,4 @@ const Categories = () => {
   );
 };
 
-export default Categories;
+export default Groups;

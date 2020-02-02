@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React, { useState } from 'react';
 import ContentEditable from 'react-contenteditable';
 import cx from 'classnames';

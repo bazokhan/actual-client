@@ -12,7 +12,6 @@ const Transaction = ({ transaction, activeAccount, activeType }) => {
     account,
     actualAmount,
     categoryObj,
-    // catGroup,
     payee,
     transferAccount,
     dateString,
@@ -33,7 +32,6 @@ const Transaction = ({ transaction, activeAccount, activeType }) => {
       </div>
       <div className={styles.bigCell}>{notes}</div>
       <div className={styles.midCell}>{categoryObj.name}</div>
-      {/* <div className={styles.midCell}>{isTransfer ? 'n/a' : catGroup.name}</div> */}
       {(activeType === 'Payment' || activeType === '') && (
         <div className={cx(styles.midCell, styles.right)}>
           {amountType === 'Payment' && actualAmount

@@ -16,7 +16,7 @@ const Category = ({ match }) => {
     () =>
       (transactionsByCategory.find(c => c.id === match.params.categoryid) || {})
         .transactions || [],
-    [transactionsByCategory]
+    [match.params.categoryid, transactionsByCategory]
   );
 
   const [sortedTransactions, setSortedTransactions] = useState(transactions);
