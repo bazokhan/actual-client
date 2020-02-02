@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import cx from 'classnames';
 import { n } from 'helpers/mathHelpers';
 import { useQuery } from '@apollo/react-hooks';
@@ -12,6 +12,8 @@ import Category from './components/Category';
 const Pivot = () => {
   const [activeAccount, setActiveAccount] = useState(null);
   const [collapseAll, setCollapseAll] = useState(true);
+  const [categoryToFilterBy, setFilter] = useState(null);
+
   const { data, error } = useQuery(categoriesGql, {
     fetchPolicy: 'cache-and-network'
   });
@@ -29,15 +31,9 @@ const Pivot = () => {
     data
   ]);
 
-  const [transactions, setTransactions] = useState(categoriesTransactions);
-
-  useEffect(() => {
-    setTransactions(categoriesTransactions);
-  }, [categoriesTransactions]);
-
-  useEffect(() => {
-    setTransactions(
-      categoriesTransactions.map(category =>
+  const transactions = useMemo(() => {
+    return categoriesTransactions
+      .map(category =>
         activeAccount
           ? {
               ...category,
@@ -47,23 +43,22 @@ const Pivot = () => {
             }
           : category
       )
-    );
-  }, [activeAccount, categoriesTransactions]);
+      .filter(c => (categoryToFilterBy ? c.id !== categoryToFilterBy.id : c));
+  }, [activeAccount, categoriesTransactions, categoryToFilterBy]);
 
-  const handleCategoryFilter = category => {
-    setTransactions([
-      ...transactions.filter(c => c.id !== category.id),
-      category
-    ]);
-  };
+  const handleCategoryFilter = useCallback(
+    category => {
+      setFilter(category);
+    },
+    [setFilter]
+  );
 
   const totalPayment = useMemo(
     () =>
       transactions.reduce((prev, category) => {
-        const balance = category.transactions.reduce(
-          (sum, t) => sum + t.amount,
-          0
-        );
+        const balance = category
+          ? category.transactions.reduce((sum, t) => sum + t.amount, 0)
+          : 0;
         return balance < 0 ? prev + balance : prev;
       }, 0),
     [transactions]
@@ -72,10 +67,9 @@ const Pivot = () => {
   const totalDeposit = useMemo(
     () =>
       transactions.reduce((prev, category) => {
-        const balance = category.transactions.reduce(
-          (sum, t) => sum + t.amount,
-          0
-        );
+        const balance = category
+          ? category.transactions.reduce((sum, t) => sum + t.amount, 0)
+          : 0;
         return balance >= 0 ? prev + balance : prev;
       }, 0),
     [transactions]
@@ -84,7 +78,8 @@ const Pivot = () => {
   const totalTransactions = useMemo(
     () =>
       transactions.reduce(
-        (prev, category) => prev + category.transactions.length,
+        (prev, category) =>
+          category ? prev + category.transactions.length : prev,
         0
       ),
     [transactions]
@@ -139,15 +134,18 @@ const Pivot = () => {
       </div>
       <div className={styles.body}>
         {transactions &&
-          transactions.map((category, index) => (
-            <Category
-              key={category.id}
-              category={category}
-              index={index}
-              collapseAll={collapseAll}
-              handleCategoryFilter={handleCategoryFilter}
-            />
-          ))}
+          transactions.map(
+            (category, index) =>
+              category && (
+                <Category
+                  key={category ? category.id : index}
+                  category={category}
+                  index={index}
+                  collapseAll={collapseAll}
+                  handleCategoryFilter={handleCategoryFilter}
+                />
+              )
+          )}
       </div>
       <div className={styles.footer}>
         <div className={styles.row}>

@@ -8,21 +8,18 @@ import { numerizeDate, dateNumToString } from 'helpers/dateHelpers';
 import styles from './Category.module.scss';
 
 const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
-  const [filters, setFilters] = useState([]);
+  const [payeesToFilterBy, setFilters] = useState([]);
   const [collapsed, setCollapsed] = useState(collapseAll);
 
-  useEffect(() => {
-    setCollapsed(collapseAll);
-  }, [collapseAll]);
-
   const transactions = useMemo(
-    () => category.transactions.filter(t => !filters.includes(t.payee.id)),
-    [category, filters]
+    () =>
+      category.transactions.filter(t => !payeesToFilterBy.includes(t.payee.id)),
+    [category, payeesToFilterBy]
   );
 
-  useEffect(() => {
-    handleCategoryFilter({ ...category, transactions });
-  }, [category, filters, handleCategoryFilter, transactions]);
+  // useEffect(() => {
+  //   handleCategoryFilter({ ...category, transactions });
+  // }, [category, handleCategoryFilter, transactions]);
 
   const balance = useMemo(
     () => transactions.reduce((prev, t) => prev + t.amount, 0),
@@ -68,7 +65,7 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
         <button
           className="btn btn-link btn-sm"
           type="button"
-          onClick={() => setCollapsed(!collapsed)}
+          // onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <FaAngleDown /> : <FaAngleUp />}
         </button>
@@ -91,7 +88,7 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
             <button
               className="btn btn-link btn-sm"
               type="button"
-              onClick={() => setFilters([...filters, p.id])}
+              onClick={() => setFilters([...payeesToFilterBy, p.id])}
             >
               <FaTimes />
             </button>

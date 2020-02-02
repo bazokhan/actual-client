@@ -1,2 +1,3 @@
-- Add refetch queries to migration page and update migration status based on it.
-- style migration page.
+- Add refetch queries to migration page and update migration status based on it. (Done)
+- style migration page. (Done)
+- Add invoices and products.

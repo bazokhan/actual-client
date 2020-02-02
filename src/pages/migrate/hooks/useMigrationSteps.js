@@ -90,7 +90,7 @@ const useMigrationSteps = () => {
     () =>
       accountsData &&
       accountsData.accounts &&
-      accountsData.accounts.length >= accounts.length,
+      accountsData.accounts.length === accounts.length,
     [accountsData, accounts]
   );
 
@@ -98,7 +98,7 @@ const useMigrationSteps = () => {
     () =>
       categoriesData &&
       categoriesData.categories &&
-      categoriesData.categories.length >= categories.length + 2,
+      categoriesData.categories.length === categories.length + 2,
     [categoriesData, categories]
   );
 
@@ -106,7 +106,7 @@ const useMigrationSteps = () => {
     () =>
       groupsData &&
       groupsData.groups &&
-      groupsData.groups.length >= groups.length,
+      groupsData.groups.length === groups.length,
     [groupsData, groups]
   );
 
@@ -114,7 +114,7 @@ const useMigrationSteps = () => {
     () =>
       payeesData &&
       payeesData.payees &&
-      payeesData.payees.length >= payees.length,
+      payeesData.payees.length === payees.length,
     [payeesData, payees]
   );
 
@@ -122,7 +122,7 @@ const useMigrationSteps = () => {
     () =>
       transactionsData &&
       transactionsData.transactions &&
-      transactionsData.transactions.length >= transactions.length,
+      transactionsData.transactions.length === transactions.length,
     [transactionsData, transactions]
   );
 
@@ -154,19 +154,26 @@ const useMigrationSteps = () => {
       prevSuccess: true,
       onClick: async () => {
         setLoading({ ...loading, accounts: true });
-        try {
-          await createAccountsMutation({
-            variables: {
-              accounts: accounts.map(a => ({
-                name: a.name,
-                userId: '88feacf0-2ffb-11ea-977a-51bad9170054'
-              }))
-            }
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-        setLoading({ ...loading, accounts: false });
+        accounts.reduce(async (prev, next, index) => {
+          const newPrev = await prev;
+          try {
+            await createAccountsMutation({
+              variables: {
+                accounts: [next].map(a => ({
+                  name: a.name,
+                  userId: '88feacf0-2ffb-11ea-977a-51bad9170054'
+                }))
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+          }
+          if (index === accounts.length - 1) {
+            setLoading({ ...loading, accounts: false });
+            console.log(newPrev);
+          }
+          return newPrev;
+        }, []);
       }
     },
     {
@@ -180,19 +187,27 @@ const useMigrationSteps = () => {
       prevSuccess: successAccounts,
       onClick: async () => {
         setLoading({ ...loading, groups: true });
-        try {
-          await createGroupsMutation({
-            variables: {
-              groups: groups.map(g => ({
-                name: g.name,
-                isIncome: g.is_income > 0
-              }))
-            }
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-        setLoading({ ...loading, groups: false });
+        groups.reduce(async (prev, next, index) => {
+          const newPrev = await prev;
+          try {
+            await createGroupsMutation({
+              variables: {
+                groups: [next].map(g => ({
+                  name: g.name,
+                  isIncome: g.is_income > 0
+                }))
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+            newPrev.push(ex);
+          }
+          if (index === groups.length - 1) {
+            setLoading({ ...loading, groups: false });
+            console.log(newPrev);
+          }
+          return newPrev;
+        }, []);
       }
     },
     {
@@ -206,29 +221,36 @@ const useMigrationSteps = () => {
       prevSuccess: successGroups,
       onClick: async () => {
         setLoading({ ...loading, categories: true });
-        try {
-          await createCategoriesMutation({
-            variables: {
-              categories: categories.map(c => ({
-                name: c.name,
-                groupName: groups.find(g => g.id === c.cat_group).name
-              }))
-            }
-          });
-          await createTransferMutation({
-            variables: {
-              categories: [
-                { name: 'Transfer In' },
-                { name: 'Transfer Out' }
-              ].map(c => ({
+        await categories.reduce(async (prev, next, index) => {
+          const newPrev = await prev;
+          try {
+            await createCategoriesMutation({
+              variables: {
+                categories: [next].map(c => ({
+                  name: c.name,
+                  groupName: groups.find(g => g.id === c.cat_group).name
+                }))
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+            newPrev.push(ex);
+          }
+          if (index === categories.length - 1) {
+            console.log(newPrev);
+          }
+          return newPrev;
+        }, []);
+        await createTransferMutation({
+          variables: {
+            categories: [{ name: 'Transfer In' }, { name: 'Transfer Out' }].map(
+              c => ({
                 name: c.name,
                 groupName: 'تحويلات'
-              }))
-            }
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
+              })
+            )
+          }
+        });
         setLoading({ ...loading, categories: false });
       }
     },
@@ -243,26 +265,34 @@ const useMigrationSteps = () => {
       prevSuccess: successCategories,
       onClick: async () => {
         setLoading({ ...loading, payees: true });
-        try {
-          await createPayeesMutation({
-            variables: {
-              payees: payees.map(p => {
-                const transferAccount = accounts.find(
-                  a => a.id === p.transfer_acct
-                );
-                return transferAccount
-                  ? {
-                      name: transferAccount.name,
-                      accountName: transferAccount.name
-                    }
-                  : { name: p.name };
-              })
-            }
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-        setLoading({ ...loading, payees: false });
+        payees.reduce(async (prev, next, index) => {
+          const newPrev = await prev;
+          try {
+            await createPayeesMutation({
+              variables: {
+                payees: [next].map(p => {
+                  const transferAccount = accounts.find(
+                    a => a.id === p.transfer_acct
+                  );
+                  return transferAccount
+                    ? {
+                        name: transferAccount.name,
+                        accountName: transferAccount.name
+                      }
+                    : { name: p.name };
+                })
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+            newPrev.push(ex);
+          }
+          if (index === payees.length - 1) {
+            setLoading({ ...loading, payees: false });
+            console.log(newPrev);
+          }
+          return newPrev;
+        }, []);
       }
     },
     {
@@ -276,24 +306,32 @@ const useMigrationSteps = () => {
       prevSuccess: successPayees,
       onClick: async () => {
         setLoading({ ...loading, transactions: true });
-        try {
-          await createTransactionsMutation({
-            variables: {
-              transactions: transactions.map(t => ({
-                amount: t.actualAmount,
-                notes: t.notes,
-                date: dateNumToString(t.date, 'DMY'),
-                accountName: t.account.name,
-                categoryName: t.categoryObj.name,
-                groupName: t.group.name,
-                payeeName: t.payee.name || t.transferAccount.name
-              }))
-            }
-          });
-        } catch (ex) {
-          console.log(ex);
-        }
-        setLoading({ ...loading, transactions: false });
+        transactions.reduce(async (prev, next, index) => {
+          const newPrev = await prev;
+          try {
+            await createTransactionsMutation({
+              variables: {
+                transactions: [next].map(t => ({
+                  amount: t.actualAmount,
+                  notes: t.notes,
+                  date: dateNumToString(t.date, 'DMY'),
+                  accountName: t.account.name,
+                  categoryName: t.categoryObj.name,
+                  groupName: t.group.name,
+                  payeeName: t.payee.name || t.transferAccount.name
+                }))
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+            newPrev.push(ex);
+          }
+          if (index === transactions.length - 1) {
+            setLoading({ ...loading, transactions: false });
+            console.log(newPrev);
+          }
+          return newPrev;
+        }, []);
       }
     }
   ];

@@ -31,6 +31,13 @@ const Migrate = () => {
               <p>
                 Migrated {step.newRecords} of {step.oldRecords} {step.name}.
               </p>
+              <div className={styles.progressBar}>
+                <div
+                  style={{
+                    width: `calc(${step.newRecords / step.oldRecords} * 100%)`
+                  }}
+                />
+              </div>
               <button
                 className={`btn btn-primary btn-lg ${
                   step.loading ? ' loading' : ''
