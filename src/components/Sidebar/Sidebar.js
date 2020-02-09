@@ -8,7 +8,7 @@ import {
   FaChartBar,
   FaExclamationTriangle,
   FaSignOutAlt,
-  FaTimes,
+  // FaTimes,
   FaFileAlt,
   FaBars
 } from 'react-icons/fa';
@@ -26,7 +26,7 @@ const Sidebar = () => {
       >
         <FaBars />
       </button>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         exact
@@ -34,7 +34,7 @@ const Sidebar = () => {
       >
         <FaHome />
         {isOpen && <span>_Home</span>}
-      </NavLink>
+      </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
@@ -44,7 +44,7 @@ const Sidebar = () => {
         <FaHome />
         {isOpen && <span>Home</span>}
       </NavLink>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         exact
@@ -52,7 +52,7 @@ const Sidebar = () => {
       >
         <FaChartBar />
         {isOpen && <span>_Reports</span>}
-      </NavLink>
+      </NavLink> */}
       {/* <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
@@ -71,14 +71,14 @@ const Sidebar = () => {
         <FaChartBar />
         {isOpen && <span>Reports</span>}
       </NavLink>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"
         to="/history"
       >
         <FaTimes />
         {isOpen && <span>_Deleted</span>}
-      </NavLink>
+      </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
         activeClassName="btn-primary"

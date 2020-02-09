@@ -1,0 +1,22 @@
+.container {
+  .table {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto;
+
+    .header {
+      border: solid 1px #333;
+      padding: 5px;
+    }
+
+    > p {
+      border: solid 1px #eee;
+      padding: 5px;
+      margin: 0;
+
+      &.bold {
+        font-weight: 900;
+      }
+    }
+  }
+}
