@@ -41,7 +41,7 @@ InputCell.propTypes = {
   mutate: PropTypes.func.isRequired
 };
 
-const Transaction = ({ transaction, account, activeType }) => {
+const Transaction = ({ transaction, filters }) => {
   const { data } = useQuery(transactionListsGql, {
     fetchPolicy: 'cache-and-network'
   });
@@ -113,7 +113,7 @@ const Transaction = ({ transaction, account, activeType }) => {
       <div className={styles.midCell} tabIndex={0}>
         {date}
       </div>
-      {!account &&
+      {!filters.account &&
         (accountEdit ? (
           <SelectCell
             onBlur={() => setAccountEdit(false)}
@@ -225,7 +225,7 @@ const Transaction = ({ transaction, account, activeType }) => {
           {categoryName}
         </div>
       )}
-      {(activeType === 'Payment' || !activeType) && (
+      {(filters.type === 'Payment' || !filters.type) && (
         <InputCell
           className={cx(styles.midCell, styles.right)}
           mutate={async newAmountString => {
@@ -247,7 +247,7 @@ const Transaction = ({ transaction, account, activeType }) => {
           html={amountType === 'Payment' && amount ? n(amount * -1) : ''}
         />
       )}
-      {(activeType === 'Deposit' || !activeType) && (
+      {(filters.type === 'Deposit' || !filters.type) && (
         <InputCell
           className={cx(styles.midCell, styles.right)}
           mutate={async newAmountString => {
@@ -275,13 +275,7 @@ const Transaction = ({ transaction, account, activeType }) => {
 
 Transaction.propTypes = {
   transaction: PropTypes.object.isRequired,
-  account: PropTypes.object,
-  activeType: PropTypes.string
-};
-
-Transaction.defaultProps = {
-  account: null,
-  activeType: ''
+  filters: PropTypes.object.isRequired
 };
 
 export default Transaction;

@@ -1,14 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
-import {
-  sortNumsAscending,
-  sortNumsDescending,
-  sortStringsAscending,
-  sortStringsDescending
-} from 'helpers/sortHelpers';
 import { numerizeDate } from 'helpers/dateHelpers';
 import styles from './TransactionHeader.module.scss';
+import SORTERS from '../../../../App/constants/Sorters';
 
 const SortButton = ({ sortBy, className, text }) => {
   const [isAscending, setIsAscending] = useState(true);
@@ -33,7 +28,7 @@ SortButton.propTypes = {
   text: PropTypes.string.isRequired
 };
 
-const TransactionsHeader = ({ sortBy, account, activeType }) => {
+const TransactionsHeader = ({ sortBy, filters }) => {
   return (
     <div className={styles.row}>
       <div style={{ width: '30px' }} />
@@ -41,20 +36,19 @@ const TransactionsHeader = ({ sortBy, account, activeType }) => {
         text="Date"
         className={styles.midCell}
         sortBy={order => {
-          sortBy(
-            t => numerizeDate(t.date),
-            order ? sortNumsAscending : sortNumsDescending
+          sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
+            numerizeDate(t.date)
           );
         }}
       />
-      {!account && (
+      {!filters.account && (
         <SortButton
           text="Account"
           className={styles.midCell}
           sortBy={order => {
             sortBy(
-              t => t.account.name,
-              order ? sortStringsAscending : sortStringsDescending
+              order ? SORTERS.STR_ASC : SORTERS.STR_DES,
+              t => t.account.name
             );
           }}
         />
@@ -63,20 +57,14 @@ const TransactionsHeader = ({ sortBy, account, activeType }) => {
         text="Payee"
         className={styles.normCell}
         sortBy={order => {
-          sortBy(
-            t => t.payee.name,
-            order ? sortStringsAscending : sortStringsDescending
-          );
+          sortBy(order ? SORTERS.STR_ASC : SORTERS.STR_DES, t => t.payee.name);
         }}
       />
       <SortButton
         text="Notes"
         className={styles.bigCell}
         sortBy={order => {
-          sortBy(
-            t => t.notes,
-            order ? sortStringsAscending : sortStringsDescending
-          );
+          sortBy(order ? SORTERS.STR_ASC : SORTERS.STR_DES, t => t.notes);
         }}
       />
       <SortButton
@@ -84,31 +72,29 @@ const TransactionsHeader = ({ sortBy, account, activeType }) => {
         className={styles.midCell}
         sortBy={order => {
           sortBy(
-            t => t.category.name,
-            order ? sortStringsAscending : sortStringsDescending
+            order ? SORTERS.STR_ASC : SORTERS.STR_DES,
+            t => t.category.name
           );
         }}
       />
-      {(activeType === 'Payment' || !activeType) && (
+      {(filters.type === 'Payment' || !filters.type) && (
         <SortButton
           text="Payment"
           className={styles.midCell}
           sortBy={order => {
-            sortBy(
-              t => (t.amount < 0 ? t.amount : null),
-              order ? sortNumsAscending : sortNumsDescending
+            sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
+              t.amount < 0 ? t.amount : null
             );
           }}
         />
       )}
-      {(activeType === 'Deposit' || !activeType) && (
+      {(filters.type === 'Deposit' || !filters.type) && (
         <SortButton
           text="Deposit"
           className={styles.midCell}
           sortBy={order => {
-            sortBy(
-              t => (t.amount >= 0 ? t.amount : null),
-              order ? sortNumsAscending : sortNumsDescending
+            sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
+              t.amount >= 0 ? t.amount : null
             );
           }}
         />
@@ -119,13 +105,7 @@ const TransactionsHeader = ({ sortBy, account, activeType }) => {
 
 TransactionsHeader.propTypes = {
   sortBy: PropTypes.func.isRequired,
-  account: PropTypes.object,
-  activeType: PropTypes.string
-};
-
-TransactionsHeader.defaultProps = {
-  account: null,
-  activeType: ''
+  filters: PropTypes.object.isRequired
 };
 
 export default TransactionsHeader;

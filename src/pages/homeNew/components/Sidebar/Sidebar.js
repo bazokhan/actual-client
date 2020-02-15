@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { FaCaretRight, FaCaretDown, FaExclamationCircle } from 'react-icons/fa';
 import { n } from 'helpers/mathHelpers';
+import FILTERS from 'App/constants/Filters';
 import styles from './Sidebar.module.scss';
 import Filters from './components/Filters';
 import useAccounts from '../../hooks/useAccounts';
@@ -25,19 +26,7 @@ ToggleButton.propTypes = {
   text: PropTypes.string.isRequired
 };
 
-const Sidebar = ({
-  account: activeAccount,
-  activeType,
-  filterByAccount,
-  filterByType,
-  filterByCategory,
-  filterByPayee,
-  filterBySearch,
-  filterByAfter,
-  filterByBefore,
-  startDate,
-  endDate
-}) => {
+const Sidebar = ({ filters, filterBy }) => {
   const [isExapanded, setIsExpanded] = useState({
     search: true,
     filters: false
@@ -85,10 +74,10 @@ const Sidebar = ({
       <button
         className={cx(
           styles.accountsButton,
-          !activeAccount ? styles.active : ''
+          !filters.account ? styles.active : ''
         )}
         type="button"
-        onClick={() => filterByAccount([null, t => t])}
+        onClick={() => filterBy(FILTERS.ACCOUNT, t => t, null)}
       >
         <span>All accounts</span>
         <span>{n(balance)} EGP</span>
@@ -98,13 +87,13 @@ const Sidebar = ({
           key={account.id}
           className={cx(
             styles.accountButton,
-            activeAccount && activeAccount.id === account.id
+            filters.account && filters.account.id === account.id
               ? styles.active
               : ''
           )}
           type="button"
           onClick={() =>
-            filterByAccount([account, t => t.account.id === account.id])
+            filterBy(FILTERS.ACCOUNT, t => t.account.id === account.id, account)
           }
         >
           <span>{account.name}</span>
@@ -123,7 +112,7 @@ const Sidebar = ({
             isExapanded.search ? styles.expanded : ''
           )}
         >
-          <Search filterBySearch={filterBySearch} />
+          <Search filterBy={filterBy} />
         </div>
         <ToggleButton
           expanded={isExapanded.filters}
@@ -139,14 +128,8 @@ const Sidebar = ({
           <Filters
             categories={categories}
             payees={payees}
-            activeType={activeType}
-            filterByType={filterByType}
-            filterByCategory={filterByCategory}
-            filterByPayee={filterByPayee}
-            filterByAfter={filterByAfter}
-            filterByBefore={filterByBefore}
-            startDate={startDate}
-            endDate={endDate}
+            filters={filters}
+            filterBy={filterBy}
           />
         </div>
       </div>
@@ -155,24 +138,8 @@ const Sidebar = ({
 };
 
 Sidebar.propTypes = {
-  account: PropTypes.object,
-  activeType: PropTypes.string,
-  filterByAccount: PropTypes.func.isRequired,
-  filterByType: PropTypes.func.isRequired,
-  filterByCategory: PropTypes.func.isRequired,
-  filterByPayee: PropTypes.func.isRequired,
-  filterBySearch: PropTypes.func.isRequired,
-  filterByAfter: PropTypes.func.isRequired,
-  filterByBefore: PropTypes.func.isRequired,
-  startDate: PropTypes.string,
-  endDate: PropTypes.string
-};
-
-Sidebar.defaultProps = {
-  account: null,
-  activeType: null,
-  startDate: null,
-  endDate: null
+  filters: PropTypes.object.isRequired,
+  filterBy: PropTypes.func.isRequired
 };
 
 export default Sidebar;

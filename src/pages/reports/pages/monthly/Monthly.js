@@ -20,24 +20,27 @@ const Monthly = () => {
 
   return (
     <div className={styles.container}>
-      {data?.accounts?.map(account => (
-        <div key={account.id}>
-          <input
-            type="checkbox"
-            value={account.id}
-            onChange={() => {
-              setActiveAccounts(
-                activeAccounts?.map(a => {
-                  if (a.id === account.id) return { ...a, on: !a.on };
-                  return a;
-                })
-              );
-            }}
-            checked={account.on}
-          />
-          {account?.name}
-        </div>
-      ))}
+      <div className={styles.filters}>
+        <h2>Accounts</h2>
+        {data?.accounts?.map(account => (
+          <div key={account.id}>
+            <input
+              type="checkbox"
+              value={account.id}
+              onChange={() => {
+                setActiveAccounts(
+                  activeAccounts?.map(a => {
+                    if (a.id === account.id) return { ...a, on: !a.on };
+                    return a;
+                  })
+                );
+              }}
+              checked={account.on}
+            />
+            {account?.name}
+          </div>
+        ))}
+      </div>
 
       {activeAccounts?.map(
         account =>
@@ -67,6 +70,34 @@ const Monthly = () => {
                   </p>
                 </Fragment>
               ))}
+              <div className={styles.header}>Total</div>
+              <div className={styles.header}>
+                {account?.transactions
+                  ?.filter(t => t.amount >= 0)
+                  .reduce((acc, next) => acc + next.amount, 0)}{' '}
+                EGP
+              </div>
+              <div className={styles.header} />
+              <div className={styles.header}>Total</div>
+              <div className={styles.header}>
+                {account?.transactions
+                  ?.filter(t => t.amount < 0)
+                  .reduce((acc, next) => acc + next.amount * -1, 0)}{' '}
+                EGP
+              </div>
+              <div className={styles.header} />
+              <div className={styles.header}>Net</div>
+              <div className={styles.header} />
+              <div className={styles.header} />
+              <div className={styles.header} />
+              <div className={styles.header} />
+              <div className={styles.header}>
+                {account?.transactions.reduce(
+                  (acc, next) => acc + next.amount,
+                  0
+                )}{' '}
+                EGP
+              </div>
             </div>
           )
       )}

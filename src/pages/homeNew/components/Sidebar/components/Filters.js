@@ -5,19 +5,9 @@ import {
   todayString,
   numerizeDate
 } from 'helpers/dateHelpers';
+import FILTERS from 'App/constants/Filters';
 
-const Filters = ({
-  categories,
-  payees,
-  activeType,
-  filterByType,
-  filterByCategory,
-  filterByPayee,
-  filterByAfter,
-  filterByBefore,
-  startDate,
-  endDate
-}) => {
+const Filters = ({ categories, payees, filters, filterBy }) => {
   return (
     <div className="form-group">
       <label className="form-label label-sm" htmlFor="categories">
@@ -27,8 +17,8 @@ const Filters = ({
           onChange={e => {
             const categoryId = e.target.value;
             return categoryId
-              ? filterByCategory(t => t.category.id === categoryId)
-              : filterByCategory(t => t);
+              ? filterBy(FILTERS.CATEGORY, t => t.category.id === categoryId)
+              : filterBy(FILTERS.CATEGORY, t => t);
           }}
           id="categories"
           style={{ color: '#243b53' }}
@@ -48,8 +38,8 @@ const Filters = ({
           onChange={e => {
             const payeeId = e.target.value;
             return payeeId
-              ? filterByPayee(t => t.payee.id === payeeId)
-              : filterByPayee(t => t);
+              ? filterBy(FILTERS.PAYEE, t => t.payee.id === payeeId)
+              : filterBy(FILTERS.PAYEE, t => t);
           }}
           id="payees"
           style={{ color: '#243b53' }}
@@ -72,12 +62,13 @@ const Filters = ({
           onChange={e => {
             const date = e.target.value;
             const requiredDateNum = dateNumFromIsoString(date);
-            filterByAfter([
-              date,
-              t => numerizeDate(t.date) - requiredDateNum >= 0
-            ]);
+            filterBy(
+              FILTERS.AFTER,
+              t => numerizeDate(t.date) - requiredDateNum >= 0,
+              date
+            );
           }}
-          value={startDate || todayString()}
+          value={filters.after || todayString()}
         />
       </label>
 
@@ -90,36 +81,16 @@ const Filters = ({
           onChange={e => {
             const date = e.target.value;
             const requiredDateNum = dateNumFromIsoString(date);
-            filterByBefore([
-              date,
-              t => requiredDateNum - numerizeDate(t.date) >= 0
-            ]);
+            filterBy(
+              FILTERS.BEFORE,
+              t => requiredDateNum - numerizeDate(t.date) >= 0,
+              date
+            );
           }}
-          value={endDate || todayString()}
+          value={filters.before || todayString()}
         />
       </label>
-      <div className="btn-group btn-group-block">
-        {/* <button
-          type="button"
-          className="btn btn-primary btn-sm"
-          disabled={!startDate || !endDate}
-          onClick={() => setDate([startDate, endDate])}
-        >
-          Go
-        </button> */}
-        {/* <button
-          type="button"
-          className="btn btn-sm"
-          disabled={!startDate || !endDate}
-          onClick={() => {
-            setStartDate(null);
-            setEndDate(null);
-            setDate([]);
-          }}
-        >
-          Clear
-        </button> */}
-      </div>
+
       <div>
         <label className="form-radio input-sm" htmlFor="all">
           <input
@@ -127,9 +98,9 @@ const Filters = ({
             type="radio"
             name="amountType"
             value=""
-            checked={!activeType}
+            checked={!filters.type}
             onChange={() => {
-              filterByType([null, t => t]);
+              filterBy(FILTERS.TYPE, t => t, null);
             }}
           />
           <i className="form-icon" /> All
@@ -140,9 +111,9 @@ const Filters = ({
             type="radio"
             name="amountType"
             value="Payment"
-            checked={activeType === 'Payment'}
+            checked={filters.type === 'Payment'}
             onChange={() => {
-              filterByType(['Payment', t => t.amount < 0]);
+              filterBy(FILTERS.TYPE, t => t.amount < 0, 'Payment');
             }}
           />
           <i className="form-icon" /> Payments
@@ -153,9 +124,9 @@ const Filters = ({
             type="radio"
             name="amountType"
             value="Deposit"
-            checked={activeType === 'Deposit'}
+            checked={filters.type === 'Deposit'}
             onChange={() => {
-              filterByType(['Deposit', t => t.amount >= 0]);
+              filterBy(FILTERS.TYPE, t => t.amount >= 0, 'Deposit');
             }}
           />
           <i className="form-icon" /> Deposits
@@ -168,20 +139,8 @@ const Filters = ({
 Filters.propTypes = {
   categories: PropTypes.array.isRequired,
   payees: PropTypes.array.isRequired,
-  activeType: PropTypes.string,
-  filterByType: PropTypes.func.isRequired,
-  filterByCategory: PropTypes.func.isRequired,
-  filterByPayee: PropTypes.func.isRequired,
-  filterByAfter: PropTypes.func.isRequired,
-  filterByBefore: PropTypes.func.isRequired,
-  startDate: PropTypes.string,
-  endDate: PropTypes.string
-};
-
-Filters.defaultProps = {
-  activeType: null,
-  startDate: null,
-  endDate: null
+  filters: PropTypes.object.isRequired,
+  filterBy: PropTypes.func.isRequired
 };
 
 export default Filters;

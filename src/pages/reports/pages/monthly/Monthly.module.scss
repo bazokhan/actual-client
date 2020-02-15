@@ -1,11 +1,29 @@
 .container {
+  display: grid;
+  grid-template-columns: 200px auto;
+  height: 100%;
+
+  .filters {
+    padding: 10px;
+    border-right: solid 1px #eee;
+    height: 100%;
+
+    > h2 {
+      font-size: 20px;
+      border-bottom: solid 1px #ddd;
+    }
+  }
+
   .table {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     grid-template-rows: auto;
+    border: solid 1px #333;
+    margin: 5px;
 
     .header {
-      border: solid 1px #333;
+      border: solid 1px #eee;
+      font-weight: 900;
       padding: 5px;
     }
 

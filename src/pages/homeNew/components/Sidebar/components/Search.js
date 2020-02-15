@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import FILTERS from 'App/constants/Filters';
 
-const Search = ({ filterBySearch }) => (
+const Search = ({ filterBy }) => (
   <div className="form-group">
     <label className="form-label label-sm" htmlFor="search">
       Search
@@ -12,10 +13,10 @@ const Search = ({ filterBySearch }) => (
         onChange={e => {
           const query = e.target.value;
           return query
-            ? filterBySearch(t => {
+            ? filterBy(FILTERS.SEARCH, t => {
                 return t.searchString.includes(query.toLowerCase());
               })
-            : filterBySearch(t => t);
+            : filterBy(FILTERS.SEARCH, t => t);
         }}
         placeholder="Search"
       />
@@ -24,7 +25,7 @@ const Search = ({ filterBySearch }) => (
 );
 
 Search.propTypes = {
-  filterBySearch: PropTypes.func.isRequired
+  filterBy: PropTypes.func.isRequired
 };
 
 export default Search;

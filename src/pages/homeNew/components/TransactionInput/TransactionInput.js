@@ -27,7 +27,7 @@ ExampleCustomInput.propTypes = {
   onClick: PropTypes.func.isRequired
 };
 
-const TransactionInput = ({ show, setShow, account, activeType }) => {
+const TransactionInput = ({ show, setShow, filters }) => {
   const { data } = useQuery(transactionListsGql, {
     fetchPolicy: 'cache-and-network'
   });
@@ -92,7 +92,7 @@ const TransactionInput = ({ show, setShow, account, activeType }) => {
             customInput={<ExampleCustomInput />}
           />
         </div>
-        {!account && (
+        {!filters.account && (
           <SelectCell
             className={styles.midCell}
             value={inputAccount}
@@ -118,7 +118,7 @@ const TransactionInput = ({ show, setShow, account, activeType }) => {
           onChange={c => setCategory(c)}
           options={categories}
         />
-        {(activeType === 'Payment' || !activeType) && (
+        {(filters.type === 'Payment' || !filters.type) && (
           <InputCell
             className={cx(styles.midCell, styles.right)}
             onBlur={newAmountString => {
@@ -136,7 +136,7 @@ const TransactionInput = ({ show, setShow, account, activeType }) => {
             }
           />
         )}
-        {(activeType === 'Deposit' || !activeType) && (
+        {(filters.type === 'Deposit' || !filters.type) && (
           <InputCell
             className={cx(styles.midCell, styles.right)}
             onBlur={newAmountString => {
@@ -185,15 +185,12 @@ const TransactionInput = ({ show, setShow, account, activeType }) => {
 };
 
 TransactionInput.propTypes = {
-  account: PropTypes.object,
-  activeType: PropTypes.string,
+  filters: PropTypes.object.isRequired,
   show: PropTypes.bool,
   setShow: PropTypes.func.isRequired
 };
 
 TransactionInput.defaultProps = {
-  account: null,
-  activeType: '',
   show: false
 };
 

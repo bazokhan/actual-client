@@ -5,7 +5,7 @@ import { FaPlus } from 'react-icons/fa';
 import styles from './Header.module.scss';
 import useAccounts from '../../hooks/useAccounts';
 
-const Header = ({ account, activeType, transactions, setShow }) => {
+const Header = ({ filters, transactions, setShow }) => {
   const sheetNet = useMemo(() => v2sum(transactions), [transactions]);
   const { balance } = useAccounts();
 
@@ -17,8 +17,8 @@ const Header = ({ account, activeType, transactions, setShow }) => {
       </div>
       <div className={styles.title}>
         <h1>
-          {account ? account.name : 'All accounts'}
-          {activeType ? ` - ${activeType}` : ''}
+          {filters.account ? filters.account.name : 'All accounts'}
+          {filters.type ? ` - ${filters.type}` : ''}
         </h1>
       </div>
       <div className={styles.totalsRow}>
@@ -44,15 +44,9 @@ const Header = ({ account, activeType, transactions, setShow }) => {
 };
 
 Header.propTypes = {
-  account: PropTypes.object,
-  activeType: PropTypes.string,
+  filters: PropTypes.object.isRequired,
   transactions: PropTypes.array.isRequired,
   setShow: PropTypes.func.isRequired
-};
-
-Header.defaultProps = {
-  account: null,
-  activeType: ''
 };
 
 export default Header;
