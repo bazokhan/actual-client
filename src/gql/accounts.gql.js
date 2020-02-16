@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  query ACCOUNTS {
-    accounts {
+  query ACCOUNTS($includeDeleted: Boolean) {
+    accounts(includeDeleted: $includeDeleted) {
       id
       name
     }

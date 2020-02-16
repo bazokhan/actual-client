@@ -5,7 +5,7 @@
   width: 100%;
   justify-content: flex-start;
   align-items: stretch;
-  border-bottom: solid 1px #ddd;
+  padding: 5px 0;
 
   .midCell {
     margin: 0;
@@ -15,11 +15,11 @@
     width: 100px;
     display: flex;
     justify-content: flex-start;
-    font-size: 13px;
+    font-size: 15px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
-    font-weight: 900;
+    // border-right: solid 1px #eee;
+    font-weight: 500;
 
     &.right {
       justify-content: flex-end;
@@ -34,11 +34,11 @@
     width: 170px;
     display: flex;
     justify-content: flex-start;
-    font-size: 13px;
+    font-size: 15px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
-    font-weight: 900;
+    // border-right: solid 1px #eee;
+    font-weight: 500;
   }
 
   .bigCell {
@@ -49,10 +49,30 @@
     width: 250px;
     display: flex;
     justify-content: flex-start;
-    font-size: 13px;
+    font-size: 15px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
-    font-weight: 900;
+    // border-right: solid 1px #eee;
+    font-weight: 500;
   }
+}
+
+.payment {
+  color: var(--error-color) !important;
+}
+.deposit {
+  color: var(--success-color) !important;
+}
+
+.paymentTag {
+  background-color: var(--error-color) !important;
+  color: white !important;
+  padding: 5px 10px;
+  width: 100%;
+}
+.depositTag {
+  background-color: var(--success-color) !important;
+  color: white !important;
+  padding: 5px 10px;
+  width: 100%;
 }

@@ -1,10 +1,8 @@
-import React, { useState, useMemo, useEffect, memo } from 'react';
+import React, { useState, useMemo, memo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import { useQuery } from '@apollo/react-hooks';
-import mapSort from 'mapsort';
-import { numerizeDate } from 'helpers/dateHelpers';
-import { sortNumsDescending } from 'helpers/sortHelpers';
+import useFilterMachine from 'hooks/useFilterMachine';
 import transactionsGql from './gql/transactions.gql';
 import Header from './components/Header';
 import TransactionsHeader from './components/TransactionHeader';
@@ -13,27 +11,24 @@ import TransactionFooter from './components/TransactionFooter';
 import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import TransactionInput from './components/TransactionInput';
+import sidebarGql from './gql/sidebar.gql';
+import { COLOR_WHEEL, MAIN_COLORS } from '../../App/constants/Colors';
 
 const Home = () => {
-  const [activeAccount, setActiveAccount] = useState(null);
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [activeType, setActiveType] = useState(null);
+  const listRef = useRef(null);
   const [show, setShow] = useState(false);
-  const [filters, setFilters] = useState({
-    sort: [t => numerizeDate(t.date), sortNumsDescending],
-    account: [null, t => t],
-    after: [null, t => t],
-    before: [null, t => t],
-    type: [null, t => t],
-    category: null,
-    payee: null,
-    search: null
-  });
 
-  const { data, error } = useQuery(transactionsGql, {
+  const { data, loading, error } = useQuery(transactionsGql, {
     fetchPolicy: 'cache-and-network'
   });
+
+  const { data: sidebarData } = useQuery(sidebarGql, {
+    fetchPolicy: 'cache-and-network'
+  });
+
+  const categories = useMemo(() => sidebarData?.categories, [sidebarData]);
+  const accounts = useMemo(() => sidebarData?.accounts, [sidebarData]);
+  const payees = useMemo(() => sidebarData?.payees, [sidebarData]);
 
   const transactions = useMemo(
     () =>
@@ -54,89 +49,60 @@ const Home = () => {
     [data]
   );
 
-  const loading = useMemo(() => !transactions && !data, [transactions, data]);
+  // const loading = useMemo(() => !transactions && !data, [transactions, data]);
 
-  const [activeTransactions, setActiveTransactions] = useState(transactions);
+  const {
+    filteredTransactions,
+    sortBy,
+    filterBy,
+    filterValues,
+    reset
+  } = useFilterMachine(transactions);
 
-  const accountFilter = (arr, account, filterFunc) => {
-    setActiveAccount(account);
-    return arr.filter(filterFunc);
-  };
-
-  const typeFilter = (arr, type, filterFunc) => {
-    setActiveType(type);
-    return arr.filter(filterFunc);
-  };
-
-  const beforeFilter = (arr, date, filterFunc) => {
-    setEndDate(date);
-    return arr.filter(filterFunc);
-  };
-
-  const afterFilter = (arr, date, filterFunc) => {
-    setStartDate(date);
-    return arr.filter(filterFunc);
-  };
-
-  useEffect(() => {
-    setActiveTransactions(transactions);
-  }, [transactions]);
-
-  useEffect(() => {
-    setActiveTransactions(
-      Object.entries(filters).reduce((prev, [name, filter]) => {
-        if (name === 'sort' && filter) {
-          return mapSort(prev, ...filter);
-        }
-        if (name === 'account' && filter) {
-          return accountFilter(prev, ...filter);
-        }
-        if (name === 'type' && filter) {
-          return typeFilter(prev, ...filter);
-        }
-        if (name === 'after' && filter) {
-          return afterFilter(prev, ...filter);
-        }
-        if (name === 'before' && filter) {
-          return beforeFilter(prev, ...filter);
-        }
-        if (filter && typeof filter === 'function') {
-          return prev.filter(filter);
-        }
-        return prev;
-      }, transactions)
-    );
-  }, [filters, transactions]);
-
-  const sortBy = (arrayMapFunc, sortFunc) =>
-    setFilters({ ...filters, sort: [arrayMapFunc, sortFunc] });
-  const filterByAccount = accountFilters =>
-    setFilters({ ...filters, account: accountFilters });
-  const filterByType = typeFilters =>
-    setFilters({ ...filters, type: typeFilters });
-  const filterByAfter = afterFilters =>
-    setFilters({ ...filters, after: afterFilters });
-  const filterByBefore = beforeFilters =>
-    setFilters({ ...filters, before: beforeFilters });
-  const filterByCategory = categoryFilter =>
-    setFilters({ ...filters, category: categoryFilter });
-  const filterByPayee = payeeFilter =>
-    setFilters({ ...filters, payee: payeeFilter });
-  const filterBySearch = searchFilter =>
-    setFilters({ ...filters, search: searchFilter });
-
-  const Row = memo(
-    ({ data: transactionsList, index, style }) => (
-      <div key={transactionsList[index].id} style={style}>
+  const Row = memo(({ data: transactionsList, index, style }) => {
+    const transaction = transactionsList[index];
+    const isOdd = index % 2;
+    const transactionIndex = categories.reduce((prev, c, i) => {
+      if (c?.id === transaction?.category?.id) {
+        return i;
+      }
+      return prev;
+    }, 0);
+    const accountIndex = accounts.reduce((prev, a, i) => {
+      if (a?.id === transaction?.account?.id) {
+        return i;
+      }
+      return prev;
+    }, 0);
+    const payeeIndex = payees.reduce((prev, p, i) => {
+      if (p?.id === transaction?.payee?.id) {
+        return i;
+      }
+      return prev;
+    }, 0);
+    return (
+      <div key={transaction.id}>
         <Transaction
-          account={activeAccount}
-          activeType={activeType}
-          transaction={transactionsList[index]}
+          filters={filterValues}
+          transaction={transaction}
+          categoryColor={COLOR_WHEEL[transactionIndex % COLOR_WHEEL.length]}
+          style={
+            isOdd
+              ? {
+                  ...style,
+                  background: 'linear-gradient(transparent, #F8F6F1)'
+                }
+              : { ...style }
+          }
+          // tagColor={`${colors[0]}${Math.floor(
+          //   transactionIndex % 10
+          // )}${Math.floor(transactionIndex % 10)}`}
+          accountColor={MAIN_COLORS[accountIndex % MAIN_COLORS.length]}
+          payeeColor={COLOR_WHEEL[payeeIndex % COLOR_WHEEL.length]}
         />
       </div>
-    ),
-    areEqual
-  );
+    );
+  }, areEqual);
 
   Row.propTypes = {
     data: PropTypes.array.isRequired,
@@ -145,67 +111,57 @@ const Home = () => {
   };
 
   if (error) return <div className={styles.loading}>Error!</div>;
-  if (loading) return <div className={styles.loading}>Loading</div>;
+  // if (loading) return <div className={styles.loading}>Loading</div>;
+
   return (
     <div className={styles.container}>
-      <Sidebar
-        account={activeAccount}
-        activeType={activeType}
-        filterByAccount={filterByAccount}
-        filterByType={filterByType}
-        filterByCategory={filterByCategory}
-        filterByPayee={filterByPayee}
-        filterBySearch={filterBySearch}
-        filterByAfter={filterByAfter}
-        filterByBefore={filterByBefore}
-        startDate={startDate}
-        endDate={endDate}
-      />
+      {/* <button type="button" onClick={reset}>
+        Reset all filters
+      </button> */}
+      <Sidebar filters={filterValues} filterBy={filterBy} />
       <div className={styles.main}>
         <div className={styles.header}>
           <Header
-            account={activeAccount}
-            activeType={activeType}
-            transactions={activeTransactions}
+            filters={filterValues}
+            transactions={filteredTransactions}
             setShow={setShow}
           />
-          <TransactionsHeader
-            account={activeAccount}
-            activeType={activeType}
-            sortBy={sortBy}
-          />
+          <TransactionsHeader filters={filterValues} sortBy={sortBy} />
         </div>
         <div className={styles.body}>
-          <TransactionInput
-            account={activeAccount}
-            activeType={activeType}
-            show={show}
-            setShow={setShow}
-          />
-          {/* {activeTransactions.map(transaction => (
-            <Transaction
-              key={transaction.id}
-              account={activeAccount}
-              activeType={activeType}
-              transaction={transaction}
+          {show && (
+            <TransactionInput
+              filters={filterValues}
+              onClose={() => setShow(false)}
             />
-          ))} */}
-          <List
-            height={740}
-            useIsScrolling
-            itemCount={activeTransactions.length}
-            itemSize={35}
-            itemData={activeTransactions}
-            width="100%"
-          >
-            {Row}
-          </List>
+          )}
+
+          {loading ? (
+            <div className={styles.placeholder}>
+              <div />
+              <div />
+              <div />
+              <div />
+            </div>
+          ) : (
+            <div className={styles.list} ref={listRef}>
+              <List
+                height={listRef?.current?.getClientRects()?.[0]?.height || 340}
+                useIsScrolling
+                itemCount={filteredTransactions.length}
+                itemSize={60}
+                itemData={filteredTransactions}
+                width="100%"
+              >
+                {Row}
+              </List>
+            </div>
+          )}
         </div>
         <div className={styles.footer}>
           <TransactionFooter
-            account={activeAccount}
-            activeType={activeType}
-            transactions={activeTransactions}
+            filters={filterValues}
+            transactions={filteredTransactions}
           />
         </div>
       </div>

@@ -5,7 +5,6 @@
   z-index: 2;
   overflow: visible;
 }
-
 .loading {
   opacity: 0.5;
   background-color: rgba(217, 245, 255, 0.5);

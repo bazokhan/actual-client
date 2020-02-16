@@ -8,9 +8,9 @@ import {
   FaChartBar,
   FaExclamationTriangle,
   FaSignOutAlt,
-  FaTimes,
   FaFileAlt,
-  FaBars
+  FaAngleLeft,
+  FaAngleRight
 } from 'react-icons/fa';
 import styles from './Sidebar.module.scss';
 
@@ -24,38 +24,42 @@ const Sidebar = () => {
         className={cx(styles.link, 'btn')}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <FaBars />
+        <div className={styles.icon}>
+          {isOpen ? <FaAngleLeft /> : <FaAngleRight />}
+        </div>
       </button>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         exact
         to="/"
       >
         <FaHome />
         {isOpen && <span>_Home</span>}
-      </NavLink>
+      </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         exact
         to="/newHome"
       >
-        <FaHome />
+        <div className={styles.icon}>
+          <FaHome />
+        </div>
         {isOpen && <span>Home</span>}
       </NavLink>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         exact
         to="/pivot"
       >
         <FaChartBar />
         {isOpen && <span>_Reports</span>}
-      </NavLink>
+      </NavLink> */}
       {/* <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         exact
         to="/newPivot"
       >
@@ -64,53 +68,64 @@ const Sidebar = () => {
       </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         exact
         to="/reports"
       >
-        <FaChartBar />
+        <div className={styles.icon}>
+          <FaChartBar />
+        </div>
         {isOpen && <span>Reports</span>}
       </NavLink>
-      <NavLink
+      {/* <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         to="/history"
       >
         <FaTimes />
         {isOpen && <span>_Deleted</span>}
-      </NavLink>
+      </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         to="/order"
       >
-        <FaFileAlt />
+        <div className={styles.icon}>
+          <FaFileAlt />
+        </div>
         {isOpen && <span>Orders</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         to="/admin"
       >
-        <FaUserCog />
+        <div className={styles.icon}>
+          <FaUserCog />
+        </div>
         {isOpen && <span>Admin</span>}
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
-        activeClassName="btn-primary"
+        activeClassName={styles.active}
         exact
         to="/migrate"
       >
-        <FaExclamationTriangle />
+        <div className={styles.icon}>
+          <FaExclamationTriangle />
+        </div>
         {isOpen && <span>Migrate</span>}
       </NavLink>
       {authToken && (
         <NavLink
           className={cx(styles.link, 'btn')}
-          activeClassName="btn-primary"
+          activeClassName={styles.active}
           to="/auth/logout"
         >
-          <FaSignOutAlt />
+          <div className={styles.icon}>
+            {' '}
+            <FaSignOutAlt />
+          </div>
           {isOpen && <span>Log out</span>}
         </NavLink>
       )}

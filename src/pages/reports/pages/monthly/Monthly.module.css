@@ -1,0 +1,17 @@
+.container .table {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: auto;
+}
+.container .table .header {
+  border: solid 1px #333;
+  padding: 5px;
+}
+.container .table > p {
+  border: solid 1px #eee;
+  padding: 5px;
+  margin: 0;
+}
+.container .table > p.bold {
+  font-weight: 900;
+}

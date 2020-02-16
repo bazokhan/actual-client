@@ -1,14 +1,19 @@
 .row {
   box-sizing: border-box;
   margin: 0;
-  padding: 0;
+  padding: 10px 0;
   display: flex;
   width: 100%;
   justify-content: flex-start;
   align-items: stretch;
   border-bottom: solid 1px #ddd;
-  height: 35px;
+  height: 60px;
   overflow-y: hidden;
+
+  &:hover {
+    box-shadow: 0 3px 6px 0 #00000064;
+    // background-color: #00000016;
+  }
 
   .deleteButton {
     background: none;
@@ -23,7 +28,7 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
 
     &:hover {
       opacity: 1;
@@ -39,16 +44,16 @@
 
   .midCell {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     flex-grow: 1;
     width: 100px;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
 
     &.right {
       justify-content: flex-end;
@@ -63,16 +68,10 @@
         background-color: rgba(217, 245, 255, 0.5);
       }
     }
-
-    &.loading {
-      opacity: 0.5;
-      background-color: rgba(217, 245, 255, 0.5);
-    }
   }
 
   .normCell {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     flex-grow: 1;
     width: 170px;
@@ -81,12 +80,11 @@
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
   }
 
   .bigCell {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     flex-grow: 1;
     width: 250px;
@@ -95,7 +93,7 @@
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
 
     &[contenteditable='true'] {
       &:hover {
@@ -106,10 +104,19 @@
         background-color: rgba(217, 245, 255, 0.5);
       }
     }
-
-    &.loading {
-      opacity: 0.5;
-      background-color: rgba(217, 245, 255, 0.5);
-    }
   }
+}
+
+.tag {
+  padding: 5px 10px;
+  margin: 0 5px;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  width: 100%;
+  border: solid 1px transparent;
 }

@@ -288,6 +288,16 @@ const App = () => {
     searchString
   ]);
 
+  useEffect(() => {
+    document.addEventListener(
+      'focusin',
+      function() {
+        console.log('focused: ', document.activeElement);
+      },
+      true
+    );
+  }, []);
+
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (

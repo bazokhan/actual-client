@@ -2,55 +2,29 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-globals */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
-import ContentEditable from 'react-contenteditable';
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { FaTimes } from 'react-icons/fa';
+import { FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import styles from './Transaction.module.scss';
 import updateTransactionGql from './gql/updateTransaction.gql';
 import transactionListsGql from './gql/transactionLists.gql';
 import SelectCell from './components/SelectCell';
+import InputCell from './components/InputCell';
 
-const InputCell = ({ html, className, mutate }) => {
-  const [loading, setLoading] = useState(false);
-  return (
-    <ContentEditable
-      className={cx(className, loading ? styles.loading : '')}
-      disabled={loading}
-      tabIndex={0}
-      onBlur={async e => {
-        setLoading(true);
-        try {
-          await mutate(e.currentTarget.textContent);
-        } catch (ex) {
-          console.log(ex);
-        }
-        setLoading(false);
-      }}
-      html={html || ''}
-    />
-  );
-};
-
-InputCell.propTypes = {
-  html: PropTypes.string.isRequired,
-  className: PropTypes.string.isRequired,
-  mutate: PropTypes.func.isRequired
-};
-
-const Transaction = ({ transaction, account, activeType }) => {
+const Transaction = ({
+  transaction,
+  filters,
+  categoryColor,
+  accountColor,
+  payeeColor,
+  style
+}) => {
   const { data } = useQuery(transactionListsGql, {
     fetchPolicy: 'cache-and-network'
   });
-  const [accountEdit, setAccountEdit] = useState(false);
-  const [payeeEdit, setPayeeEdit] = useState(false);
-  const [categoryEdit, setCategoryEdit] = useState(false);
-  const [tAccount, setAccount] = useState(transaction.account);
-  const [tPayee, setPayee] = useState(transaction.payee);
-  const [tCategory, setCategory] = useState(transaction.category);
   const {
     id,
     amount,
@@ -61,16 +35,7 @@ const Transaction = ({ transaction, account, activeType }) => {
     payee: { name: payeeName }
   } = transaction;
 
-  const [updateTransactionMutation] = useMutation(updateTransactionGql, {
-    onCompleted: res => {
-      if (res.updateTransaction) {
-        setAccount(res.updateTransaction.account);
-        setPayee(res.updateTransaction.payee);
-        setCategory(res.updateTransaction.category);
-      }
-    },
-    onError: e => console.log(e)
-  });
+  const [updateTransactionMutation] = useMutation(updateTransactionGql);
 
   const amountType = useMemo(() => (amount >= 0 ? 'Deposit' : 'Payment'), [
     amount
@@ -101,7 +66,7 @@ const Transaction = ({ transaction, account, activeType }) => {
   );
 
   return (
-    <div key={id} className={styles.row}>
+    <div key={id} className={styles.row} style={style || {}}>
       <button
         onClick={() => console.log(transaction)}
         type="button"
@@ -113,72 +78,119 @@ const Transaction = ({ transaction, account, activeType }) => {
       <div className={styles.midCell} tabIndex={0}>
         {date}
       </div>
-      {!account &&
-        (accountEdit ? (
-          <SelectCell
-            onBlur={() => setAccountEdit(false)}
-            className={styles.midCell}
-            value={{ label: tAccount.name, value: tAccount.id }}
-            onChange={async a => {
-              try {
-                if (!a) return;
-                if (a.value === tAccount.id) return;
-                await updateTransactionMutation({
-                  variables: {
-                    id,
-                    transaction: { accountId: a.value }
-                  }
-                });
-              } catch (ex) {
-                console.log(ex);
-              }
-              setAccountEdit(false);
-            }}
-            options={accounts}
-          />
-        ) : (
-          <div
-            className={styles.midCell}
-            onClick={() => setAccountEdit(true)}
-            onFocus={() => setAccountEdit(true)}
-            tabIndex={0}
-          >
-            {accountName}
-          </div>
-        ))}
 
-      {payeeEdit ? (
-        <SelectCell
-          className={styles.normCell}
-          value={{ label: tPayee.name, value: tPayee.id }}
-          onBlur={() => setPayeeEdit(false)}
-          onChange={async p => {
-            try {
-              if (!p) return;
-              if (p.value === tPayee.id) return;
-              await updateTransactionMutation({
-                variables: {
-                  id,
-                  transaction: { payeeId: p.value }
-                }
-              });
-            } catch (ex) {
-              console.log(ex);
-            }
-            setPayeeEdit(false);
-          }}
-          options={payees}
-        />
-      ) : (
+      <SelectCell
+        className={styles.midCell}
+        defaultValue={{
+          label: transaction.account.name,
+          value: transaction.account.id
+        }}
+        options={accounts}
+        color={accountColor}
+        mutate={async opt => {
+          try {
+            if (!opt) return;
+            if (opt.value === transaction.account.id) return;
+            await updateTransactionMutation({
+              variables: {
+                id,
+                transaction: { accountId: opt.value }
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+          }
+        }}
+      >
         <div
-          className={styles.normCell}
-          onClick={() => setPayeeEdit(true)}
-          onFocus={() => setPayeeEdit(true)}
-          tabIndex={0}
+          className={styles.tag}
+          style={{
+            backgroundColor: accountColor,
+            boxShadow: `0 3px 6px 0 ${accountColor}32`
+          }}
         >
+          {accountName}
+        </div>
+      </SelectCell>
+
+      <SelectCell
+        className={styles.normCell}
+        defaultValue={{
+          label: transaction.payee.name,
+          value: transaction.payee.id
+        }}
+        options={payees}
+        color={payeeColor}
+        mutate={async opt => {
+          try {
+            if (!opt) return;
+            if (opt.value === transaction.payee.id) return;
+            await updateTransactionMutation({
+              variables: {
+                id,
+                transaction: { payeeId: opt.value }
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+          }
+        }}
+      >
+        <div
+          className={styles.tag}
+          style={{
+            border: `solid 1px var(--main-color)`,
+            color: payeeColor,
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}
+        >
+          {amountType === 'Payment' ? (
+            <FaArrowRight
+              style={{ color: 'var(--error-color)', fontWeight: '900' }}
+            />
+          ) : (
+            <FaArrowLeft
+              style={{ color: 'var(--success-color)', fontWeight: '900' }}
+            />
+          )}
           {payeeName}
         </div>
-      )}
+      </SelectCell>
+
+      <SelectCell
+        className={styles.midCell}
+        defaultValue={{
+          label: transaction.category.name,
+          value: transaction.category.id
+        }}
+        options={categories}
+        color={categoryColor}
+        mutate={async opt => {
+          try {
+            if (!opt) return;
+            if (opt.value === transaction.category.id) return;
+            await updateTransactionMutation({
+              variables: {
+                id,
+                transaction: { categoryId: opt.value }
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+          }
+        }}
+      >
+        <div
+          className={styles.tag}
+          style={{
+            backgroundColor: categoryColor,
+            boxShadow: `0 3px 6px 0 ${categoryColor}32`
+          }}
+        >
+          {categoryName}
+        </div>
+      </SelectCell>
 
       <InputCell
         className={styles.bigCell}
@@ -191,41 +203,10 @@ const Transaction = ({ transaction, account, activeType }) => {
             }
           });
         }}
-        html={notes || ''}
+        defaultValue={notes || ''}
       />
-      {categoryEdit ? (
-        <SelectCell
-          className={styles.midCell}
-          value={{ label: tCategory.name, value: tCategory.id }}
-          onBlur={() => setCategoryEdit(false)}
-          onChange={async c => {
-            try {
-              if (!c) return;
-              if (c.value === tCategory.id) return;
-              await updateTransactionMutation({
-                variables: {
-                  id,
-                  transaction: { categoryId: c.value }
-                }
-              });
-            } catch (ex) {
-              console.log(ex);
-            }
-            setCategoryEdit(false);
-          }}
-          options={categories}
-        />
-      ) : (
-        <div
-          className={styles.midCell}
-          onClick={() => setCategoryEdit(true)}
-          onFocus={() => setCategoryEdit(true)}
-          tabIndex={0}
-        >
-          {categoryName}
-        </div>
-      )}
-      {(activeType === 'Payment' || !activeType) && (
+
+      {(filters.type === 'Payment' || !filters.type) && (
         <InputCell
           className={cx(styles.midCell, styles.right)}
           mutate={async newAmountString => {
@@ -244,10 +225,14 @@ const Transaction = ({ transaction, account, activeType }) => {
               console.log(ex);
             }
           }}
-          html={amountType === 'Payment' && amount ? n(amount * -1) : ''}
+          defaultValue={
+            amountType === 'Payment' && amount ? n(amount * -1) : ''
+          }
+          color="var(--error-color)"
         />
       )}
-      {(activeType === 'Deposit' || !activeType) && (
+
+      {(filters.type === 'Deposit' || !filters.type) && (
         <InputCell
           className={cx(styles.midCell, styles.right)}
           mutate={async newAmountString => {
@@ -266,7 +251,8 @@ const Transaction = ({ transaction, account, activeType }) => {
               console.log(ex);
             }
           }}
-          html={amountType === 'Deposit' && amount ? n(amount) : ''}
+          defaultValue={amountType === 'Deposit' && amount ? n(amount) : ''}
+          color="var(--success-color)"
         />
       )}
     </div>
@@ -275,13 +261,18 @@ const Transaction = ({ transaction, account, activeType }) => {
 
 Transaction.propTypes = {
   transaction: PropTypes.object.isRequired,
-  account: PropTypes.object,
-  activeType: PropTypes.string
+  filters: PropTypes.object.isRequired,
+  categoryColor: PropTypes.string,
+  accountColor: PropTypes.string,
+  payeeColor: PropTypes.string,
+  style: PropTypes.object
 };
 
 Transaction.defaultProps = {
-  account: null,
-  activeType: ''
+  categoryColor: 'red',
+  accountColor: 'red',
+  payeeColor: 'red',
+  style: {}
 };
 
 export default Transaction;

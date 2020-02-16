@@ -23,7 +23,8 @@ const useMigrationData = () => {
         ? resolveTransactions(
             transactions.filter(
               transaction =>
-                !transaction.starting_balance_flag && !transaction.tombstone
+                // !transaction.starting_balance_flag && !transaction.tombstone
+                !transaction.starting_balance_flag
             ),
             accounts,
             categories,

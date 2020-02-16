@@ -11,5 +11,10 @@ export default gql`
       id
       name
     }
+
+    accounts {
+      id
+      name
+    }
   }
 `;
