@@ -65,8 +65,8 @@ const TransactionsHeader = ({ sortBy, filters }) => {
         className={styles.midCell}
         sortBy={order => {
           sortBy(
-            t => t.category.name,
-            order ? sortStringsAscending : sortStringsDescending
+            order ? SORTERS.STR_ASC : SORTERS.STR_DES,
+            t => t.category.name
           );
         }}
       />
