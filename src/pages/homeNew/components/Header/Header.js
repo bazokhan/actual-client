@@ -30,14 +30,14 @@ const Header = ({ account, activeType, transactions, setShow }) => {
           <FaPlus />
           Add
         </button>
-        <div className={styles.balance}>
+        {/* <div className={styles.balance}>
           <h2>BALANCE</h2>
           <p>{n(balance)} EGP</p>
         </div>
         <div className={styles.balance}>
           <h2>Sheet Net</h2>
           <p>{n(sheetNet)} EGP</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

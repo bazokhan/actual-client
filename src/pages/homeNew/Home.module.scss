@@ -36,6 +36,10 @@
     .body {
       width: 100%;
       flex-grow: 1;
+
+      .list {
+        height: 100%;
+      }
     }
 
     .footer {

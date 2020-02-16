@@ -21,7 +21,7 @@ const SortButton = ({ sortBy, className, text }) => {
       }}
       className={className}
     >
-      <p>{text}</p>
+      <p>{text}</p>&nbsp;&nbsp;&nbsp;&nbsp;
       {isAscending ? <FaAngleUp /> : <FaAngleDown />}
     </button>
   );
@@ -70,16 +70,6 @@ const TransactionsHeader = ({ sortBy, account, activeType }) => {
         }}
       />
       <SortButton
-        text="Notes"
-        className={styles.bigCell}
-        sortBy={order => {
-          sortBy(
-            t => t.notes,
-            order ? sortStringsAscending : sortStringsDescending
-          );
-        }}
-      />
-      <SortButton
         text="Category"
         className={styles.midCell}
         sortBy={order => {
@@ -89,7 +79,16 @@ const TransactionsHeader = ({ sortBy, account, activeType }) => {
           );
         }}
       />
-      {(activeType === 'Payment' || !activeType) && (
+
+      <SortButton
+        text="Notes"
+        className={styles.bigCell}
+        sortBy={order => {
+          sortBy(order ? SORTERS.STR_ASC : SORTERS.STR_DES, t => t.notes);
+        }}
+      />
+
+      {(filters.type === 'Payment' || !filters.type) && (
         <SortButton
           text="Payment"
           className={styles.midCell}
