@@ -1,49 +1,96 @@
-import React from 'react';
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import styles from './SelectCell.module.scss';
 
-const customStyles = {
-  container: originalStyles => ({
-    ...originalStyles,
-    width: '120px',
-    position: 'absolute'
-  }),
-  control: () => ({
-    display: 'flex',
-    flexGrow: '1',
-    backgroundColor: 'rgba(217, 245, 255, 0.1)'
-  }),
-  input: originalStyles => ({
-    ...originalStyles,
-    backgroundColor: 'rgba(217, 245, 255, 0.1)'
-  })
-};
+const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
+  const customStyles = {
+    container: originalStyles => ({
+      ...originalStyles,
+      width: '100%',
+      border: 'dashed 1px var(--main-color)'
+    }),
+    control: originalStyles => ({
+      ...originalStyles,
+      color: 'var(--main-color)'
+    }),
+    input: originalStyles => ({
+      ...originalStyles,
+      color: 'var(--main-color)'
+    }),
+    menu: originalStyles => ({
+      ...originalStyles
+    })
+  };
 
-const SelectCell = ({ className, value, onChange, options, onBlur }) => (
-  <div className={cx(className, styles.selectCell)}>
-    <Select
-      onBlur={onBlur}
-      value={value}
-      onChange={onChange}
-      options={options}
-      styles={customStyles}
+  const [editMode, setEditMode] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const inputRef = useRef();
+  const [selectedOption, setSelectedOption] = useState(defaultValue);
+
+  useEffect(() => {
+    if (editMode && inputRef && inputRef.current && inputRef.current.focus) {
+      inputRef.current.focus();
+    }
+  }, [inputRef, editMode]);
+
+  // useEffect(() => {
+  //   setLoading(false);
+  // }, [defaultValue]);
+
+  return editMode ? (
+    <div
+      className={cx(
+        className,
+        styles.selectCell,
+        loading ? styles.loading : ''
+      )}
+    >
+      <Select
+        ref={inputRef}
+        onBlur={async () => {
+          setLoading(true);
+          try {
+            await mutate(selectedOption);
+          } catch (ex) {
+            console.log(ex);
+          }
+          setLoading(false);
+          setEditMode(false);
+        }}
+        value={selectedOption}
+        onChange={opt => setSelectedOption(opt)}
+        options={options}
+        styles={customStyles}
+        defaultMenuIsOpen
+      />
+    </div>
+  ) : (
+    <div
+      className={cx(
+        className,
+        styles.selectCell,
+        loading ? styles.loading : ''
+      )}
+      onClick={() => setEditMode(true)}
+      onFocus={() => setEditMode(true)}
       tabIndex={0}
-    />
-  </div>
-);
+    >
+      {children}
+    </div>
+  );
+};
 
 SelectCell.propTypes = {
-  value: PropTypes.object,
+  defaultValue: PropTypes.object.isRequired,
   className: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
+  mutate: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
-  onBlur: PropTypes.func.isRequired
-};
-
-SelectCell.defaultProps = {
-  value: null
+  children: PropTypes.node.isRequired
 };
 
 export default SelectCell;

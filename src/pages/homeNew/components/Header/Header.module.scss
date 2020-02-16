@@ -6,6 +6,7 @@
   justify-content: flex-start;
   align-items: flex-start;
   border-bottom: solid 1px #ddd;
+  background-color: #F8F6F1;
 
   .title {
     // flex-grow: 1;
@@ -41,6 +42,7 @@
     padding: 20px;
     box-shadow: 0 3px 6px 0 #00000032;
     margin: 10px 20px;
+    background-color: white;
 
     span {
       color: var(--light-main-color);

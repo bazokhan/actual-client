@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
 import { numerizeDate } from 'helpers/dateHelpers';
+import SORTERS from 'App/constants/Sorters';
 import styles from './TransactionHeader.module.scss';
-import SORTERS from '../../../../App/constants/Sorters';
 
 const SortButton = ({ sortBy, className, text }) => {
   const [isAscending, setIsAscending] = useState(true);
@@ -34,7 +35,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
       <div style={{ width: '30px' }} />
       <SortButton
         text="Date"
-        className={styles.midCell}
+        className={cx(styles.cell, styles.midCell)}
         sortBy={order => {
           sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
             numerizeDate(t.date)
@@ -44,7 +45,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
       {!filters.account && (
         <SortButton
           text="Account"
-          className={styles.midCell}
+          className={cx(styles.cell, styles.midCell)}
           sortBy={order => {
             sortBy(
               order ? SORTERS.STR_ASC : SORTERS.STR_DES,
@@ -55,14 +56,14 @@ const TransactionsHeader = ({ sortBy, filters }) => {
       )}
       <SortButton
         text="Payee"
-        className={styles.normCell}
+        className={cx(styles.cell, styles.normCell)}
         sortBy={order => {
           sortBy(order ? SORTERS.STR_ASC : SORTERS.STR_DES, t => t.payee.name);
         }}
       />
       <SortButton
         text="Category"
-        className={styles.midCell}
+        className={cx(styles.cell, styles.midCell)}
         sortBy={order => {
           sortBy(
             order ? SORTERS.STR_ASC : SORTERS.STR_DES,
@@ -73,7 +74,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
 
       <SortButton
         text="Notes"
-        className={styles.bigCell}
+        className={cx(styles.cell, styles.bigCell)}
         sortBy={order => {
           sortBy(order ? SORTERS.STR_ASC : SORTERS.STR_DES, t => t.notes);
         }}
@@ -82,7 +83,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
       {(filters.type === 'Payment' || !filters.type) && (
         <SortButton
           text="Payment"
-          className={styles.midCell}
+          className={cx(styles.cell, styles.midCell)}
           sortBy={order => {
             sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
               t.amount < 0 ? t.amount : null
@@ -93,7 +94,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
       {(filters.type === 'Deposit' || !filters.type) && (
         <SortButton
           text="Deposit"
-          className={styles.midCell}
+          className={cx(styles.cell, styles.midCell)}
           sortBy={order => {
             sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
               t.amount >= 0 ? t.amount : null

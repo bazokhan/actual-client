@@ -12,51 +12,8 @@ import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import TransactionInput from './components/TransactionInput';
 import sidebarGql from './gql/sidebar.gql';
+import { COLOR_WHEEL, MAIN_COLORS } from '../../App/constants/Colors';
 
-const colors = [
-  '#26de80',
-  '#de4663',
-  '#1382eb',
-  '#EB2226',
-  '#DE4400',
-  '#0C8810',
-  '#056DBA',
-  '#0E9447',
-  '#9324A2',
-  '#565451',
-  '#C9205D',
-  '#D63B40',
-  '#F96F07',
-  '#394960',
-  '#C43A2D',
-  '#D95405',
-  '#4EB49F',
-  '#51C9B0'
-];
-
-const payeeColors = [
-  '#26de80',
-  '#de4663',
-  '#1382eb',
-  '#EB2226',
-  '#DE4400',
-  '#0C8810',
-  '#056DBA',
-  '#0E9447',
-  '#9324A2',
-  '#565451',
-  '#C9205D',
-  '#D63B40',
-  '#F96F07',
-  '#394960',
-  '#C43A2D',
-  '#D95405',
-  '#4EB49F',
-  '#51C9B0'
-];
-
-// const accountColors = ['#000000', '#666666', '#999999'];
-const accountColors = ['#43a5f2', '#056DBA', '#394960'];
 const Home = () => {
   const listRef = useRef(null);
   const [show, setShow] = useState(false);
@@ -128,7 +85,7 @@ const Home = () => {
         <Transaction
           filters={filterValues}
           transaction={transaction}
-          tagColor={colors[transactionIndex % colors.length]}
+          categoryColor={COLOR_WHEEL[transactionIndex % COLOR_WHEEL.length]}
           style={
             isOdd
               ? {
@@ -140,8 +97,8 @@ const Home = () => {
           // tagColor={`${colors[0]}${Math.floor(
           //   transactionIndex % 10
           // )}${Math.floor(transactionIndex % 10)}`}
-          accountColor={accountColors[accountIndex % accountColors.length]}
-          payeeColor={payeeColors[payeeIndex % payeeColors.length]}
+          accountColor={MAIN_COLORS[accountIndex % MAIN_COLORS.length]}
+          payeeColor={COLOR_WHEEL[payeeIndex % COLOR_WHEEL.length]}
         />
       </div>
     );

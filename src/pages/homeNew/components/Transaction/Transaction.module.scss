@@ -44,7 +44,6 @@
 
   .midCell {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     flex-grow: 1;
     width: 100px;
@@ -69,16 +68,10 @@
         background-color: rgba(217, 245, 255, 0.5);
       }
     }
-
-    &.loading {
-      opacity: 0.5;
-      background-color: rgba(217, 245, 255, 0.5);
-    }
   }
 
   .normCell {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     flex-grow: 1;
     width: 170px;
@@ -92,7 +85,6 @@
 
   .bigCell {
     margin: 0;
-    padding: 0;
     box-sizing: border-box;
     flex-grow: 1;
     width: 250px;
@@ -112,76 +104,19 @@
         background-color: rgba(217, 245, 255, 0.5);
       }
     }
-
-    &.loading {
-      opacity: 0.5;
-      background-color: rgba(217, 245, 255, 0.5);
-    }
   }
 }
 
 .tag {
   padding: 5px 10px;
-  // border-radius: 5px;
+  margin: 0 5px;
   display: flex;
+  height: 100%;
   justify-content: center;
   align-items: center;
-  // background-color: #333;
   color: white;
   font-weight: 500;
   font-size: 13px;
   width: 100%;
   border: solid 1px transparent;
-}
-
-.editable {
-  border: dashed 2px transparent;
-  // border-radius: 5px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 13px;
-
-  & div {
-    padding: 5px 10px;
-    border: solid 2px transparent;
-    // height: 100%;
-    min-height: 30px;
-    text-align: right;
-
-    &:hover {
-      border: dashed 2px #ddd;
-      // box-shadow: 0 3px 6px 0 #00000032;
-    }
-
-    &:focus {
-      border: dashed 2px var(--main-color);
-      color: var(--main-color) !important;
-    }
-  }
-
-  form {
-    width: 100%;
-  }
-  input {
-    margin: 0 !important;
-    padding: 5px 10px !important;
-    box-sizing: border-box !important;
-    border: solid 2px transparent;
-    display: block;
-    width: 100%;
-    // height: 100%;
-    text-align: right;
-
-    &:hover {
-      border: dashed 2px #ddd;
-      // box-shadow: 0 3px 6px 0 #00000032;
-    }
-
-    &:focus {
-      border: dashed 2px var(--main-color);
-      color: var(--main-color) !important;
-    }
-  }
 }
