@@ -18,14 +18,14 @@ const TransactionFooter = ({
       <div className={styles.midCell} />
       <div className={styles.midCell} />
       {(activeType === 'Payment' || activeType === '') && (
-        <div className={cx(styles.midCell, styles.right)}>
+        <div className={cx(styles.midCell, styles.right, styles.payment)}>
           {n(
             sum(activeTransactions.filter(t => t.amountType === 'Payment')) * -1
           )}
         </div>
       )}
       {(activeType === 'Deposit' || activeType === '') && (
-        <div className={cx(styles.midCell, styles.right)}>
+        <div className={cx(styles.midCell, styles.right, styles.deposit)}>
           {n(sum(activeTransactions.filter(t => t.amountType === 'Deposit')))}
         </div>
       )}

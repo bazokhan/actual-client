@@ -7,8 +7,13 @@
   justify-content: flex-start;
   align-items: stretch;
   border-bottom: solid 1px #ddd;
-  height: 35px;
+  height: 60px;
   overflow-y: hidden;
+
+  &:hover {
+    box-shadow: 0 3px 6px 0 #00000032;
+    background-color: #00000016;
+  }
 
   .deleteButton {
     background: none;
@@ -45,6 +50,7 @@
     width: 100px;
     display: flex;
     justify-content: flex-start;
+    align-items: center;
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
@@ -110,6 +116,43 @@
     &.loading {
       opacity: 0.5;
       background-color: rgba(217, 245, 255, 0.5);
+    }
+  }
+}
+
+.tag {
+  padding: 5px 10px;
+  // border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #333;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  width: 100%;
+}
+
+.editable {
+  border: dashed 2px transparent;
+  // border-radius: 5px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+
+  & > div {
+    padding: 5px 10px;
+
+    &:hover {
+      border: dashed 2px #ddd;
+      // box-shadow: 0 3px 6px 0 #00000032;
+    }
+
+    &:focus {
+      border: dashed 2px var(--main-color);
+      color: var(--main-color) !important;
     }
   }
 }

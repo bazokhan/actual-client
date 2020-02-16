@@ -17,21 +17,25 @@ import SelectCell from './components/SelectCell';
 const InputCell = ({ html, className, mutate }) => {
   const [loading, setLoading] = useState(false);
   return (
-    <ContentEditable
-      className={cx(className, loading ? styles.loading : '')}
-      disabled={loading}
-      tabIndex={0}
-      onBlur={async e => {
-        setLoading(true);
-        try {
-          await mutate(e.currentTarget.textContent);
-        } catch (ex) {
-          console.log(ex);
-        }
-        setLoading(false);
-      }}
-      html={html || ''}
-    />
+    <div className={cx(className, loading ? styles.loading : '')}>
+      <div className={styles.editable}>
+        <ContentEditable
+          style={{ width: '100%', outline: 'none' }}
+          disabled={loading}
+          tabIndex={0}
+          onBlur={async e => {
+            setLoading(true);
+            try {
+              await mutate(e.currentTarget.textContent);
+            } catch (ex) {
+              console.log(ex);
+            }
+            setLoading(false);
+          }}
+          html={html || ''}
+        />
+      </div>
+    </div>
   );
 };
 
@@ -41,7 +45,7 @@ InputCell.propTypes = {
   mutate: PropTypes.func.isRequired
 };
 
-const Transaction = ({ transaction, filters }) => {
+const Transaction = ({ transaction, filters, tagColor, accountColor }) => {
   const { data } = useQuery(transactionListsGql, {
     fetchPolicy: 'cache-and-network'
   });
@@ -143,7 +147,15 @@ const Transaction = ({ transaction, filters }) => {
             onFocus={() => setAccountEdit(true)}
             tabIndex={0}
           >
-            {accountName}
+            <div
+              className={styles.tag}
+              style={{
+                backgroundColor: accountColor,
+                boxShadow: `0 3px 6px 0 ${accountColor}32`
+              }}
+            >
+              {accountName}
+            </div>
           </div>
         ))}
 
@@ -176,23 +188,10 @@ const Transaction = ({ transaction, filters }) => {
           onFocus={() => setPayeeEdit(true)}
           tabIndex={0}
         >
-          {payeeName}
+          <div className={styles.editable}>{payeeName}</div>
         </div>
       )}
 
-      <InputCell
-        className={styles.bigCell}
-        mutate={async newNotes => {
-          if (newNotes === notes) return;
-          await updateTransactionMutation({
-            variables: {
-              id,
-              transaction: { notes: newNotes }
-            }
-          });
-        }}
-        html={notes || ''}
-      />
       {categoryEdit ? (
         <SelectCell
           className={styles.midCell}
@@ -222,9 +221,32 @@ const Transaction = ({ transaction, filters }) => {
           onFocus={() => setCategoryEdit(true)}
           tabIndex={0}
         >
-          {categoryName}
+          <div
+            className={styles.tag}
+            style={{
+              backgroundColor: tagColor,
+              boxShadow: `0 3px 6px 0 ${tagColor}32`
+            }}
+          >
+            {categoryName}
+          </div>
         </div>
       )}
+
+      <InputCell
+        className={styles.bigCell}
+        mutate={async newNotes => {
+          if (newNotes === notes) return;
+          await updateTransactionMutation({
+            variables: {
+              id,
+              transaction: { notes: newNotes }
+            }
+          });
+        }}
+        html={notes || ''}
+      />
+
       {(filters.type === 'Payment' || !filters.type) && (
         <InputCell
           className={cx(styles.midCell, styles.right)}
@@ -275,7 +297,14 @@ const Transaction = ({ transaction, filters }) => {
 
 Transaction.propTypes = {
   transaction: PropTypes.object.isRequired,
-  filters: PropTypes.object.isRequired
+  filters: PropTypes.object.isRequired,
+  tagColor: PropTypes.string,
+  accountColor: PropTypes.string
+};
+
+Transaction.defaultProps = {
+  tagColor: '#333',
+  accountColor: 'red'
 };
 
 export default Transaction;

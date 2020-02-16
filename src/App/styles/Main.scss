@@ -21,3 +21,10 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #333;
 }
+
+:root {
+  --main-color: #1382eb;
+  --light-main-color: #43a5f2;
+  --success-color: #26de80;
+  --error-color: #de4663;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, memo } from 'react';
+import React, { useState, useMemo, memo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import { useQuery } from '@apollo/react-hooks';
@@ -11,13 +11,42 @@ import TransactionFooter from './components/TransactionFooter';
 import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import TransactionInput from './components/TransactionInput';
+import sidebarGql from './gql/sidebar.gql';
 
+const colors = [
+  '#1382eb',
+  '#EB2226',
+  '#DE4400',
+  '#0C8810',
+  '#056DBA',
+  '#0E9447',
+  '#9324A2',
+  '#565451',
+  '#C9205D',
+  '#D63B40',
+  '#F96F07',
+  '#394960',
+  '#C43A2D',
+  '#D95405',
+  '#4EB49F',
+  '#51C9B0'
+];
+
+const accountColors = ['#000000', '#666666', '#999999'];
 const Home = () => {
+  const listRef = useRef(null);
   const [show, setShow] = useState(false);
 
   const { data, error } = useQuery(transactionsGql, {
     fetchPolicy: 'cache-and-network'
   });
+
+  const { data: sidebarData } = useQuery(sidebarGql, {
+    fetchPolicy: 'cache-and-network'
+  });
+
+  const categories = useMemo(() => sidebarData?.categories, [sidebarData]);
+  const accounts = useMemo(() => sidebarData?.accounts, [sidebarData]);
 
   const transactions = useMemo(
     () =>
@@ -48,17 +77,34 @@ const Home = () => {
     reset
   } = useFilterMachine(transactions);
 
-  const Row = memo(
-    ({ data: transactionsList, index, style }) => (
-      <div key={transactionsList[index].id} style={style}>
+  const Row = memo(({ data: transactionsList, index, style }) => {
+    const transaction = transactionsList[index];
+    const transactionIndex = categories.reduce((prev, c, i) => {
+      if (c?.id === transaction?.category?.id) {
+        return i;
+      }
+      return prev;
+    }, 0);
+    const accountIndex = accounts.reduce((prev, a, i) => {
+      if (a?.id === transaction?.account?.id) {
+        return i;
+      }
+      return prev;
+    }, 0);
+    return (
+      <div key={transaction.id} style={style}>
         <Transaction
           filters={filterValues}
-          transaction={transactionsList[index]}
+          transaction={transaction}
+          // tagColor={colors[transactionIndex % colors.length]}
+          tagColor={`${colors[0]}${Math.floor(
+            transactionIndex % 10
+          )}${Math.floor(transactionIndex % 10)}`}
+          accountColor={accountColors[accountIndex % accountColors.length]}
         />
       </div>
-    ),
-    areEqual
-  );
+    );
+  }, areEqual);
 
   Row.propTypes = {
     data: PropTypes.array.isRequired,
@@ -71,9 +117,9 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      <button type="button" onClick={reset}>
+      {/* <button type="button" onClick={reset}>
         Reset all filters
-      </button>
+      </button> */}
       <Sidebar filters={filterValues} filterBy={filterBy} />
       <div className={styles.main}>
         <div className={styles.header}>
@@ -91,16 +137,18 @@ const Home = () => {
             setShow={setShow}
           />
 
-          <List
-            height={740}
-            useIsScrolling
-            itemCount={filteredTransactions.length}
-            itemSize={35}
-            itemData={filteredTransactions}
-            width="100%"
-          >
-            {Row}
-          </List>
+          <div className={styles.list} ref={listRef}>
+            <List
+              height={listRef?.current?.getClientRects()?.[0]?.height || 340}
+              useIsScrolling
+              itemCount={filteredTransactions.length}
+              itemSize={60}
+              itemData={filteredTransactions}
+              width="100%"
+            >
+              {Row}
+            </List>
+          </div>
         </div>
         <div className={styles.footer}>
           <TransactionFooter

@@ -56,3 +56,10 @@
     font-weight: 900;
   }
 }
+
+.payment {
+  color: var(--error-color) !important;
+}
+.deposit {
+  color: var(--success-color) !important;
+}

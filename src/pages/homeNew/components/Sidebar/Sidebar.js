@@ -3,7 +3,13 @@ import React, { useState, useMemo } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-import { FaCaretRight, FaCaretDown, FaExclamationCircle } from 'react-icons/fa';
+import {
+  FaCaretRight,
+  FaCaretDown,
+  FaExclamationCircle,
+  FaAngleLeft,
+  FaAngleRight
+} from 'react-icons/fa';
 import { n } from 'helpers/mathHelpers';
 import FILTERS from 'App/constants/Filters';
 import styles from './Sidebar.module.scss';
@@ -14,9 +20,9 @@ import Search from './components/Search';
 
 const ToggleButton = ({ expanded, onClick, text }) => (
   <button type="button" className={styles.expandButton} onClick={onClick}>
-    <FaExclamationCircle />
+    {/* <FaExclamationCircle /> */}
     <span style={{ margin: '4px' }}>{text}</span>
-    {expanded ? <FaCaretDown /> : <FaCaretRight />}
+    {expanded ? <FaAngleLeft /> : <FaAngleRight />}
   </button>
 );
 
@@ -31,6 +37,8 @@ const Sidebar = ({ filters, filterBy }) => {
     search: true,
     filters: false
   });
+
+  const [open, setOpen] = useState(true);
 
   const expand = keyName => {
     const tabNames = Object.keys(isExapanded);
@@ -70,38 +78,45 @@ const Sidebar = ({ filters, filterBy }) => {
   if (loading) return <div className={styles.loading}>Loading</div>;
 
   return (
-    <div className={styles.sidebar}>
-      <button
-        className={cx(
-          styles.accountsButton,
-          !filters.account ? styles.active : ''
-        )}
-        type="button"
-        onClick={() => filterBy(FILTERS.ACCOUNT, t => t, null)}
-      >
-        <span>All accounts</span>
-        <span>{n(balance)} EGP</span>
-      </button>
-      {accounts.map(account => (
+    <div className={cx(styles.sidebar, open ? styles.open : '')}>
+      <ToggleButton expanded={open} text="" onClick={() => setOpen(!open)} />
+      <div>
+        {' '}
         <button
-          key={account.id}
           className={cx(
-            styles.accountButton,
-            filters.account && filters.account.id === account.id
-              ? styles.active
-              : ''
+            styles.accountsButton,
+            !filters.account ? styles.active : ''
           )}
           type="button"
-          onClick={() =>
-            filterBy(FILTERS.ACCOUNT, t => t.account.id === account.id, account)
-          }
+          onClick={() => filterBy(FILTERS.ACCOUNT, t => t, null)}
         >
-          <span>{account.name}</span>
-          <span>{n(account.balance)} EGP</span>
+          <span>All</span>
+          <span>{n(balance)} EGP</span>
         </button>
-      ))}
-      <div className={styles.tabs}>
-        <ToggleButton
+        {accounts.map(account => (
+          <button
+            key={account.id}
+            className={cx(
+              styles.accountButton,
+              filters.account && filters.account.id === account.id
+                ? styles.active
+                : ''
+            )}
+            type="button"
+            onClick={() =>
+              filterBy(
+                FILTERS.ACCOUNT,
+                t => t.account.id === account.id,
+                account
+              )
+            }
+          >
+            <span>{account.name}</span>
+            <span>{n(account.balance)} EGP</span>
+          </button>
+        ))}
+        <div className={styles.tabs}>
+          {/* <ToggleButton
           expanded={isExapanded.search}
           text="Search"
           onClick={() => expand('search')}
@@ -111,10 +126,10 @@ const Sidebar = ({ filters, filterBy }) => {
             styles.filters,
             isExapanded.search ? styles.expanded : ''
           )}
-        >
+        > */}
           <Search filterBy={filterBy} />
-        </div>
-        <ToggleButton
+          {/* </div> */}
+          {/* <ToggleButton
           expanded={isExapanded.filters}
           text="Filters"
           onClick={() => expand('filters')}
@@ -124,7 +139,7 @@ const Sidebar = ({ filters, filterBy }) => {
             styles.filters,
             isExapanded.filters ? styles.expanded : ''
           )}
-        >
+        > */}
           <Filters
             categories={categories}
             payees={payees}
@@ -132,6 +147,7 @@ const Sidebar = ({ filters, filterBy }) => {
             filterBy={filterBy}
           />
         </div>
+        {/* </div> */}
       </div>
     </div>
   );

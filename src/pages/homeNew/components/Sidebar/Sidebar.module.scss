@@ -8,13 +8,27 @@
 }
 
 .sidebar {
-  width: 250px;
-  background: #2d1d93;
+  width: 50px;
+  background: var(--main-color);
   color: white;
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
+  box-shadow: inset 3px 0 6px 0 #00000032;
+  padding: 10px 0;
+
+  > div {
+    display: none;
+  }
+
+  &.open {
+    width: 250px;
+    padding: 10px;
+    > div {
+      display: block;
+    }
+  }
 
   .tabs {
     flex-grow: 1;
@@ -22,25 +36,10 @@
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    .expandButton {
-      width: 100%;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      justify-content: flex-start;
-      align-items: center;
-      color: white;
-
-      &:hover {
-        background: #4240d4;
-      }
-    }
 
     .filters {
       padding: 5px;
-      display: none;
+      display: block;
       overflow: hidden;
       margin-bottom: 10px;
 
@@ -54,21 +53,21 @@
     width: 100%;
     padding: 5px 10px;
     border: none;
-    background: #2d1d93;
+    background: var(--main-color);
     display: flex;
     justify-content: space-between;
     cursor: pointer;
     color: white;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 500;
 
     &:hover {
-      background: #4240d4;
+      background: var(--light-main-color);
       color: white;
     }
 
     &.active {
-      background: #4240d4;
+      background: var(--light-main-color);
       color: white;
     }
   }
@@ -77,22 +76,40 @@
     width: 100%;
     padding: 5px 10px;
     border: none;
-    background: #2d1d93;
+    background: var(--main-color);
     display: flex;
     justify-content: space-between;
     cursor: pointer;
     color: white;
-    font-size: 12px;
+    font-size: 15px;
     font-weight: 500;
 
     &:hover {
-      background: #4240d4;
+      background: var(--light-main-color);
       color: white;
     }
 
     &.active {
-      background: #4240d4;
+      background: var(--light-main-color);
       color: white;
     }
+  }
+}
+
+.expandButton {
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+
+  &:hover {
+    background: var(--light-main-color);
   }
 }
