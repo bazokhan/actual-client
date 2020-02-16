@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 export default (payees, accounts) =>
   payees
-    .filter(payee => !payee.tombstone)
+    // .filter(payee => !payee.tombstone)
     .filter(payee => payee)
     .map(p => {
       p.transferAccount =

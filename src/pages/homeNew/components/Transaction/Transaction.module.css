@@ -1,0 +1,146 @@
+.row {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-bottom: solid 1px #ddd;
+  height: 60px;
+  overflow-y: hidden;
+}
+.row .deleteButton {
+  background: none;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+  font-size: 12px;
+  width: 30px;
+  font-weight: 600;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.row .deleteButton:hover {
+  opacity: 1;
+}
+.row:hover {
+  background-color: rgba(217, 245, 255, 0.1);
+}
+.row:hover .deleteButton {
+  opacity: 0.5;
+}
+.row .midCell {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  flex-grow: 1;
+  width: 100px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 13px;
+  color: #333;
+  padding: 5px 10px;
+}
+.row .midCell.right {
+  justify-content: flex-end;
+}
+.row .midCell[contenteditable="true"]:hover {
+  background-color: rgba(217, 245, 255, 0.5);
+}
+.row .midCell[contenteditable="true"]:focus {
+  background-color: rgba(217, 245, 255, 0.5);
+}
+.row .midCell.loading {
+  opacity: 0.5;
+  background-color: rgba(217, 245, 255, 0.5);
+}
+.row .normCell {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  flex-grow: 1;
+  width: 170px;
+  display: flex;
+  justify-content: flex-start;
+  font-size: 13px;
+  color: #333;
+  padding: 5px 10px;
+}
+.row .bigCell {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  flex-grow: 1;
+  width: 250px;
+  display: flex;
+  justify-content: flex-start;
+  font-size: 13px;
+  color: #333;
+  padding: 5px 10px;
+}
+.row .bigCell[contenteditable="true"]:hover {
+  background-color: rgba(217, 245, 255, 0.5);
+}
+.row .bigCell[contenteditable="true"]:focus {
+  background-color: rgba(217, 245, 255, 0.5);
+}
+.row .bigCell.loading {
+  opacity: 0.5;
+  background-color: rgba(217, 245, 255, 0.5);
+}
+.tag {
+  padding: 5px 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: 500;
+  font-size: 13px;
+  width: 100%;
+  border: solid 1px transparent;
+}
+.editable {
+  border: dashed 2px transparent;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+}
+.editable div {
+  padding: 5px 10px;
+  border: solid 2px transparent;
+  min-height: 30px;
+  text-align: right;
+}
+.editable div:hover {
+  border: dashed 2px #ddd;
+}
+.editable div:focus {
+  border: dashed 2px var(--main-color);
+  color: var(--main-color) !important;
+}
+.editable form {
+  width: 100%;
+}
+.editable input {
+  margin: 0 !important;
+  padding: 5px 10px !important;
+  box-sizing: border-box !important;
+  border: solid 2px transparent;
+  display: block;
+  width: 100%;
+  text-align: right;
+}
+.editable input:hover {
+  border: dashed 2px #ddd;
+}
+.editable input:focus {
+  border: dashed 2px var(--main-color);
+  color: var(--main-color) !important;
+}

@@ -32,57 +32,70 @@ const useMigrationSteps = () => {
   });
 
   const [createAccountsMutation] = useMutation(createAccountsGql, {
-    refetchQueries: [{ query: accountsGql }],
+    refetchQueries: [
+      { query: accountsGql, variables: { includeDeleted: true } }
+    ],
     awaitRefetchQueries: true
   });
 
   const [createGroupsMutation] = useMutation(createGroupsGql, {
-    refetchQueries: [{ query: groupsGql }],
+    refetchQueries: [{ query: groupsGql, variables: { includeDeleted: true } }],
     awaitRefetchQueries: true
   });
 
   const [createCategoriesMutation] = useMutation(createCategoriesGql, {
-    refetchQueries: [{ query: categoriesGql }],
+    refetchQueries: [
+      { query: categoriesGql, variables: { includeDeleted: true } }
+    ],
     awaitRefetchQueries: true
   });
 
   const [createTransferMutation] = useMutation(createCategoriesGql, {
-    refetchQueries: [{ query: categoriesGql }],
+    refetchQueries: [
+      { query: categoriesGql, variables: { includeDeleted: true } }
+    ],
     awaitRefetchQueries: true
   });
 
   const [createPayeesMutation] = useMutation(createPayeesGql, {
-    refetchQueries: [{ query: payeesGql }],
+    refetchQueries: [{ query: payeesGql, variables: { includeDeleted: true } }],
     awaitRefetchQueries: true
   });
 
   const [createTransactionsMutation] = useMutation(createTransactionsGql, {
-    refetchQueries: [{ query: transactionsGql }],
+    refetchQueries: [
+      { query: transactionsGql, variables: { includeDeleted: true } }
+    ],
     awaitRefetchQueries: true
   });
 
   const { data: accountsData, loading: accountsLoading } = useQuery(
     accountsGql,
     {
-      fetchPolicy: 'cache-and-network'
+      fetchPolicy: 'cache-and-network',
+      variables: { includeDeleted: true }
     }
   );
   const { data: groupsData, loading: groupsLoading } = useQuery(groupsGql, {
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
+    variables: { includeDeleted: true }
   });
   const { data: categoriesData, loading: categoriesLoading } = useQuery(
     categoriesGql,
     {
-      fetchPolicy: 'cache-and-network'
+      fetchPolicy: 'cache-and-network',
+      variables: { includeDeleted: true }
     }
   );
   const { data: payeesData, loading: payeesLoading } = useQuery(payeesGql, {
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
+    variables: { includeDeleted: true }
   });
   const { data: transactionsData, loading: transactionsLoading } = useQuery(
     transactionsGql,
     {
-      fetchPolicy: 'cache-and-network'
+      fetchPolicy: 'cache-and-network',
+      variables: { includeDeleted: true }
     }
   );
 
@@ -151,6 +164,7 @@ const useMigrationSteps = () => {
       oldRecords: accounts.length,
       loading: loading.accounts,
       success: successAccounts,
+      // success: false,
       prevSuccess: true,
       onClick: async () => {
         setLoading({ ...loading, accounts: true });
@@ -161,7 +175,8 @@ const useMigrationSteps = () => {
               variables: {
                 accounts: [next].map(a => ({
                   name: a.name,
-                  userId: '88feacf0-2ffb-11ea-977a-51bad9170054'
+                  // userId: '88feacf0-2ffb-11ea-977a-51bad9170054'
+                  tombstone: a.tombstone
                 }))
               }
             });
@@ -170,7 +185,6 @@ const useMigrationSteps = () => {
           }
           if (index === accounts.length - 1) {
             setLoading({ ...loading, accounts: false });
-            console.log(newPrev);
           }
           return newPrev;
         }, []);
@@ -194,7 +208,8 @@ const useMigrationSteps = () => {
               variables: {
                 groups: [next].map(g => ({
                   name: g.name,
-                  isIncome: g.is_income > 0
+                  isIncome: g.is_income > 0,
+                  tombstone: g.tombstone
                 }))
               }
             });
@@ -204,7 +219,6 @@ const useMigrationSteps = () => {
           }
           if (index === groups.length - 1) {
             setLoading({ ...loading, groups: false });
-            console.log(newPrev);
           }
           return newPrev;
         }, []);
@@ -221,14 +235,15 @@ const useMigrationSteps = () => {
       prevSuccess: successGroups,
       onClick: async () => {
         setLoading({ ...loading, categories: true });
-        await categories.reduce(async (prev, next, index) => {
+        await categories.reduce(async (prev, next) => {
           const newPrev = await prev;
           try {
             await createCategoriesMutation({
               variables: {
                 categories: [next].map(c => ({
                   name: c.name,
-                  groupName: groups.find(g => g.id === c.cat_group).name
+                  groupName: groups.find(g => g.id === c.cat_group).name,
+                  tombstone: c.tombstone
                 }))
               }
             });
@@ -236,19 +251,19 @@ const useMigrationSteps = () => {
             console.log(ex);
             newPrev.push(ex);
           }
-          if (index === categories.length - 1) {
-            console.log(newPrev);
-          }
+
           return newPrev;
         }, []);
         await createTransferMutation({
           variables: {
-            categories: [{ name: 'Transfer In' }, { name: 'Transfer Out' }].map(
-              c => ({
-                name: c.name,
-                groupName: 'تحويلات'
-              })
-            )
+            categories: [
+              { name: 'Transfer In', tombstone: 0 },
+              { name: 'Transfer Out', tombstone: 0 }
+            ].map(c => ({
+              name: c.name,
+              groupName: 'تحويلات',
+              tombstone: c.tombstone
+            }))
           }
         });
         setLoading({ ...loading, categories: false });
@@ -277,9 +292,10 @@ const useMigrationSteps = () => {
                   return transferAccount
                     ? {
                         name: transferAccount.name,
-                        accountName: transferAccount.name
+                        accountName: transferAccount.name,
+                        tombstone: transferAccount.tombstone
                       }
-                    : { name: p.name };
+                    : { name: p.name, tombstone: p.tombstone };
                 })
               }
             });
@@ -289,7 +305,6 @@ const useMigrationSteps = () => {
           }
           if (index === payees.length - 1) {
             setLoading({ ...loading, payees: false });
-            console.log(newPrev);
           }
           return newPrev;
         }, []);
@@ -318,7 +333,8 @@ const useMigrationSteps = () => {
                   accountName: t.account.name,
                   categoryName: t.categoryObj.name,
                   groupName: t.group.name,
-                  payeeName: t.payee.name || t.transferAccount.name
+                  payeeName: t.payee.name || t.transferAccount.name,
+                  tombstone: t.tombstone
                 }))
               }
             });
@@ -328,7 +344,6 @@ const useMigrationSteps = () => {
           }
           if (index === transactions.length - 1) {
             setLoading({ ...loading, transactions: false });
-            console.log(newPrev);
           }
           return newPrev;
         }, []);

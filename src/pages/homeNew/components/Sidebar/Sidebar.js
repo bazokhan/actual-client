@@ -3,13 +3,7 @@ import React, { useState, useMemo } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-import {
-  FaCaretRight,
-  FaCaretDown,
-  FaExclamationCircle,
-  FaAngleLeft,
-  FaAngleRight
-} from 'react-icons/fa';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 import { n } from 'helpers/mathHelpers';
 import FILTERS from 'App/constants/Filters';
 import styles from './Sidebar.module.scss';

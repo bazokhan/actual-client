@@ -14,6 +14,8 @@ import TransactionInput from './components/TransactionInput';
 import sidebarGql from './gql/sidebar.gql';
 
 const colors = [
+  '#26de80',
+  '#de4663',
   '#1382eb',
   '#EB2226',
   '#DE4400',
@@ -32,12 +34,34 @@ const colors = [
   '#51C9B0'
 ];
 
-const accountColors = ['#000000', '#666666', '#999999'];
+const payeeColors = [
+  '#26de80',
+  '#de4663',
+  '#1382eb',
+  '#EB2226',
+  '#DE4400',
+  '#0C8810',
+  '#056DBA',
+  '#0E9447',
+  '#9324A2',
+  '#565451',
+  '#C9205D',
+  '#D63B40',
+  '#F96F07',
+  '#394960',
+  '#C43A2D',
+  '#D95405',
+  '#4EB49F',
+  '#51C9B0'
+];
+
+// const accountColors = ['#000000', '#666666', '#999999'];
+const accountColors = ['#43a5f2', '#056DBA', '#394960'];
 const Home = () => {
   const listRef = useRef(null);
   const [show, setShow] = useState(false);
 
-  const { data, error } = useQuery(transactionsGql, {
+  const { data, loading, error } = useQuery(transactionsGql, {
     fetchPolicy: 'cache-and-network'
   });
 
@@ -47,6 +71,7 @@ const Home = () => {
 
   const categories = useMemo(() => sidebarData?.categories, [sidebarData]);
   const accounts = useMemo(() => sidebarData?.accounts, [sidebarData]);
+  const payees = useMemo(() => sidebarData?.payees, [sidebarData]);
 
   const transactions = useMemo(
     () =>
@@ -67,7 +92,7 @@ const Home = () => {
     [data]
   );
 
-  const loading = useMemo(() => !transactions && !data, [transactions, data]);
+  // const loading = useMemo(() => !transactions && !data, [transactions, data]);
 
   const {
     filteredTransactions,
@@ -79,6 +104,7 @@ const Home = () => {
 
   const Row = memo(({ data: transactionsList, index, style }) => {
     const transaction = transactionsList[index];
+    const isOdd = index % 2;
     const transactionIndex = categories.reduce((prev, c, i) => {
       if (c?.id === transaction?.category?.id) {
         return i;
@@ -91,16 +117,31 @@ const Home = () => {
       }
       return prev;
     }, 0);
+    const payeeIndex = payees.reduce((prev, p, i) => {
+      if (p?.id === transaction?.payee?.id) {
+        return i;
+      }
+      return prev;
+    }, 0);
     return (
-      <div key={transaction.id} style={style}>
+      <div key={transaction.id}>
         <Transaction
           filters={filterValues}
           transaction={transaction}
-          // tagColor={colors[transactionIndex % colors.length]}
-          tagColor={`${colors[0]}${Math.floor(
-            transactionIndex % 10
-          )}${Math.floor(transactionIndex % 10)}`}
+          tagColor={colors[transactionIndex % colors.length]}
+          style={
+            isOdd
+              ? {
+                  ...style,
+                  background: 'linear-gradient(transparent, #F8F6F1)'
+                }
+              : { ...style }
+          }
+          // tagColor={`${colors[0]}${Math.floor(
+          //   transactionIndex % 10
+          // )}${Math.floor(transactionIndex % 10)}`}
           accountColor={accountColors[accountIndex % accountColors.length]}
+          payeeColor={payeeColors[payeeIndex % payeeColors.length]}
         />
       </div>
     );
@@ -113,7 +154,7 @@ const Home = () => {
   };
 
   if (error) return <div className={styles.loading}>Error!</div>;
-  if (loading) return <div className={styles.loading}>Loading</div>;
+  // if (loading) return <div className={styles.loading}>Loading</div>;
 
   return (
     <div className={styles.container}>
@@ -131,24 +172,34 @@ const Home = () => {
           <TransactionsHeader filters={filterValues} sortBy={sortBy} />
         </div>
         <div className={styles.body}>
-          <TransactionInput
-            filters={filterValues}
-            show={show}
-            setShow={setShow}
-          />
+          {show && (
+            <TransactionInput
+              filters={filterValues}
+              onClose={() => setShow(false)}
+            />
+          )}
 
-          <div className={styles.list} ref={listRef}>
-            <List
-              height={listRef?.current?.getClientRects()?.[0]?.height || 340}
-              useIsScrolling
-              itemCount={filteredTransactions.length}
-              itemSize={60}
-              itemData={filteredTransactions}
-              width="100%"
-            >
-              {Row}
-            </List>
-          </div>
+          {loading ? (
+            <div className={styles.placeholder}>
+              <div />
+              <div />
+              <div />
+              <div />
+            </div>
+          ) : (
+            <div className={styles.list} ref={listRef}>
+              <List
+                height={listRef?.current?.getClientRects()?.[0]?.height || 340}
+                useIsScrolling
+                itemCount={filteredTransactions.length}
+                itemSize={60}
+                itemData={filteredTransactions}
+                width="100%"
+              >
+                {Row}
+              </List>
+            </div>
+          )}
         </div>
         <div className={styles.footer}>
           <TransactionFooter

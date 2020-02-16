@@ -1,16 +1,55 @@
-.row {
-  box-sizing: border-box;
-  margin: 0;
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #00000066;
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 100px;
+  z-index: 2;
+}
+
+.modalContent {
+  box-sizing: border-box;
+  margin: 20px 10vw;
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
   justify-content: flex-start;
   align-items: stretch;
   border-bottom: solid 1px #ddd;
-  // background-color: rgba(217, 245, 255, 0.1);
+  background-color: white;
+  padding: 20px;
 
   // &:hover {
   //   background-color: rgba(217, 245, 255, 0.1);
   // }
+
+  form {
+    width: 100%;
+  }
+
+  .row {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+
+    p {
+      color: var(--main-color);
+      width: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: flex-start;
+      padding: 5px 10px;
+      align-items: center;
+      font-weight: 500;
+    }
+  }
 
   .midCell {
     margin: 0;
@@ -23,7 +62,7 @@
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
 
     &.right {
       justify-content: flex-end;
@@ -56,7 +95,7 @@
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
   }
 
   .bigCell {
@@ -70,7 +109,7 @@
     font-size: 13px;
     color: #333;
     padding: 5px 10px;
-    border-right: solid 1px #eee;
+    // border-right: solid 1px #eee;
 
     &[contenteditable='true'] {
       &:hover {
@@ -82,4 +121,49 @@
       }
     }
   }
+}
+
+.primaryButton {
+  cursor: pointer;
+  border: solid 1px transparent;
+  background: var(--main-color);
+  padding: 5px 10px;
+  color: white;
+
+  &:hover {
+    box-shadow: 0 3px 6px 0 #00000032;
+  }
+}
+
+.secondaryButton {
+  cursor: pointer;
+  border: solid 1px var(--main-color);
+  background: white;
+  padding: 5px 10px;
+  color: var(--main-color);
+
+  &:hover {
+    box-shadow: 0 3px 6px 0 #00000032;
+  }
+}
+
+.linkIconButton {
+  cursor: pointer;
+  border: solid 1px transparent;
+  background: none;
+  padding: 5px 10px;
+  color: var(--light-main-color);
+  width: 40px;
+  height: 40px;
+  margin: 0 10px 0 auto;
+
+  &:hover {
+    color: var(--main-color);
+  }
+}
+
+.modalTitle {
+  color: var(--main-color);
+  margin: 5px auto 5px 10px;
+  font-size: 16px;
 }

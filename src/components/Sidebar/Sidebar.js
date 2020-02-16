@@ -8,9 +8,7 @@ import {
   FaChartBar,
   FaExclamationTriangle,
   FaSignOutAlt,
-  // FaTimes,
   FaFileAlt,
-  FaBars,
   FaAngleLeft,
   FaAngleRight
 } from 'react-icons/fa';

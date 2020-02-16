@@ -1,20 +1,82 @@
 .headerContainer {
   display: flex;
   width: 100%;
-  flex-direction: column;
+  // flex-direction: column;
+  flex-wrap: wrap;
   justify-content: flex-start;
-  align-items: stretch;
+  align-items: flex-start;
   border-bottom: solid 1px #ddd;
 
-  .transactionNum {
+  .title {
+    // flex-grow: 1;
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding: 10px 20px;
+    width: 100%;
 
-    padding: 10px;
+    h1 {
+      font-size: 24px;
+      font-weight: 500;
+      color: #102a43;
+      margin: 0;
+      color: var(--main-color);
+
+      &::first-letter {
+        text-transform: uppercase;
+      }
+    }
+
+    p {
+      margin: 0;
+      // margin-left: 10px;
+    }
+  }
+
+  .headerCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px;
+    box-shadow: 0 3px 6px 0 #00000032;
+    margin: 10px 20px;
+
+    span {
+      color: var(--light-main-color);
+    }
 
     & p {
       font-size: 14px;
       margin: 0 3px;
+
+      &:first-of-type {
+        color: var(--main-color);
+        font-weight: 900;
+      }
+    }
+  }
+
+  .headerLastCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px;
+    background-color: var(--main-color);
+    box-shadow: 0 3px 6px 0 var;
+    margin: 10px 20px;
+    margin-left: auto;
+    margin-right: 20px;
+
+    span {
+      color: white;
+    }
+
+    & p {
+      font-size: 14px;
+      margin: 0 3px;
+      color: white;
 
       &:first-of-type {
         font-weight: 900;
@@ -22,61 +84,39 @@
     }
   }
 
-  .title {
-    flex-grow: 1;
+  // .dateFilter {
+  //   min-height: 40px;
+  //   box-sizing: border-box;
+  //   display: flex;
+  //   justify-content: center;
+
+  //   & p {
+  //     font-size: 12px;
+  //     margin: 3px;
+  //   }
+  // }
+
+  .headerRow {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 10px 0 0;
-
-    & h1 {
-      font-size: 24px;
-      font-weight: 500;
-      color: #102a43;
-      margin: 0;
-
-      &::first-letter {
-        text-transform: uppercase;
-      }
-    }
-  }
-
-  .dateFilter {
-    min-height: 40px;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: center;
-
-    & p {
-      font-size: 12px;
-      margin: 3px;
-    }
-  }
-
-  .totalsRow {
-    display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
+    padding: 10px 20px;
+    margin: 10px 0;
 
-    .balance {
+    .addButton {
+      border: none;
+      padding: 5px 10px;
+      background-color: var(--light-main-color);
+      color: white;
       display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      margin: 10px;
+      justify-content: center;
+      cursor: pointer;
 
-      & h2 {
-        font-size: 13px;
-        font-weight: 100;
-        color: #486581;
-        margin: 0 0 5px;
-      }
-
-      & p {
-        font-size: 18px;
-        margin: 0;
-        padding: 0;
+      &:hover {
+        background-color: var(--main-color);
+        box-shadow: 0 3px 6px 0 #00000032;
       }
     }
   }
