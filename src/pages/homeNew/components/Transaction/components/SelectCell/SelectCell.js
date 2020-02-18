@@ -11,36 +11,73 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
   const customStyles = {
     container: originalStyles => ({
       ...originalStyles,
+      outline: 'none',
+      border: 'none',
       width: '100%',
-      border: 'dashed 1px var(--main-color)'
+      // border: 'dashed 1px var(--main-color)',
+      zIndex: '5',
+      boxSizing: 'border-box',
+      margin: 'var(--size-0) var(--size-2)'
     }),
     control: originalStyles => ({
       ...originalStyles,
-      color: 'var(--main-color)'
+      border: 'dashed 2px var(--main-color)',
+      borderRadius: '0',
+      outline: 'none',
+      color: 'var(--main-color)',
+      boxSizing: 'border-box',
+      boxShadow: 'none'
     }),
     input: originalStyles => ({
       ...originalStyles,
+      border: 'none',
+      outline: 'none',
+      color: 'var(--main-color)',
+      boxSizing: 'border-box',
+      justifyConetn: 'flex-start',
+      display: 'flex'
+    }),
+    singleValue: originalStyles => ({
+      ...originalStyles,
+      justifyConetn: 'flex-start',
+      display: 'flex',
       color: 'var(--main-color)'
     }),
+    placeholder: originalStyles => ({
+      ...originalStyles,
+      justifyConetn: 'flex-start',
+      display: 'flex'
+    }),
+    option: (originalStyles, { isSelected }) => ({
+      ...originalStyles,
+      color: isSelected ? 'white' : 'var(--main-color)',
+      textAlign: 'right',
+      cursor: 'pointer'
+    }),
     menu: originalStyles => ({
-      ...originalStyles
+      ...originalStyles,
+      background: 'white'
+    }),
+    dropdownIndicator: originalStyles => ({
+      ...originalStyles,
+      color: 'var(--light-main-color)',
+      cursor: 'pointer',
+      ':hover': {
+        color: 'var(--main-color)'
+      }
     })
   };
 
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef();
-  const [selectedOption, setSelectedOption] = useState(defaultValue);
+  // const [selectedOption, setSelectedOption] = useState(defaultValue);
 
   useEffect(() => {
     if (editMode && inputRef && inputRef.current && inputRef.current.focus) {
       inputRef.current.focus();
     }
   }, [inputRef, editMode]);
-
-  // useEffect(() => {
-  //   setLoading(false);
-  // }, [defaultValue]);
 
   return editMode ? (
     <div
@@ -52,30 +89,36 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
     >
       <Select
         ref={inputRef}
-        onBlur={async () => {
+        onBlur={() => {
+          // setLoading(true);
+          // try {
+          //   await mutate(selectedOption);
+          // } catch (ex) {
+          //   console.log(ex);
+          // }
+          // setLoading(false);
+          setEditMode(false);
+        }}
+        value={defaultValue}
+        onChange={async opt => {
+          console.log('Triggered');
           setLoading(true);
           try {
-            await mutate(selectedOption);
+            await mutate(opt);
           } catch (ex) {
             console.log(ex);
           }
           setLoading(false);
           setEditMode(false);
         }}
-        value={selectedOption}
-        onChange={opt => setSelectedOption(opt)}
         options={options}
         styles={customStyles}
-        defaultMenuIsOpen
+        // defaultMenuIsOpen
       />
     </div>
   ) : (
     <div
-      className={cx(
-        className,
-        styles.selectCell,
-        loading ? styles.loading : ''
-      )}
+      className={cx(className, styles.valueCell, loading ? styles.loading : '')}
       onClick={() => setEditMode(true)}
       onFocus={() => setEditMode(true)}
       tabIndex={0}

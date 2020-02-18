@@ -1,0 +1,81 @@
+.placeholder {
+  --base-color: var(--light-gray-color);
+  --highlight-color: var(--lightest-gray-color);
+
+  width: 100%;
+  padding: var(--size-3);
+  margin: 0;
+  overflow: hidden;
+
+  > div {
+    --circle-size: 16px;
+    --circle-padding: 8px;
+    --circle-image: radial-gradient(
+      circle var(--circle-size),
+      var(--highlight-color) 99%,
+      transparent 0
+    );
+    --circle-shadow: radial-gradient(
+      circle var(--circle-size),
+      var(--base-color) 99%,
+      transparent 0
+    );
+    --circle-position-x: var(--circle-padding);
+    --circle-position-y: var(--circle-padding);
+
+    --line-image: linear-gradient(
+      90deg,
+      var(--highlight-color) 99%,
+      transparent 0
+    );
+    --line-shadow: linear-gradient(
+      90deg,
+      transparent 0,
+      var(--highlight-color) 50%,
+      transparent 100%
+    );
+    --line-height: 8px;
+    --line-position-x: 48px;
+    --line-position-y: var(--circle-padding);
+
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    background-repeat: no-repeat;
+    background-image: var(--circle-image), var(--line-image), var(--line-image),
+      var(--line-image),
+      linear-gradient(90deg, var(--base-color) 100%, transparent 0);
+    background-size: calc(var(--circle-size) * 2) calc(var(--circle-size) * 2),
+      calc(400px - var(--line-position-x)) var(--line-height),
+      calc(300px - var(--line-position-x)) var(--line-height),
+      calc(350px - var(--line-position-x)) var(--line-height), 100% 100%;
+    background-position: 8px 8px, 48px 4px, 48px 20px, 48px 36px, 0 0;
+    margin: var(--size-1) 0;
+    margin-bottom: var(--size-3);
+    box-shadow: 0 3px 6px 0 var(--base-color);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-image: var(--line-shadow);
+      background-size: 100% 100%;
+      background-position: 0 0;
+
+      animation: progress 1s ease-in-out infinite;
+    }
+  }
+}
+
+@keyframes progress {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, memo, useRef } from 'react';
+import React, { useState, useMemo, memo, useRef, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import { useQuery } from '@apollo/react-hooks';
@@ -7,16 +7,21 @@ import transactionsGql from './gql/transactions.gql';
 import Header from './components/Header';
 import TransactionsHeader from './components/TransactionHeader';
 import Transaction from './components/Transaction';
-import TransactionFooter from './components/TransactionFooter';
 import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import TransactionInput from './components/TransactionInput';
 import sidebarGql from './gql/sidebar.gql';
 import { COLOR_WHEEL, MAIN_COLORS } from '../../App/constants/Colors';
+import WindowDiv from '../../ui/WindowDiv';
+import PlaceholderDiv from '../../ui/PlaceholderDiv';
 
 const Home = () => {
+  const [optionsState, setOptionsState] = useState({
+    sidebar: true,
+    header: true
+  });
   const listRef = useRef(null);
-  const [show, setShow] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const { data, loading, error } = useQuery(transactionsGql, {
     fetchPolicy: 'cache-and-network'
@@ -49,8 +54,6 @@ const Home = () => {
     [data]
   );
 
-  // const loading = useMemo(() => !transactions && !data, [transactions, data]);
-
   const {
     filteredTransactions,
     sortBy,
@@ -62,19 +65,19 @@ const Home = () => {
   const Row = memo(({ data: transactionsList, index, style }) => {
     const transaction = transactionsList[index];
     const isOdd = index % 2;
-    const transactionIndex = categories.reduce((prev, c, i) => {
+    const transactionIndex = categories?.reduce((prev, c, i) => {
       if (c?.id === transaction?.category?.id) {
         return i;
       }
       return prev;
     }, 0);
-    const accountIndex = accounts.reduce((prev, a, i) => {
+    const accountIndex = accounts?.reduce((prev, a, i) => {
       if (a?.id === transaction?.account?.id) {
         return i;
       }
       return prev;
     }, 0);
-    const payeeIndex = payees.reduce((prev, p, i) => {
+    const payeeIndex = payees?.reduce((prev, p, i) => {
       if (p?.id === transaction?.payee?.id) {
         return i;
       }
@@ -94,9 +97,6 @@ const Home = () => {
                 }
               : { ...style }
           }
-          // tagColor={`${colors[0]}${Math.floor(
-          //   transactionIndex % 10
-          // )}${Math.floor(transactionIndex % 10)}`}
           accountColor={MAIN_COLORS[accountIndex % MAIN_COLORS.length]}
           payeeColor={COLOR_WHEEL[payeeIndex % COLOR_WHEEL.length]}
         />
@@ -110,6 +110,17 @@ const Home = () => {
     style: PropTypes.object.isRequired
   };
 
+  const [mode, setMode] = useState('original');
+  const [listHeight, setListHeight] = useState(340);
+
+  useLayoutEffect(() => {
+    setListHeight(
+      console.log(listRef?.current?.getClientRects()) ||
+        listRef?.current?.getClientRects()?.[0]?.height ||
+        340
+    );
+  }, [listRef, mode]);
+
   if (error) return <div className={styles.loading}>Error!</div>;
   // if (loading) return <div className={styles.loading}>Loading</div>;
 
@@ -118,35 +129,43 @@ const Home = () => {
       {/* <button type="button" onClick={reset}>
         Reset all filters
       </button> */}
-      <Sidebar filters={filterValues} filterBy={filterBy} />
+      {optionsState.sidebar && (
+        <Sidebar filters={filterValues} filterBy={filterBy} />
+      )}
       <div className={styles.main}>
         <div className={styles.header}>
           <Header
             filters={filterValues}
             transactions={filteredTransactions}
-            setShow={setShow}
+            setModalOpen={setModalOpen}
+            optionsState={optionsState}
+            setOptionsState={setOptionsState}
           />
           <TransactionsHeader filters={filterValues} sortBy={sortBy} />
         </div>
         <div className={styles.body}>
-          {show && (
+          {modalOpen && (
             <TransactionInput
               filters={filterValues}
-              onClose={() => setShow(false)}
+              onClose={() => setModalOpen(false)}
             />
           )}
 
           {loading ? (
-            <div className={styles.placeholder}>
-              <div />
-              <div />
-              <div />
-              <div />
-            </div>
+            <PlaceholderDiv
+              number={Math.floor(listHeight / 64)}
+              height={listHeight}
+            />
           ) : (
-            <div className={styles.list} ref={listRef}>
+            <WindowDiv
+              ref={listRef}
+              title="Transactions table"
+              onExpand={() => setMode('fullScreen')}
+              onMinimize={() => setMode('minimized')}
+              onRestore={() => setMode('original')}
+            >
               <List
-                height={listRef?.current?.getClientRects()?.[0]?.height || 340}
+                height={listHeight}
                 useIsScrolling
                 itemCount={filteredTransactions.length}
                 itemSize={60}
@@ -155,14 +174,8 @@ const Home = () => {
               >
                 {Row}
               </List>
-            </div>
+            </WindowDiv>
           )}
-        </div>
-        <div className={styles.footer}>
-          <TransactionFooter
-            filters={filterValues}
-            transactions={filteredTransactions}
-          />
         </div>
       </div>
     </div>
