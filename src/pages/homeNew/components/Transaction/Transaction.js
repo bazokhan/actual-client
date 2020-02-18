@@ -8,11 +8,14 @@ import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+import { Tag } from 'ui';
 import styles from './Transaction.module.scss';
 import updateTransactionGql from './gql/updateTransaction.gql';
 import transactionListsGql from './gql/transactionLists.gql';
 import SelectCell from './components/SelectCell';
 import InputCell from './components/InputCell';
+import deleteTransactionGql from './gql/deleteTransaction.gql';
+import transactionsGql from './gql/transactions.gql';
 
 const Transaction = ({
   transaction,
@@ -36,6 +39,12 @@ const Transaction = ({
   } = transaction;
 
   const [updateTransactionMutation] = useMutation(updateTransactionGql);
+  const [deleteTransactionMutation, { loading }] = useMutation(
+    deleteTransactionGql,
+    {
+      refetchQueries: [{ query: transactionsGql }]
+    }
+  );
 
   const amountType = useMemo(() => (amount >= 0 ? 'Deposit' : 'Payment'), [
     amount
@@ -66,9 +75,38 @@ const Transaction = ({
   );
 
   return (
-    <div key={id} className={styles.row} style={style || {}}>
+    <div
+      key={id}
+      className={styles.row}
+      style={loading ? { ...style, opacity: '0.5' } : style}
+    >
       <button
-        onClick={() => console.log(transaction)}
+        onClick={async () => {
+          try {
+            await deleteTransactionMutation({
+              variables: {
+                id
+              },
+              update: (proxy, { data: { deleteTransaction } }) => {
+                // Read the data from our cache for this query.
+                const prevData = proxy.readQuery({ query: transactionsGql });
+                // Write our data back to the cache with the new comment in it
+                proxy.writeQuery({
+                  query: transactionsGql,
+                  data: {
+                    ...prevData,
+                    transactions: prevData.transactions.filter(
+                      t => t.id !== deleteTransaction.id
+                    )
+                  }
+                });
+              }
+            });
+          } catch (ex) {
+            console.log(ex);
+          }
+        }}
+        disabled={loading}
         type="button"
         className={styles.deleteButton}
         tabIndex={-1}
@@ -102,15 +140,9 @@ const Transaction = ({
           }
         }}
       >
-        <div
-          className={styles.tag}
-          style={{
-            backgroundColor: accountColor,
-            boxShadow: `0 3px 6px 0 ${accountColor}32`
-          }}
-        >
+        <Tag type="solid" color={accountColor}>
           {accountName}
-        </div>
+        </Tag>
       </SelectCell>
 
       <SelectCell
@@ -136,15 +168,7 @@ const Transaction = ({
           }
         }}
       >
-        <div
-          className={styles.tag}
-          style={{
-            border: `solid 1px var(--main-color)`,
-            color: payeeColor,
-            display: 'flex',
-            justifyContent: 'space-between'
-          }}
-        >
+        <Tag type="outlined" color={payeeColor} justifyContent="space-between">
           {amountType === 'Payment' ? (
             <FaArrowRight
               style={{ color: 'var(--error-color)', fontWeight: '900' }}
@@ -155,7 +179,7 @@ const Transaction = ({
             />
           )}
           {payeeName}
-        </div>
+        </Tag>
       </SelectCell>
 
       <SelectCell
@@ -181,15 +205,9 @@ const Transaction = ({
           }
         }}
       >
-        <div
-          className={styles.tag}
-          style={{
-            backgroundColor: categoryColor,
-            boxShadow: `0 3px 6px 0 ${categoryColor}32`
-          }}
-        >
+        <Tag type="solid" color={categoryColor}>
           {categoryName}
-        </div>
+        </Tag>
       </SelectCell>
 
       <InputCell
@@ -269,9 +287,9 @@ Transaction.propTypes = {
 };
 
 Transaction.defaultProps = {
-  categoryColor: 'red',
-  accountColor: 'red',
-  payeeColor: 'red',
+  categoryColor: '#eeeeee',
+  accountColor: '#eeeeee',
+  payeeColor: '#eeeeee',
   style: {}
 };
 

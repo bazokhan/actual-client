@@ -1,0 +1,48 @@
+.editable {
+  border: dashed 2px transparent;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+
+  > div {
+    padding: var(--padding-1);
+    border: solid 2px transparent;
+    min-height: var(--size-8);
+    width: 100% !important;
+    outline: none !important;
+
+    &:hover {
+      border: dashed 2px var(--light-gray-color);
+    }
+
+    &:focus {
+      border: dashed 2px var(--main-color);
+      color: var(--main-color) !important;
+    }
+  }
+
+  > form {
+    width: 100%;
+
+    input {
+      margin: 0 !important;
+      padding: var(--padding-1) !important;
+      box-sizing: border-box !important;
+      border: solid 2px transparent;
+      display: block;
+      width: 100% !important;
+      outline: none !important;
+
+      &:hover {
+        border: dashed 2px #ddd;
+      }
+
+      &:focus {
+        border: dashed 2px var(--main-color);
+        color: var(--main-color) !important;
+      }
+    }
+  }
+}
