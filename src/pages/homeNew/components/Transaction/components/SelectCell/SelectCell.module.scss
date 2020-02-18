@@ -2,8 +2,12 @@
   padding: 0 !important;
   display: flex;
   position: relative;
-  z-index: 2;
-  overflow: visible;
+}
+
+.valueCell {
+  padding: 0 !important;
+  display: flex;
+  position: relative;
 }
 
 .loading {

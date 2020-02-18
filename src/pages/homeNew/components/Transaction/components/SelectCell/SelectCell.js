@@ -12,7 +12,8 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
     container: originalStyles => ({
       ...originalStyles,
       width: '100%',
-      border: 'dashed 1px var(--main-color)'
+      border: 'dashed 1px var(--main-color)',
+      zIndex: '5'
     }),
     control: originalStyles => ({
       ...originalStyles,
@@ -23,7 +24,8 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
       color: 'var(--main-color)'
     }),
     menu: originalStyles => ({
-      ...originalStyles
+      ...originalStyles,
+      background: 'white'
     })
   };
 
@@ -71,11 +73,7 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
     </div>
   ) : (
     <div
-      className={cx(
-        className,
-        styles.selectCell,
-        loading ? styles.loading : ''
-      )}
+      className={cx(className, styles.valueCell, loading ? styles.loading : '')}
       onClick={() => setEditMode(true)}
       onFocus={() => setEditMode(true)}
       tabIndex={0}

@@ -7,7 +7,7 @@ import transactionsGql from './gql/transactions.gql';
 import Header from './components/Header';
 import TransactionsHeader from './components/TransactionHeader';
 import Transaction from './components/Transaction';
-import TransactionFooter from './components/TransactionFooter';
+// import TransactionFooter from './components/TransactionFooter';
 import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import TransactionInput from './components/TransactionInput';
@@ -15,8 +15,12 @@ import sidebarGql from './gql/sidebar.gql';
 import { COLOR_WHEEL, MAIN_COLORS } from '../../App/constants/Colors';
 
 const Home = () => {
+  const [optionsState, setOptionsState] = useState({
+    sidebar: true,
+    header: true
+  });
   const listRef = useRef(null);
-  const [show, setShow] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
   const { data, loading, error } = useQuery(transactionsGql, {
     fetchPolicy: 'cache-and-network'
@@ -48,8 +52,6 @@ const Home = () => {
         : [],
     [data]
   );
-
-  // const loading = useMemo(() => !transactions && !data, [transactions, data]);
 
   const {
     filteredTransactions,
@@ -118,21 +120,25 @@ const Home = () => {
       {/* <button type="button" onClick={reset}>
         Reset all filters
       </button> */}
-      <Sidebar filters={filterValues} filterBy={filterBy} />
+      {optionsState.sidebar && (
+        <Sidebar filters={filterValues} filterBy={filterBy} />
+      )}
       <div className={styles.main}>
         <div className={styles.header}>
           <Header
             filters={filterValues}
             transactions={filteredTransactions}
-            setShow={setShow}
+            setModalOpen={setModalOpen}
+            optionsState={optionsState}
+            setOptionsState={setOptionsState}
           />
           <TransactionsHeader filters={filterValues} sortBy={sortBy} />
         </div>
         <div className={styles.body}>
-          {show && (
+          {modalOpen && (
             <TransactionInput
               filters={filterValues}
-              onClose={() => setShow(false)}
+              onClose={() => setModalOpen(false)}
             />
           )}
 
@@ -158,12 +164,12 @@ const Home = () => {
             </div>
           )}
         </div>
-        <div className={styles.footer}>
+        {/* <div className={styles.footer}>
           <TransactionFooter
             filters={filterValues}
             transactions={filteredTransactions}
           />
-        </div>
+        </div> */}
       </div>
     </div>
   );
