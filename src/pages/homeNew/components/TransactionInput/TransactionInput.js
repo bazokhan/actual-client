@@ -184,7 +184,7 @@ const TransactionInput = ({ onClose, filters }) => {
                 dateFormat="dd-MM-yyyy"
                 selected={inputDate}
                 onChange={date => {
-                  console.log(date);
+                  // console.log(date);
                   setDate(date);
                 }}
                 customInput={<ExampleCustomInput />}

@@ -1,35 +1,28 @@
-/* eslint-disable no-nested-ternary */
-/* eslint-disable jsx-a11y/no-noninteractive-tabindex */
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable no-restricted-globals */
 import React, { useMemo } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import { FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import { Tag } from 'ui';
+import { COLOR_WHEEL, MAIN_COLORS } from 'App/constants/Colors';
+import TableRow from 'ui/TableRow/TableRow';
 import styles from './Transaction.module.scss';
 import updateTransactionGql from './gql/updateTransaction.gql';
-import transactionListsGql from './gql/transactionLists.gql';
 import SelectCell from './components/SelectCell';
 import InputCell from './components/InputCell';
 import deleteTransactionGql from './gql/deleteTransaction.gql';
 import transactionsGql from './gql/transactions.gql';
-import TableRow from '../../../../ui/TableRow/TableRow';
 
 const Transaction = ({
-  transaction,
-  filters,
-  categoryColor,
-  accountColor,
-  payeeColor,
-  style
+  item: transaction,
+  style,
+  accounts,
+  categories,
+  payees,
+  filterValues
 }) => {
-  const { data } = useQuery(transactionListsGql, {
-    fetchPolicy: 'cache-and-network'
-  });
   const {
     id,
     amount,
@@ -52,28 +45,65 @@ const Transaction = ({
     amount
   ]);
 
-  const accounts = useMemo(
-    () =>
-      data && data.accounts
-        ? data.accounts.map(a => ({ label: a.name, value: a.id }))
-        : [],
-    [data]
+  const accountOptions = useMemo(
+    () => accounts?.map(a => ({ label: a.name, value: a.id })) || [],
+    [accounts]
   );
 
-  const payees = useMemo(
-    () =>
-      data && data.payees
-        ? data.payees.map(a => ({ label: a.name, value: a.id }))
-        : [],
-    [data]
+  const payeeOptions = useMemo(
+    () => payees?.map(a => ({ label: a.name, value: a.id })) || [],
+    [payees]
   );
 
-  const categories = useMemo(
+  const categoryOptions = useMemo(
+    () => categories?.map(a => ({ label: a.name, value: a.id })) || [],
+    [categories]
+  );
+
+  const categoryIndex = useMemo(
     () =>
-      data && data.categories
-        ? data.categories.map(a => ({ label: a.name, value: a.id }))
-        : [],
-    [data]
+      categories?.reduce((prev, c, i) => {
+        if (c?.id === transaction?.category?.id) {
+          return i;
+        }
+        return prev;
+      }, 0),
+    [categories, transaction]
+  );
+  const accountIndex = useMemo(
+    () =>
+      accounts?.reduce((prev, a, i) => {
+        if (a?.id === transaction?.account?.id) {
+          return i;
+        }
+        return prev;
+      }, 0),
+    [accounts, transaction]
+  );
+  const payeeIndex = useMemo(
+    () =>
+      payees?.reduce((prev, p, i) => {
+        if (p?.id === transaction?.payee?.id) {
+          return i;
+        }
+        return prev;
+      }, 0),
+    [payees, transaction]
+  );
+
+  const categoryColor = useMemo(
+    () => COLOR_WHEEL[categoryIndex % COLOR_WHEEL.length] || '#eeeeee',
+    [categoryIndex]
+  );
+
+  const accountColor = useMemo(
+    () => MAIN_COLORS[accountIndex % MAIN_COLORS.length] || '#eeeeee',
+    [accountIndex]
+  );
+
+  const payeeColor = useMemo(
+    () => COLOR_WHEEL[payeeIndex % COLOR_WHEEL.length] || '#eeeeee',
+    [payeeIndex]
   );
 
   const handleDeleteTransaction = async () => {
@@ -221,7 +251,7 @@ const Transaction = ({
             label: transaction.account.name,
             value: transaction.account.id
           }}
-          options={accounts}
+          options={accountOptions}
           color={accountColor}
           mutate={handleUpdateAccount}
         >
@@ -240,7 +270,7 @@ const Transaction = ({
             label: transaction.payee.name,
             value: transaction.payee.id
           }}
-          options={payees}
+          options={payeeOptions}
           color={payeeColor}
           mutate={handleUpdatePayee}
         >
@@ -272,7 +302,7 @@ const Transaction = ({
             label: transaction.category.name,
             value: transaction.category.id
           }}
-          options={categories}
+          options={categoryOptions}
           color={categoryColor}
           mutate={handleUpdateCategory}
         >
@@ -292,7 +322,7 @@ const Transaction = ({
     {
       name: 'payment',
       size: 'md',
-      condition: () => filters.type === 'Payment' || !filters.type,
+      condition: () => filterValues?.type === 'Payment' || !filterValues?.type,
       component: (
         <InputCell
           className={styles.right}
@@ -307,7 +337,7 @@ const Transaction = ({
     {
       name: 'deposit',
       size: 'md',
-      condition: () => filters.type === 'Deposit' || !filters.type,
+      condition: () => filterValues?.type === 'Deposit' || !filterValues?.type,
       component: (
         <InputCell
           className={styles.right}
@@ -329,18 +359,15 @@ const Transaction = ({
 };
 
 Transaction.propTypes = {
-  transaction: PropTypes.object.isRequired,
-  filters: PropTypes.object.isRequired,
-  categoryColor: PropTypes.string,
-  accountColor: PropTypes.string,
-  payeeColor: PropTypes.string,
+  item: PropTypes.object.isRequired,
+  accounts: PropTypes.array.isRequired,
+  categories: PropTypes.array.isRequired,
+  payees: PropTypes.array.isRequired,
+  filterValues: PropTypes.object.isRequired,
   style: PropTypes.object
 };
 
 Transaction.defaultProps = {
-  categoryColor: '#eeeeee',
-  accountColor: '#eeeeee',
-  payeeColor: '#eeeeee',
   style: {}
 };
 

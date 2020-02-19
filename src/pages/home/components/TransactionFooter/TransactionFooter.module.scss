@@ -1,0 +1,65 @@
+.row {
+  box-sizing: border-box;
+  margin: 0;
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: stretch;
+  border-bottom: solid 1px #ddd;
+
+  .midCell {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 100px;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 13px;
+    color: #333;
+    padding: 5px 10px;
+    border-right: solid 1px #eee;
+    font-weight: 900;
+
+    &.right {
+      justify-content: flex-end;
+    }
+  }
+
+  .normCell {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 170px;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 13px;
+    color: #333;
+    padding: 5px 10px;
+    border-right: solid 1px #eee;
+    font-weight: 900;
+  }
+
+  .bigCell {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 250px;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 13px;
+    color: #333;
+    padding: 5px 10px;
+    border-right: solid 1px #eee;
+    font-weight: 900;
+  }
+}
+
+.payment {
+  color: var(--error-color) !important;
+}
+.deposit {
+  color: var(--success-color) !important;
+}

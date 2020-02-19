@@ -29,7 +29,7 @@ SortButton.propTypes = {
   text: PropTypes.string.isRequired
 };
 
-const TransactionsHeader = ({ sortBy, filters }) => {
+const TransactionsHeader = ({ sortBy, filterValues }) => {
   return (
     <div className={styles.row}>
       <div style={{ width: '30px' }} />
@@ -42,7 +42,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
           );
         }}
       />
-      {!filters.account && (
+      {!filterValues?.account && (
         <SortButton
           text="Account"
           className={cx(styles.cell, styles.midCell)}
@@ -80,7 +80,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
         }}
       />
 
-      {(filters.type === 'Payment' || !filters.type) && (
+      {(filterValues?.type === 'Payment' || !filterValues?.type) && (
         <SortButton
           text="Payment"
           className={cx(styles.cell, styles.midCell)}
@@ -91,7 +91,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
           }}
         />
       )}
-      {(filters.type === 'Deposit' || !filters.type) && (
+      {(filterValues?.type === 'Deposit' || !filterValues?.type) && (
         <SortButton
           text="Deposit"
           className={cx(styles.cell, styles.midCell)}
@@ -108,7 +108,7 @@ const TransactionsHeader = ({ sortBy, filters }) => {
 
 TransactionsHeader.propTypes = {
   sortBy: PropTypes.func.isRequired,
-  filters: PropTypes.object.isRequired
+  filterValues: PropTypes.object.isRequired
 };
 
 export default TransactionsHeader;
