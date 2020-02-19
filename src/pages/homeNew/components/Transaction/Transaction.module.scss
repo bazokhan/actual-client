@@ -1,110 +1,32 @@
 .row {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 10px 0;
-  display: flex;
-  width: 100%;
-  justify-content: flex-start;
-  align-items: stretch;
-  border-bottom: solid 1px #ddd;
-  height: 60px;
-  overflow-y: visible;
-
   &:hover {
-    box-shadow: 0 3px 6px 0 #00000064;
-    // background-color: #00000016;
-  }
-
-  .deleteButton {
-    background: none;
-    margin: 0;
-    padding: 0;
-    opacity: 0;
-    font-size: 12px;
-    width: 30px;
-    font-weight: 600;
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    // border-right: solid 1px #eee;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
-
-  &:hover {
-    background-color: rgba(217, 245, 255, 0.1);
     .deleteButton {
       opacity: 0.5;
     }
   }
 
-  .midCell {
-    margin: 0;
-    box-sizing: border-box;
-    flex-grow: 1;
-    width: 100px;
+  .deleteButton {
+    padding: 0;
+    opacity: 0;
+    font-size: 12px;
+    width: 100%;
+    font-weight: 600;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    font-size: 13px;
-    color: #333;
-    padding: 5px 10px;
-    // border-right: solid 1px #eee;
 
-    &.right {
-      justify-content: flex-end;
-    }
-
-    &[contenteditable='true'] {
-      &:hover {
-        background-color: rgba(217, 245, 255, 0.5);
-      }
-
-      &:focus {
-        background-color: rgba(217, 245, 255, 0.5);
-      }
+    &:hover {
+      opacity: 1;
     }
   }
+}
 
-  .normCell {
-    margin: 0;
-    box-sizing: border-box;
-    flex-grow: 1;
-    width: 170px;
-    display: flex;
-    justify-content: flex-start;
-    font-size: 13px;
-    color: #333;
-    padding: 5px 10px;
-    // border-right: solid 1px #eee;
-  }
+.loading {
+  opacity: 0.5;
+}
 
-  .bigCell {
-    margin: 0;
-    box-sizing: border-box;
-    flex-grow: 1;
-    width: 250px;
-    display: flex;
-    justify-content: flex-start;
-    font-size: 13px;
-    color: #333;
-    padding: 5px 10px;
-    // border-right: solid 1px #eee;
-
-    &[contenteditable='true'] {
-      &:hover {
-        background-color: rgba(217, 245, 255, 0.5);
-      }
-
-      &:focus {
-        background-color: rgba(217, 245, 255, 0.5);
-      }
-    }
-  }
+.right {
+  justify-content: flex-end;
 }
 
 .tag {

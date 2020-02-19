@@ -14,7 +14,6 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
       outline: 'none',
       border: 'none',
       width: '100%',
-      // border: 'dashed 1px var(--main-color)',
       zIndex: '5',
       boxSizing: 'border-box',
       margin: 'var(--size-0) var(--size-2)'
@@ -71,13 +70,23 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef();
-  // const [selectedOption, setSelectedOption] = useState(defaultValue);
 
   useEffect(() => {
     if (editMode && inputRef && inputRef.current && inputRef.current.focus) {
       inputRef.current.focus();
     }
   }, [inputRef, editMode]);
+
+  const onChange = async opt => {
+    setLoading(true);
+    try {
+      await mutate(opt);
+    } catch (ex) {
+      console.log(ex);
+    }
+    setLoading(false);
+    setEditMode(false);
+  };
 
   return editMode ? (
     <div
@@ -89,31 +98,11 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
     >
       <Select
         ref={inputRef}
-        onBlur={() => {
-          // setLoading(true);
-          // try {
-          //   await mutate(selectedOption);
-          // } catch (ex) {
-          //   console.log(ex);
-          // }
-          // setLoading(false);
-          setEditMode(false);
-        }}
+        onBlur={() => setEditMode(false)}
         value={defaultValue}
-        onChange={async opt => {
-          console.log('Triggered');
-          setLoading(true);
-          try {
-            await mutate(opt);
-          } catch (ex) {
-            console.log(ex);
-          }
-          setLoading(false);
-          setEditMode(false);
-        }}
+        onChange={onChange}
         options={options}
         styles={customStyles}
-        // defaultMenuIsOpen
       />
     </div>
   ) : (
@@ -130,10 +119,14 @@ const SelectCell = ({ className, defaultValue, options, children, mutate }) => {
 
 SelectCell.propTypes = {
   defaultValue: PropTypes.object.isRequired,
-  className: PropTypes.string.isRequired,
+  className: PropTypes.string,
   mutate: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
   children: PropTypes.node.isRequired
+};
+
+SelectCell.defaultProps = {
+  className: ''
 };
 
 export default SelectCell;
