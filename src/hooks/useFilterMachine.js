@@ -32,7 +32,10 @@ const useFilterMachine = transactions => {
   });
 
   const unfilteredState = {
-    sort: [t => numerizeDate(t.date), sorters.sortNumsDescending],
+    sort: [
+      t => (t.date && typeof t.date === 'string' ? numerizeDate(t.date) : t),
+      sorters.sortNumsDescending
+    ],
     account: t => t,
     after: t => t,
     before: t => t,

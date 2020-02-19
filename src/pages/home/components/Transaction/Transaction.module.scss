@@ -1,11 +1,13 @@
 .row {
-  box-sizing: border-box;
+  box-sizing: border-box !important;
   margin: 0;
   display: flex;
   width: 100%;
   justify-content: flex-start;
   align-items: stretch;
   border-bottom: solid 1px #ddd;
+  height: 30 !important;
+  overflow: hidden;
 
   .midCell {
     margin: 0;

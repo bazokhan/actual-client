@@ -90,7 +90,14 @@ const Home = () => {
             <Table
               data={filteredTransactions}
               loading={loading}
-              context={{ categories, accounts, payees, filterValues, sortBy }}
+              context={{
+                categories,
+                accounts,
+                payees,
+                filterValues,
+                sortBy,
+                reset
+              }}
               header={TransactionsHeader}
               row={Transaction}
             />

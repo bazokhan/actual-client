@@ -6,7 +6,12 @@ import { dateStringFromIsoString } from 'helpers/dateHelpers';
 import { n } from 'helpers/mathHelpers';
 import styles from './Transaction.module.scss';
 
-const Transaction = ({ transaction, activeAccount, activeType }) => {
+const Transaction = ({
+  item: transaction,
+  activeAccount,
+  activeType,
+  style
+}) => {
   const {
     id,
     account,
@@ -22,7 +27,7 @@ const Transaction = ({ transaction, activeAccount, activeType }) => {
   const isTransfer = useMemo(() => transferAccount.id, [transferAccount]);
 
   return (
-    <div key={id} className={styles.row}>
+    <div key={id} className={styles.row} style={style}>
       <div className={styles.midCell}>
         {dateStringFromIsoString(dateString, 'DMY')}
       </div>
@@ -49,14 +54,16 @@ const Transaction = ({ transaction, activeAccount, activeType }) => {
 };
 
 Transaction.propTypes = {
-  transaction: PropTypes.object.isRequired,
+  item: PropTypes.object.isRequired,
   activeAccount: PropTypes.string,
-  activeType: PropTypes.string
+  activeType: PropTypes.string,
+  style: PropTypes.object
 };
 
 Transaction.defaultProps = {
   activeAccount: null,
-  activeType: ''
+  activeType: '',
+  style: {}
 };
 
 export default Transaction;

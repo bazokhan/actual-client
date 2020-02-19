@@ -9,7 +9,6 @@ import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
 import { sortAmountsByAccount } from 'helpers';
 
-// import Navbar from 'components/Navbar';
 import Sidebar from 'components/Sidebar';
 
 import mapSort from 'mapsort';
@@ -21,16 +20,15 @@ import client from './client';
 import AuthRoute from './AuthRoute';
 
 const routes = {
-  AuthPage: lazy(() => import('pages/auth')),
-  PivotPage: lazy(() => import('pages/pivot')),
-  PivotNew: lazy(() => import('pages/pivotNew')),
-  MigratePage: lazy(() => import('pages/migrate')),
-  CategoryPage: lazy(() => import('pages/category')),
   AdminPage: lazy(() => import('pages/admin')),
+  AuthPage: lazy(() => import('pages/auth')),
+  CategoryPage: lazy(() => import('pages/category')),
+  HistoryPage: lazy(() => import('pages/history')),
   HomePage: lazy(() => import('pages/home')),
   HomeNew: lazy(() => import('pages/homeNew')),
-  HistoryPage: lazy(() => import('pages/history')),
+  MigratePage: lazy(() => import('pages/migrate')),
   OrderPage: lazy(() => import('pages/order')),
+  PivotPage: lazy(() => import('pages/pivot')),
   ReportsPage: lazy(() => import('pages/reports'))
 };
 
@@ -288,16 +286,6 @@ const App = () => {
     searchString
   ]);
 
-  // useEffect(() => {
-  //   document.addEventListener(
-  //     'focusin',
-  //     function() {
-  //       console.log('focused: ', document.activeElement);
-  //     },
-  //     true
-  //   );
-  // }, []);
-
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
   return (
@@ -307,29 +295,39 @@ const App = () => {
           <div className={styles.container}>
             <Sidebar />
             <div className={styles.main}>
-              {/* <Navbar
-                activeTransactions={activeTransactions}
-                activeAccount={activeAccount}
-                activeType={activeType}
-              /> */}
               <Suspense
                 fallback={<div className={styles.loading}>Loading..</div>}
               >
                 <Switch>
-                  <Route path="/auth" component={routes.AuthPage} />
-                  <AuthRoute path="/admin" component={routes.AdminPage} />
-                  <AuthRoute path="/order" component={routes.OrderPage} />
-                  <AuthRoute path="/newHome" component={routes.HomeNew} />
-                  <AuthRoute path="/migrate" component={routes.MigratePage} />
-                  <AuthRoute path="/history" component={routes.HistoryPage} />
+                  <AuthRoute path="/admin" exact component={routes.AdminPage} />
+                  <Route path="/auth" exact component={routes.AuthPage} />
                   <AuthRoute
                     path="/pivot/:categoryid"
+                    exact
                     component={routes.CategoryPage}
                   />
-                  <AuthRoute path="/pivot" component={routes.PivotPage} />
-                  {/* <AuthRoute path="/newPivot" component={routes.PivotNew} /> */}
+                  <AuthRoute
+                    path="/history"
+                    exact
+                    component={routes.HistoryPage}
+                  />
+                  <AuthRoute path="/" exact component={routes.HomePage} />
+                  <AuthRoute path="/newHome" exact component={routes.HomeNew} />
+                  <AuthRoute
+                    path="/migrate"
+                    exact
+                    component={routes.MigratePage}
+                  />
+                  <AuthRoute path="/order" exact component={routes.OrderPage} />
+                  <AuthRoute path="/pivot" exact component={routes.PivotPage} />
                   <AuthRoute path="/reports" component={routes.ReportsPage} />
-                  <AuthRoute path="/" component={routes.HomePage} />
+                  <AuthRoute
+                    path="/:notfound"
+                    exact
+                    component={() => (
+                      <div className={styles.loading}>404! Not found</div>
+                    )}
+                  />
                 </Switch>
               </Suspense>
             </div>

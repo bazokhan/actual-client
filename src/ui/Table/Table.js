@@ -42,7 +42,15 @@ Row.defaultProps = {
   context: {}
 };
 
-const Table = ({ data, loading, context, header: Header, row }) => {
+const Table = ({
+  title,
+  data,
+  loading,
+  context,
+  header: Header,
+  row,
+  rowHeight
+}) => {
   const listRef = useRef(null);
   const [mode, setMode] = useState('original');
   const [listHeight, setListHeight] = useState(window.innerHeight);
@@ -58,7 +66,7 @@ const Table = ({ data, loading, context, header: Header, row }) => {
   ) : (
     <WindowDiv
       ref={listRef}
-      title="Transactions table"
+      title={title}
       onExpand={() => setMode('fullScreen')}
       onMinimize={() => setMode('minimized')}
       onRestore={() => setMode('original')}
@@ -68,7 +76,7 @@ const Table = ({ data, loading, context, header: Header, row }) => {
         height={listHeight}
         useIsScrolling
         itemCount={data.length}
-        itemSize={60}
+        itemSize={rowHeight}
         itemData={data}
         width="100%"
       >
@@ -81,17 +89,21 @@ const Table = ({ data, loading, context, header: Header, row }) => {
 };
 
 Table.propTypes = {
+  title: PropTypes.string,
   data: PropTypes.array,
   loading: PropTypes.bool,
   context: PropTypes.object,
+  rowHeight: PropTypes.number,
   header: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   row: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired
 };
 
 Table.defaultProps = {
+  title: '',
   data: [],
   loading: false,
-  context: {}
+  context: {},
+  rowHeight: 60
 };
 
 export default Table;

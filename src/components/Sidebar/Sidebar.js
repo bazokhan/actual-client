@@ -123,7 +123,6 @@ const Sidebar = () => {
           to="/auth/logout"
         >
           <div className={styles.icon}>
-            {' '}
             <FaSignOutAlt />
           </div>
           {isOpen && <span>Log out</span>}
