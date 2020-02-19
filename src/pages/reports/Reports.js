@@ -35,10 +35,14 @@ const Reports = () => {
       <div className={styles.reportsBody}>
         <Suspense fallback={<div>Loading..</div>}>
           <Switch>
-            <Route path="/reports/pivot" component={routes.Pivot} />
-            <Route path="/reports/chart" component={routes.Chart} />
-            <Route path="/reports/monthly" component={routes.Monthly} />
-            <Route path="/reports" component={routes.Pivot} />
+            <Route exact path="/reports/pivot" component={routes.Pivot} />
+            <Route exact path="/reports/chart" component={routes.Chart} />
+            <Route exact path="/reports/monthly" component={routes.Monthly} />
+            <Route exact path="/reports" component={routes.Pivot} />
+            <Route
+              path="/reports/:notfound"
+              component={() => <div>404! Not found.</div>}
+            />
           </Switch>
         </Suspense>
       </div>
