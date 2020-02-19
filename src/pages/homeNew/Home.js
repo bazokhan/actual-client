@@ -111,18 +111,16 @@ const Home = () => {
   };
 
   const [mode, setMode] = useState('original');
-  const [listHeight, setListHeight] = useState(340);
+  const [listHeight, setListHeight] = useState(window.innerHeight);
 
   useLayoutEffect(() => {
-    setListHeight(
-      console.log(listRef?.current?.getClientRects()) ||
-        listRef?.current?.getClientRects()?.[0]?.height ||
-        340
-    );
+    const height = listRef?.current?.getClientRects()?.[0]?.height;
+    if (height) {
+      setListHeight(height);
+    }
   }, [listRef, mode]);
 
   if (error) return <div className={styles.loading}>Error!</div>;
-  // if (loading) return <div className={styles.loading}>Loading</div>;
 
   return (
     <div className={styles.container}>
@@ -141,7 +139,6 @@ const Home = () => {
             optionsState={optionsState}
             setOptionsState={setOptionsState}
           />
-          <TransactionsHeader filters={filterValues} sortBy={sortBy} />
         </div>
         <div className={styles.body}>
           {modalOpen && (
@@ -150,7 +147,6 @@ const Home = () => {
               onClose={() => setModalOpen(false)}
             />
           )}
-
           {loading ? (
             <PlaceholderDiv
               number={Math.floor(listHeight / 64)}
@@ -164,6 +160,7 @@ const Home = () => {
               onMinimize={() => setMode('minimized')}
               onRestore={() => setMode('original')}
             >
+              <TransactionsHeader filters={filterValues} sortBy={sortBy} />
               <List
                 height={listHeight}
                 useIsScrolling
