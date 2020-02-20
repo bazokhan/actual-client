@@ -8,7 +8,11 @@ const Auth = () => {
   return (
     <Switch>
       <Route path="/auth" exact component={Login} />
-      <AuthRoute path="/auth/logout" component={Logout} />
+      <AuthRoute path="/auth/logout" exact component={Logout} />
+      <AuthRoute
+        path="/auth/:notfound"
+        component={<div>404! Not found.</div>}
+      />
     </Switch>
   );
 };

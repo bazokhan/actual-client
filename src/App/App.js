@@ -300,7 +300,7 @@ const App = () => {
               >
                 <Switch>
                   <AuthRoute path="/admin" exact component={routes.AdminPage} />
-                  <Route path="/auth" exact component={routes.AuthPage} />
+                  <Route path="/auth" component={routes.AuthPage} />
                   <AuthRoute
                     path="/pivot/:categoryid"
                     exact
