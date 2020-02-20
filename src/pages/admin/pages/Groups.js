@@ -6,6 +6,7 @@ import styles from '../Admin.module.scss';
 import deleteGroupGql from '../gql/deleteGroup.gql';
 import groupsGql from '../gql/groups.gql';
 import Toast from '../components/Toast';
+import ItemCard from '../../../ui/ItemCard';
 
 const Groups = () => {
   const [viewMode, setViewMode] = useState(
@@ -83,7 +84,11 @@ const Groups = () => {
       ) : (
         <div className={styles.cardsContainer}>
           {groups.map(group => (
-            <div className={styles.card} key={group.id}>
+            <ItemCard
+              key={group.id}
+              title={group.name}
+              style={{ margin: '15px' }}
+            >
               <div className={styles.cardAction}>
                 <button
                   type="button"
@@ -112,7 +117,7 @@ const Groups = () => {
                   <div key={category.id}>{category.name}</div>
                 ))}
               </div>
-            </div>
+            </ItemCard>
           ))}
         </div>
       )}

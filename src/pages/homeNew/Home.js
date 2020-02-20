@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useState, useMemo, forwardRef } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import useFilterMachine from 'hooks/useFilterMachine';
 import transactionsGql from './gql/transactions.gql';

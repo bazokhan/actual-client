@@ -6,6 +6,7 @@ import styles from '../Admin.module.scss';
 import payeesGql from '../gql/payees.gql';
 import deletePayeeGql from '../gql/deletePayee.gql';
 import Toast from '../components/Toast';
+import ItemCard from '../../../ui/ItemCard';
 
 const Payees = () => {
   const [viewMode, setViewMode] = useState(
@@ -76,7 +77,11 @@ const Payees = () => {
       ) : (
         <div className={styles.cardsContainer}>
           {payees.map(payee => (
-            <div className={styles.card} key={payee.id}>
+            <ItemCard
+              key={payee.id}
+              title={payee.name}
+              style={{ margin: '15px' }}
+            >
               <div className={styles.cardAction}>
                 <button
                   type="button"
@@ -97,7 +102,7 @@ const Payees = () => {
               <div className={styles.cardTitle}>{payee.name}</div>
               <div className={styles.cardBody}>{payee.count} Transactions</div>
               <div className={styles.cardBody}>{n(payee.balance)} EGP</div>
-            </div>
+            </ItemCard>
           ))}
         </div>
       )}

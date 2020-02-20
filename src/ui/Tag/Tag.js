@@ -1,27 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './Tag.module.scss';
-
-// https://stackoverflow.com/questions/12043187/how-to-check-if-hex-color-is-too-black
-const isDarkColor = hexCode => {
-  if (!/#/.test(hexCode)) return new Error('Only hex codes are accpetable');
-  const c = hexCode.substring(1); // strip #
-  const rgb = parseInt(c, 16); // convert rrggbb to decimal
-  // eslint-disable-next-line no-bitwise
-  const r = (rgb >> 16) & 0xff; // extract red
-  // eslint-disable-next-line no-bitwise
-  const g = (rgb >> 8) & 0xff; // extract green
-  // eslint-disable-next-line no-bitwise
-  const b = (rgb >> 0) & 0xff; // extract blue
-
-  const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-  if (luma < 140 /* ranges between 0, 255 */) {
-    // pick a different colour
-    return true;
-  }
-  return false;
-};
+import { isDarkColor } from '../../helpers/colorHelpers';
 
 const Tag = ({ type, children, color, justifyContent, style }) => {
   return (

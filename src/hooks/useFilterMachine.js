@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import mapSort from 'mapsort';
 import { numerizeDate } from 'helpers/dateHelpers';
 import FILTERS from 'App/constants/Filters';
@@ -13,29 +13,13 @@ const sortFunctions = {
   [SORTERS.STR_DES]: sorters.sortStringsDescending
 };
 
-const unfilteredState = {
-  sort: [
-    t => (t.date && typeof t.date === 'string' ? numerizeDate(t.date) : t),
-    sorters.sortNumsDescending
-  ],
-  account: t => t,
-  after: t => t,
-  before: t => t,
-  type: t => t,
-  category: t => t,
-  payee: t => t,
-  search: t => t,
-  month: t => t,
-  categories: t => [].includes(t.category.id)
-};
-
 const useFilterMachine = transactions => {
   const unfilteredTransactions = useMemo(
     () =>
       transactions.map(t => ({
         ...t,
         month: `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`
-      })),
+      })) || [],
     [transactions]
   );
 
@@ -125,6 +109,25 @@ const useFilterMachine = transactions => {
     );
   }, [filteredTransactions]);
 
+  const unfilteredState = useMemo(
+    () => ({
+      sort: [
+        t => (t.date && typeof t.date === 'string' ? numerizeDate(t.date) : t),
+        sorters.sortNumsDescending
+      ],
+      account: t => t,
+      after: t => t,
+      before: t => t,
+      type: t => t,
+      category: t => t,
+      payee: t => t,
+      search: t => t,
+      month: t => t,
+      categories: t => t
+    }),
+    [unfilteredLists]
+  );
+
   const [filterValues, setFilterValues] = useState({
     account: null,
     after: null,
@@ -134,7 +137,7 @@ const useFilterMachine = transactions => {
     payee: null,
     search: null,
     month: null,
-    categories: []
+    categories: unfilteredLists?.categories
   });
 
   const [filterFunctions, setFilterFunctions] = useState(unfilteredState);

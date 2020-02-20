@@ -6,6 +6,7 @@ import accountsGql from '../gql/accounts.gql';
 import styles from '../Admin.module.scss';
 import deleteAccountGql from '../gql/deleteAccount.gql';
 import Toast from '../components/Toast';
+import ItemCard from '../../../ui/ItemCard';
 
 const Accounts = () => {
   const [viewMode, setViewMode] = useState(
@@ -76,7 +77,11 @@ const Accounts = () => {
       ) : (
         <div className={styles.cardsContainer}>
           {accounts.map(account => (
-            <div className={styles.card} key={account.id}>
+            <ItemCard
+              key={account.id}
+              title={account.name}
+              style={{ margin: '15px' }}
+            >
               <div className={styles.cardAction}>
                 <button
                   type="button"
@@ -99,7 +104,7 @@ const Accounts = () => {
                 {account.count} Transactions
               </div>
               <div className={styles.cardBody}>{n(account.balance)} EGP</div>
-            </div>
+            </ItemCard>
           ))}
         </div>
       )}

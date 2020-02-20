@@ -11,6 +11,7 @@ import deleteCategoryGql from '../gql/deleteCategory.gql';
 import Toast from '../components/Toast';
 import groupsGql from '../../reports/pages/chart/gql/groups.gql';
 import updateCategoryGql from '../gql/updateCategory.gql';
+import ItemCard from '../../../ui/ItemCard';
 
 const Categories = () => {
   const [editGroup, setEditGroup] = useState('');
@@ -137,7 +138,11 @@ const Categories = () => {
       ) : (
         <div className={styles.cardsContainer}>
           {categories.map(category => (
-            <div className={styles.card} key={category.id}>
+            <ItemCard
+              key={category.id}
+              title={category.name}
+              style={{ margin: '15px' }}
+            >
               <div className={styles.cardAction}>
                 <button
                   type="button"
@@ -163,7 +168,7 @@ const Categories = () => {
               <div className={styles.cardFooter}>
                 Group: {category.group.name}
               </div>
-            </div>
+            </ItemCard>
           ))}
         </div>
       )}

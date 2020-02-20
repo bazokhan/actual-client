@@ -57,7 +57,7 @@ const Admin = () => {
             <Route path="/admin" exact component={routes.Accounts} />
             <Route
               path="/admin/:notfound"
-              component={<div>404! Not found!</div>}
+              component={() => <div>404! Not found!</div>}
             />
           </Switch>
         </Suspense>

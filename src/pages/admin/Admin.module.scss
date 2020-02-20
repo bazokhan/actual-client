@@ -95,7 +95,7 @@
 }
 
 .cardsContainer {
-  padding: 40px;
+  // padding: 40px;
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
@@ -115,37 +115,37 @@
       box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.32);
       background: rgba(0, 0, 0, 0.02);
     }
-
-    .cardAction {
-      padding: 0;
-      margin: 0;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .cardTitle {
-      padding: 10px;
-      font-size: 18px;
-      font-weight: 500;
-      text-align: center;
-      border-bottom: solid 1px #eee;
-      margin-bottom: 5px;
-    }
-
-    .cardBody {
-      padding: 5px 10px;
-      font-size: 14px;
-      text-align: left;
-      margin-bottom: 5px;
-    }
-
-    .cardFooter {
-      padding: 5px 10px;
-      font-size: 14px;
-      font-weight: 500;
-      text-align: left;
-      margin: 5px 0;
-      border-top: solid 1px #eee;
-    }
   }
+}
+
+.cardAction {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.cardTitle {
+  padding: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  border-bottom: solid 1px #eee;
+  margin-bottom: 5px;
+}
+
+.cardBody {
+  padding: 5px 10px;
+  font-size: 14px;
+  text-align: left;
+  margin-bottom: 5px;
+}
+
+.cardFooter {
+  padding: 5px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  margin: 5px 0;
+  border-top: solid 1px #eee;
 }

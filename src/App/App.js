@@ -7,6 +7,7 @@ import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
+import '../fonts/Changa-VariableFont_wght.ttf';
 import { sortAmountsByAccount } from 'helpers';
 
 import Sidebar from 'components/Sidebar';
