@@ -19,6 +19,10 @@ export default gql`
             isIncome
           }
         }
+        payee {
+          id
+          name
+        }
       }
     }
 
