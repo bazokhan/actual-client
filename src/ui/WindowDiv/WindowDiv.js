@@ -5,7 +5,10 @@ import { FaRegWindowRestore, FaWindowMaximize } from 'react-icons/fa';
 import styles from './WindowDiv.module.scss';
 
 const WindowDiv = forwardRef(
-  ({ children, onExpand, onMinimize, onRestore, title }, ref) => {
+  (
+    { children, onExpand, onMinimize, onRestore, title, alwaysShowTitle },
+    ref
+  ) => {
     const [mode, setMode] = useState('original');
     const className = useMemo(
       () =>
@@ -20,7 +23,7 @@ const WindowDiv = forwardRef(
     return (
       <div className={className}>
         <div className={styles.navbar}>
-          {mode === 'fullScreen' && <h2>{title}</h2>}
+          {(mode === 'fullScreen' || alwaysShowTitle) && <h2>{title}</h2>}
           <button
             type="button"
             onClick={() => {
@@ -53,14 +56,16 @@ WindowDiv.propTypes = {
   title: PropTypes.string,
   onExpand: PropTypes.func,
   onMinimize: PropTypes.func,
-  onRestore: PropTypes.func
+  onRestore: PropTypes.func,
+  alwaysShowTitle: PropTypes.bool
 };
 
 WindowDiv.defaultProps = {
   title: '',
   onExpand: () => {},
   onMinimize: () => {},
-  onRestore: () => {}
+  onRestore: () => {},
+  alwaysShowTitle: false
 };
 
 export default WindowDiv;

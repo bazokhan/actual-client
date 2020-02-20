@@ -24,7 +24,6 @@ const Header = ({
         <p
           className={styles.title}
           onClick={() => {
-            console.log('Clicked', transactions[0]);
             setIsAscending(!isAscending);
             sortBy(
               isAscending ? SORTERS.NUM_ASC : SORTERS.NUM_DES,

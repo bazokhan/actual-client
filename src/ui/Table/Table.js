@@ -57,7 +57,8 @@ const Table = ({
   header: Header,
   row,
   footer: Footer,
-  rowHeight
+  rowHeight,
+  alwaysShowTitle
 }) => {
   const listRef = useRef(null);
   const footerRef = useRef(null);
@@ -74,7 +75,6 @@ const Table = ({
     // const height = listRef?.current?.offsetHeight;
     // const footerHeight = footerRef?.current?.offsetHeight;
     if (height) {
-      console.log(footerHeight, height);
       setListHeight(
         Footer && footerHeight ? height - footerHeight - 60 : height - 60
       );
@@ -91,13 +91,14 @@ const Table = ({
     <WindowDiv
       ref={listRef}
       title={title}
+      alwaysShowTitle={alwaysShowTitle}
       onExpand={() => setMode('fullScreen')}
       onMinimize={() => setMode('minimized')}
       onRestore={() => setMode('original')}
     >
       <Header {...context} />
       <List
-        height={console.log(listHeight) || listHeight}
+        height={listHeight}
         useIsScrolling
         itemCount={data.length}
         itemSize={rowHeight}
@@ -125,7 +126,8 @@ Table.propTypes = {
     PropTypes.string,
     PropTypes.func,
     PropTypes.object
-  ])
+  ]),
+  alwaysShowTitle: PropTypes.bool
 };
 
 Table.defaultProps = {
@@ -134,7 +136,8 @@ Table.defaultProps = {
   loading: false,
   context: {},
   rowHeight: 60,
-  footer: null
+  footer: null,
+  alwaysShowTitle: false
 };
 
 export default Table;

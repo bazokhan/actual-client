@@ -6,7 +6,9 @@ const FILTERS = {
   TYPE: 'type',
   CATEGORY: 'category',
   PAYEE: 'payee',
-  SEARCH: 'search'
+  SEARCH: 'search',
+  MONTH: 'month',
+  CATEGORIES: 'categories'
 };
 
 export default FILTERS;

@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import mapSort from 'mapsort';
 import { numerizeDate } from 'helpers/dateHelpers';
 import FILTERS from 'App/constants/Filters';
@@ -12,14 +13,117 @@ const sortFunctions = {
   [SORTERS.STR_DES]: sorters.sortStringsDescending
 };
 
+const unfilteredState = {
+  sort: [
+    t => (t.date && typeof t.date === 'string' ? numerizeDate(t.date) : t),
+    sorters.sortNumsDescending
+  ],
+  account: t => t,
+  after: t => t,
+  before: t => t,
+  type: t => t,
+  category: t => t,
+  payee: t => t,
+  search: t => t,
+  month: t => t,
+  categories: t => [].includes(t.category.id)
+};
+
 const useFilterMachine = transactions => {
-  const [filteredTransactions, setFilteredTransactions] = useState(
-    transactions
+  const unfilteredTransactions = useMemo(
+    () =>
+      transactions.map(t => ({
+        ...t,
+        month: `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`
+      })),
+    [transactions]
   );
 
-  useEffect(() => {
-    setFilteredTransactions(transactions);
-  }, [transactions]);
+  const [filteredTransactions, setFilteredTransactions] = useState(
+    unfilteredTransactions
+  );
+
+  const unfilteredLists = useMemo(
+    () => ({
+      months: unfilteredTransactions?.reduce(
+        (prev, t) => (prev.includes(t.month) ? prev : [...prev, t.month]),
+        []
+      ),
+      accounts: unfilteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.account?.id) ? prev : [...prev, t.account?.id],
+        []
+      ),
+      categories: unfilteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.category?.id) ? prev : [...prev, t.category?.id],
+        []
+      ),
+      payees: unfilteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.payee?.id) ? prev : [...prev, t.payee?.id],
+        []
+      ),
+      groups: unfilteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.category?.group?.id)
+            ? prev
+            : [...prev, t.category?.group?.id],
+        []
+      )
+    }),
+    [unfilteredTransactions]
+  );
+
+  const filteredLists = useMemo(
+    () => ({
+      months: filteredTransactions?.reduce(
+        (prev, t) => (prev.includes(t.month) ? prev : [...prev, t.month]),
+        []
+      ),
+      accounts: filteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.account?.id) ? prev : [...prev, t.account?.id],
+        []
+      ),
+      categories: filteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.category?.id) ? prev : [...prev, t.category?.id],
+        []
+      ),
+      payees: filteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.payee?.id) ? prev : [...prev, t.payee?.id],
+        []
+      ),
+      groups: filteredTransactions?.reduce(
+        (prev, t) =>
+          prev.includes(t.category?.group?.id)
+            ? prev
+            : [...prev, t.category?.group?.id],
+        []
+      )
+    }),
+    [filteredTransactions]
+  );
+
+  const { payment, deposit, net } = useMemo(() => {
+    return filteredTransactions?.reduce(
+      (prev, t) =>
+        t.amount < 0
+          ? {
+              ...prev,
+              payment: prev.payment + t.amount,
+              net: prev.net + t.amount
+            }
+          : {
+              ...prev,
+              deposit: prev.deposit + t.amount,
+              net: prev.net + t.amount
+            },
+      { payment: 0, deposit: 0, net: 0 }
+    );
+  }, [filteredTransactions]);
 
   const [filterValues, setFilterValues] = useState({
     account: null,
@@ -28,22 +132,10 @@ const useFilterMachine = transactions => {
     type: null,
     category: null,
     payee: null,
-    search: null
+    search: null,
+    month: null,
+    categories: []
   });
-
-  const unfilteredState = {
-    sort: [
-      t => (t.date && typeof t.date === 'string' ? numerizeDate(t.date) : t),
-      sorters.sortNumsDescending
-    ],
-    account: t => t,
-    after: t => t,
-    before: t => t,
-    type: t => t,
-    category: t => t,
-    payee: t => t,
-    search: t => t
-  };
 
   const [filterFunctions, setFilterFunctions] = useState(unfilteredState);
 
@@ -59,9 +151,9 @@ const useFilterMachine = transactions => {
           return prev.filter(filter);
         }
         return prev;
-      }, transactions)
+      }, unfilteredTransactions)
     );
-  }, [filterFunctions, transactions]);
+  }, [filterFunctions, unfilteredTransactions]);
 
   const sortBy = (sortName, arrayMapFunc) => {
     setFilterFunctions({
@@ -77,7 +169,19 @@ const useFilterMachine = transactions => {
     setFilterFunctions({ ...filterFunctions, [filterName]: filterFunction });
   };
 
-  return { filteredTransactions, sortBy, filterBy, filterValues, reset };
+  return {
+    unfilteredTransactions,
+    filteredTransactions,
+    sortBy,
+    filterBy,
+    filterValues,
+    reset,
+    unfilteredLists,
+    filteredLists,
+    payment,
+    deposit,
+    net
+  };
 };
 
 export default useFilterMachine;

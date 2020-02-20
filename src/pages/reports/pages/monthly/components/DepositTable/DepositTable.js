@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import SORTERS from 'App/constants/Sorters';
 import Table from 'ui/Table';
@@ -47,6 +47,17 @@ const Header = ({ style, isAscending, setIsAscending, sortBy }) => {
     }
   ];
   return <TableRow cells={cells} style={style} />;
+};
+
+Header.propTypes = {
+  style: PropTypes.object,
+  isAscending: PropTypes.bool.isRequired,
+  setIsAscending: PropTypes.func.isRequired,
+  sortBy: PropTypes.func.isRequired
+};
+
+Header.defaultProps = {
+  style: {}
 };
 
 const Row = ({ item: t, style }) => {
@@ -107,31 +118,39 @@ Row.defaultProps = {
   style: {}
 };
 
-const DepositTable = ({ loading, context }) => {
+const DepositTable = ({ loading, context, isConcise }) => {
   const [isAscending, setIsAscending] = useState(true);
 
   const transactions = useMemo(
-    () =>
-      context?.filteredTransactions
-        ?.filter(t => t.amount >= 0)
-        .filter(t =>
-          context?.activeMonth ? t.month === context?.activeMonth : t
-        ) || [],
+    () => context?.filteredTransactions?.filter(t => t.amount >= 0),
     [context]
   );
-
-  useEffect(() => {
-    context.setDeposit(
-      transactions
-        .filter(t => t.amount >= 0)
-        .reduce((prev, t) => prev + t.amount, 0)
-    );
-  }, [context, transactions]);
 
   return (
     <Table
       key={context?.account?.id}
-      data={transactions}
+      data={
+        isConcise
+          ? transactions.reduce((prev, next) => {
+              const hasCategory = prev.find(
+                t =>
+                  t.category?.id === next.category?.id && t.month === next.month
+              );
+              if (hasCategory) {
+                const categoryAccumulator = {
+                  ...hasCategory,
+                  amount: hasCategory.amount + next.amount,
+                  payee: { id: hasCategory.payee.id, name: 'multiple' }
+                };
+                const filteredPrev = prev.filter(
+                  t => t.id !== categoryAccumulator.id
+                );
+                return [...filteredPrev, categoryAccumulator];
+              }
+              return [...prev, next];
+            }, [])
+          : transactions
+      }
       context={{
         ...context,
         transactions,
@@ -142,14 +161,16 @@ const DepositTable = ({ loading, context }) => {
       loading={loading}
       rowHeight={32}
       row={Row}
-      title={context?.account?.name}
+      title={`${transactions?.length} transactions`}
+      alwaysShowTitle
     />
   );
 };
 
 DepositTable.propTypes = {
   context: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
+  isConcise: PropTypes.bool.isRequired
 };
 
 export default DepositTable;

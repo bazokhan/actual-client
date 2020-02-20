@@ -23,12 +23,24 @@ export default gql`
           id
           name
         }
+        account {
+          id
+          name
+        }
       }
     }
 
     groups {
       id
       name
+    }
+
+    categories {
+      id
+      name
+      transactions {
+        id
+      }
     }
   }
 `;
