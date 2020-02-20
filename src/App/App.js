@@ -299,7 +299,7 @@ const App = () => {
                 fallback={<div className={styles.loading}>Loading..</div>}
               >
                 <Switch>
-                  <AuthRoute path="/admin" exact component={routes.AdminPage} />
+                  <AuthRoute path="/admin" component={routes.AdminPage} />
                   <Route path="/auth" component={routes.AuthPage} />
                   <AuthRoute
                     path="/pivot/:categoryid"

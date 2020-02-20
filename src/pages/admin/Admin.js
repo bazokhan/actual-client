@@ -46,11 +46,19 @@ const Admin = () => {
       <div className={styles.adminBody}>
         <Suspense fallback={<div>Loading..</div>}>
           <Switch>
-            <Route path="/admin/accounts" component={routes.Accounts} />
-            <Route path="/admin/payees" component={routes.Payees} />
-            <Route path="/admin/categories" component={routes.Categories} />
-            <Route path="/admin/groups" component={routes.Groups} />
-            <Route path="/admin" component={routes.Accounts} />
+            <Route path="/admin/accounts" exact component={routes.Accounts} />
+            <Route path="/admin/payees" exact component={routes.Payees} />
+            <Route
+              path="/admin/categories"
+              exact
+              component={routes.Categories}
+            />
+            <Route path="/admin/groups" exact component={routes.Groups} />
+            <Route path="/admin" exact component={routes.Accounts} />
+            <Route
+              path="/admin/:notfound"
+              component={<div>404! Not found!</div>}
+            />
           </Switch>
         </Suspense>
       </div>
