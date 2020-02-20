@@ -1,16 +1,17 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import SORTERS from 'App/constants/Sorters';
-import { FaTag } from 'react-icons/fa';
+import { FaTag, FaMoneyBillAlt } from 'react-icons/fa';
 import Table from 'ui/Table';
 import Tag from 'ui/Tag';
 import TableRow from 'ui/TableRow/TableRow';
 import useFilterMachine from 'hooks/useFilterMachine';
 import SelectableDiv from 'ui/SelectableDiv';
 import PlaceholderDiv from 'ui/PlaceholderDiv/PlaceholderDiv';
+import { n } from 'helpers/mathHelpers';
 import styles from './Monthly.module.scss';
 import monthlyReportGql from './gql/monthlyReport.gql';
 
@@ -19,7 +20,11 @@ const Header = ({
   style,
   isAscending,
   setIsAscending,
-  sortBy
+  sortBy,
+  months,
+  filterBy,
+  activeMonth,
+  setActiveMonth
 }) => {
   const cells = [
     {
@@ -70,7 +75,7 @@ const Header = ({
   return <TableRow cells={cells} style={style} />;
 };
 
-const Row = ({ item: t, style }) => {
+const Row = ({ item: t, style, activeMonth }) => {
   const cells = [
     {
       name: 'income',
@@ -118,68 +123,93 @@ const Row = ({ item: t, style }) => {
     }
   ];
 
-  return <TableRow cells={cells} style={style} />;
+  return <TableRow cells={cells} style={{ ...style, height: '32px' }} />;
 };
 
-// const TableFooter = ({ account }) => {
-//   return (
-//     <div>
-//       <div className={styles.header}>Total</div>
-//       <div className={styles.header}>
-//         {account?.transactions
-//           ?.filter(t => t.amount >= 0)
-//           .reduce((acc, next) => acc + next.amount, 0)}{' '}
-//         EGP
-//       </div>
-//       <div className={styles.header} />
-//       <div className={styles.header}>Total</div>
-//       <div className={styles.header}>
-//         {account?.transactions
-//           ?.filter(t => t.amount < 0)
-//           .reduce((acc, next) => acc + next.amount * -1, 0)}{' '}
-//         EGP
-//       </div>
-//       <div className={styles.header} />
-//       <div className={styles.header}>Net</div>
-//       <div className={styles.header} />
-//       <div className={styles.header} />
-//       <div className={styles.header} />
-//       <div className={styles.header} />
-//       <div className={styles.header}>
-//         {account?.transactions.reduce((acc, next) => acc + next.amount, 0)} EGP
-//       </div>
-//     </div>
-//   );
-// };
+const Footer = forwardRef(({ transactions }, ref) => {
+  return (
+    <div ref={ref} style={{ height: 200 }}>
+      <div className={styles.header}>Total</div>
+      <div className={styles.header}>
+        {transactions
+          ?.filter(t => t.amount >= 0)
+          .reduce((acc, next) => acc + next.amount, 0)}{' '}
+        EGP
+      </div>
+      <div className={styles.header} />
+      <div className={styles.header}>Total</div>
+      <div className={styles.header}>
+        {transactions
+          ?.filter(t => t.amount < 0)
+          .reduce((acc, next) => acc + next.amount * -1, 0)}{' '}
+        EGP
+      </div>
+      <div className={styles.header} />
+      <div className={styles.header}>Net</div>
+      <div className={styles.header} />
+      <div className={styles.header} />
+      <div className={styles.header} />
+      <div className={styles.header} />
+      <div className={styles.header}>
+        {transactions?.reduce((acc, next) => acc + next.amount, 0)} EGP
+      </div>
+    </div>
+  );
+});
 
-const TableByMonth = ({ account, loading }) => {
-  const { sortBy, filteredTransactions } = useFilterMachine(
-    account.transactions
+const AccountTable = ({ loading, context }) => {
+  const { sortBy, filteredTransactions, filterBy } = useFilterMachine(
+    context?.transactions
   );
 
   const [isAscending, setIsAscending] = useState(true);
 
+  const transactions = useMemo(
+    () =>
+      filteredTransactions?.filter(t =>
+        context?.activeMonth ? t.month === context?.activeMonth : t
+      ) || [],
+    [context, filteredTransactions]
+  );
+
+  useEffect(() => {
+    context.setPayment(
+      transactions
+        .filter(t => t.amount < 0)
+        .reduce((prev, t) => prev + t.amount, 0)
+    );
+    context.setDeposit(
+      transactions
+        .filter(t => t.amount >= 0)
+        .reduce((prev, t) => prev + t.amount, 0)
+    );
+    context.setNet(transactions.reduce((prev, t) => prev + t.amount, 0));
+  }, [context, transactions]);
+
   return (
     <Table
-      key={account.id}
-      data={filteredTransactions || []}
+      key={context?.account?.id}
+      data={transactions}
       context={{
-        transactions: filteredTransactions,
+        ...context,
+        transactions,
         isAscending,
         setIsAscending,
-        sortBy
+        sortBy,
+        filterBy
       }}
       header={Header}
       loading={loading}
       rowHeight={32}
       row={Row}
-      title={account.name}
+      footer={Footer}
+      title={context?.account?.name}
     />
   );
 };
 
-TableByMonth.propTypes = {
-  account: PropTypes.object.isRequired,
+AccountTable.propTypes = {
+  context: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired
 };
 
@@ -199,6 +229,24 @@ const Monthly = () => {
     [activeAccountId, allAccounts]
   );
 
+  const transactions = useMemo(
+    () =>
+      activeAccount?.transactions?.map(t => ({
+        ...t,
+        month: `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`
+      })),
+    [activeAccount]
+  );
+
+  const months = useMemo(
+    () =>
+      transactions?.reduce(
+        (prev, t) => (prev.includes(t.month) ? prev : [...prev, t.month]),
+        []
+      ),
+    [transactions]
+  );
+
   const accountOptions = useMemo(
     () =>
       allAccounts?.map(account => ({
@@ -207,6 +255,21 @@ const Monthly = () => {
       })),
     [allAccounts]
   );
+
+  const monthOptions = useMemo(
+    () =>
+      months?.map(month => ({
+        label: month,
+        value: month
+      })),
+    [months]
+  );
+
+  const [activeMonth, setActiveMonth] = useState(months?.[0] || '');
+
+  const [payment, setPayment] = useState(0);
+  const [deposit, setDeposit] = useState(0);
+  const [net, setNet] = useState(0);
 
   return (
     <div className={styles.container}>
@@ -221,12 +284,75 @@ const Monthly = () => {
               options={accountOptions}
               onChange={opt => setActiveAccountId(opt.value)}
             >
-              {/* <p className={styles.select}>{activeAccount?.name}</p> */}
               <Tag color="var(--main-color)" justifyContent="space-between">
                 <FaTag />
                 {activeAccount?.name}
               </Tag>
             </SelectableDiv>
+          )}
+        </div>
+        <h2>Month</h2>
+        <div>
+          {loading ? (
+            <PlaceholderDiv height={60} number={1} />
+          ) : (
+            <SelectableDiv
+              defaultValue={monthOptions?.[0]}
+              options={monthOptions}
+              onChange={opt => setActiveMonth(opt.value)}
+            >
+              <Tag color="var(--main-color)" justifyContent="space-between">
+                <FaTag />
+                {activeMonth}
+              </Tag>
+            </SelectableDiv>
+          )}
+        </div>
+
+        <h2>Deposit</h2>
+        <div>
+          {loading ? (
+            <PlaceholderDiv height={60} number={1} />
+          ) : (
+            <Tag
+              color="var(--success-color)"
+              type="outline"
+              justifyContent="space-between"
+            >
+              <FaMoneyBillAlt />
+              {n(deposit)} EGP
+            </Tag>
+          )}
+        </div>
+
+        <h2>Payment</h2>
+        <div>
+          {loading ? (
+            <PlaceholderDiv height={60} number={1} />
+          ) : (
+            <Tag
+              color="var(--error-color)"
+              type="outline"
+              justifyContent="space-between"
+            >
+              <FaMoneyBillAlt />
+              {n(payment)} EGP
+            </Tag>
+          )}
+        </div>
+
+        <h2>Net</h2>
+        <div>
+          {loading ? (
+            <PlaceholderDiv height={60} number={1} />
+          ) : (
+            <Tag
+              color={net < 0 ? 'var(--error-color)' : 'var(--success-color'}
+              justifyContent="space-between"
+            >
+              <FaMoneyBillAlt />
+              {n(net)} EGP
+            </Tag>
           )}
         </div>
         {/* {data?.accounts?.map(account => (
@@ -249,11 +375,22 @@ const Monthly = () => {
         ))} */}
       </div>
       {activeAccount && (
-        <TableByMonth account={activeAccount} loading={loading} />
+        <AccountTable
+          context={{
+            transactions,
+            account: activeAccount,
+            months,
+            activeMonth,
+            setPayment,
+            setDeposit,
+            setNet
+          }}
+          loading={loading}
+        />
       )}
       {/* {activeAccounts?.map(
         account =>
-          account?.on && <TableByMonth account={account} loading={loading} />
+          account?.on && <AccountTable account={account} loading={loading} />
       )} */}
     </div>
   );

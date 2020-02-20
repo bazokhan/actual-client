@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import { FaRegWindowRestore, FaWindowMaximize } from 'react-icons/fa';
 import styles from './WindowDiv.module.scss';
 
-const WindowDiv = React.forwardRef(
+const WindowDiv = forwardRef(
   ({ children, onExpand, onMinimize, onRestore, title }, ref) => {
     const [mode, setMode] = useState('original');
     const className = useMemo(
