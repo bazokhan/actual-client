@@ -9,45 +9,59 @@ import { n } from 'helpers/mathHelpers';
 import Tag from 'ui/Tag';
 import { FaArrowAltCircleRight } from 'react-icons/fa';
 import styles from '../../Monthly.module.scss';
+import { forwardRef } from 'react';
 
-const Header = ({ style, isAscending, setIsAscending, sortBy }) => {
-  const cells = [
-    {
-      name: 'month',
-      size: 'sm',
-      component: <p className={styles.title}>Month</p>
-    },
-    {
-      name: 'amount',
-      size: 'md',
-      component: (
-        <p
-          className={styles.title}
-          onClick={() => {
-            setIsAscending(!isAscending);
-            sortBy(
-              isAscending ? SORTERS.NUM_ASC : SORTERS.NUM_DES,
-              t => t.amount
-            );
-          }}
-        >
-          Amount
-        </p>
-      )
-    },
-    {
-      name: 'category',
-      size: 'md',
-      component: <p className={styles.title}>Category</p>
-    },
-    {
-      name: 'payee',
-      size: 'md',
-      component: <p className={styles.title}>Payee</p>
-    }
-  ];
-  return <TableRow cells={cells} style={style} />;
-};
+const ROW_HEIGHT = 60;
+const Header = forwardRef(
+  ({ style, isAscending, setIsAscending, sortBy, mode }, ref) => {
+    const cells = [
+      {
+        name: 'month',
+        size: 'sm',
+        component: <p className={styles.title}>Month</p>
+      },
+      {
+        name: 'amount',
+        size: 'md',
+        component: (
+          <p
+            className={styles.title}
+            onClick={() => {
+              setIsAscending(!isAscending);
+              sortBy(
+                isAscending ? SORTERS.NUM_ASC : SORTERS.NUM_DES,
+                t => t.amount
+              );
+            }}
+          >
+            Amount
+          </p>
+        )
+      },
+      {
+        name: 'category',
+        size: 'md',
+        component: <p className={styles.title}>Category</p>
+      },
+      {
+        name: 'payee',
+        size: 'md',
+        component: <p className={styles.title}>Payee</p>
+      },
+      {
+        name: 'notes',
+        size: 'xl',
+        condition: () => mode === 'fullScreen',
+        component: <p className={styles.title}>Notes</p>
+      }
+    ];
+    return (
+      <div ref={ref}>
+        <TableRow cells={cells} style={style} />
+      </div>
+    );
+  }
+);
 
 Header.propTypes = {
   style: PropTypes.object,
@@ -60,7 +74,7 @@ Header.defaultProps = {
   style: {}
 };
 
-const Row = ({ item: t, style }) => {
+const Row = ({ item: t, style, mode }) => {
   const cells = [
     {
       name: 'month',
@@ -98,13 +112,19 @@ const Row = ({ item: t, style }) => {
           {t.payee?.name}
         </Tag>
       )
+    },
+    {
+      name: 'notes',
+      size: 'xl',
+      condition: () => mode === 'fullScreen',
+      component: <p className={styles.title}>{t.notes || '---'}</p>
     }
   ];
 
   return (
     <TableRow
       cells={cells}
-      style={{ ...style, height: '32px', padding: '0' }}
+      style={{ ...style, height: `${ROW_HEIGHT}px`, padding: '0' }}
     />
   );
 };
@@ -159,7 +179,7 @@ const PaymentTable = ({ loading, context, isConcise }) => {
       }}
       header={Header}
       loading={loading}
-      rowHeight={32}
+      rowHeight={ROW_HEIGHT}
       row={Row}
       title={`${transactions?.length} transactions`}
       alwaysShowTitle

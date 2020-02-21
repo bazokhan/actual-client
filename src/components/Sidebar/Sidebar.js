@@ -35,7 +35,7 @@ const Sidebar = () => {
         to="/"
       >
         <FaHome />
-        {isOpen && <span>_Home</span>}
+         <span>_Home</span>
       </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -46,7 +46,7 @@ const Sidebar = () => {
         <div className={styles.icon}>
           <FaHome />
         </div>
-        {isOpen && <span>Home</span>}
+        <span>Home</span>
       </NavLink>
       {/* <NavLink
         className={cx(styles.link, 'btn')}
@@ -55,7 +55,7 @@ const Sidebar = () => {
         to="/pivot"
       >
         <FaChartBar />
-        {isOpen && <span>_Reports</span>}
+         <span>_Reports</span>
       </NavLink> */}
       {/* <NavLink
         className={cx(styles.link, 'btn')}
@@ -64,7 +64,7 @@ const Sidebar = () => {
         to="/newPivot"
       >
         <FaChartBar />
-        {isOpen && <span>Reports</span>}
+         <span>Reports</span>
       </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -75,7 +75,7 @@ const Sidebar = () => {
         <div className={styles.icon}>
           <FaChartBar />
         </div>
-        {isOpen && <span>Reports</span>}
+        <span>Reports</span>
       </NavLink>
       {/* <NavLink
         className={cx(styles.link, 'btn')}
@@ -83,7 +83,7 @@ const Sidebar = () => {
         to="/history"
       >
         <FaTimes />
-        {isOpen && <span>_Deleted</span>}
+         <span>_Deleted</span>
       </NavLink> */}
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -93,7 +93,7 @@ const Sidebar = () => {
         <div className={styles.icon}>
           <FaFileAlt />
         </div>
-        {isOpen && <span>Orders</span>}
+        <span>Orders</span>
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -103,7 +103,7 @@ const Sidebar = () => {
         <div className={styles.icon}>
           <FaUserCog />
         </div>
-        {isOpen && <span>Admin</span>}
+        <span>Admin</span>
       </NavLink>
       <NavLink
         className={cx(styles.link, 'btn')}
@@ -114,7 +114,7 @@ const Sidebar = () => {
         <div className={styles.icon}>
           <FaExclamationTriangle />
         </div>
-        {isOpen && <span>Migrate</span>}
+        <span>Migrate</span>
       </NavLink>
       {authToken && (
         <NavLink
@@ -125,7 +125,7 @@ const Sidebar = () => {
           <div className={styles.icon}>
             <FaSignOutAlt />
           </div>
-          {isOpen && <span>Log out</span>}
+          <span>Log out</span>
         </NavLink>
       )}
     </div>

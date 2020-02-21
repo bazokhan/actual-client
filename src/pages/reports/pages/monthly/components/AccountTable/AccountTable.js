@@ -9,13 +9,7 @@ import useFilterMachine from 'hooks/useFilterMachine';
 import { n } from 'helpers/mathHelpers';
 import styles from './AccountTable.module.scss';
 
-const Header = ({
-  transactions,
-  style,
-  isAscending,
-  setIsAscending,
-  sortBy
-}) => {
+const Header = ({ style, isAscending, setIsAscending, sortBy }) => {
   const cells = [
     {
       name: 'income',
@@ -62,6 +56,17 @@ const Header = ({
     }
   ];
   return <TableRow cells={cells} style={style} />;
+};
+
+Header.propTypes = {
+  style: PropTypes.object,
+  isAscending: PropTypes.bool.isRequired,
+  setIsAscending: PropTypes.func.isRequired,
+  sortBy: PropTypes.func.isRequired
+};
+
+Header.defaultProps = {
+  style: {}
 };
 
 const Row = ({ item: t, style }) => {

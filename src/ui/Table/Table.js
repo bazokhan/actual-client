@@ -11,7 +11,9 @@ import PropTypes from 'prop-types';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import WindowDiv from 'ui/WindowDiv';
 import PlaceholderDiv from 'ui/PlaceholderDiv';
+// import { createContext } from 'react';
 
+// const TableContext = createContext(null);
 const Row = memo(
   ({ data: dataList, index, style, component: RowComponent, ...context }) => {
     const item = dataList[index];
@@ -59,10 +61,12 @@ const Table = ({
   footer: Footer,
   rowHeight,
   alwaysShowTitle
+  // mode
 }) => {
   const listRef = useRef(null);
+  const headerRef = useRef(null);
   const footerRef = useRef(null);
-  const [mode, setMode] = useState('original');
+  const [modeOfWindowDiv, setModeOfWindowDiv] = useState('original');
   const [listHeight, setListHeight] = useState(
     listRef?.current?.clientHeight || window.innerHeight
   );
@@ -70,47 +74,59 @@ const Table = ({
   useLayoutEffect(() => {
     // const height = listRef?.current?.getClientRects()?.[0]?.height;
     // const footerHeight = footerRef?.current?.getClientRects()?.[0]?.height;
-    const height = listRef?.current?.innerHeight;
-    const footerHeight = footerRef?.current?.innerHeight;
-    // const height = listRef?.current?.offsetHeight;
-    // const footerHeight = footerRef?.current?.offsetHeight;
+    const height = listRef?.current?.clientHeight;
+    const headerHeight = headerRef?.current?.clientHeight;
+    const footerHeight = footerRef?.current?.clientHeight;
+    // const height = listRef?.current?.getComputedStyle(divElement).height;
+    // const footerHeight = footerRef?.current?.getComputedStyle(divElement).height;
     if (height) {
-      setListHeight(
-        Footer && footerHeight ? height - footerHeight - 60 : height - 60
-      );
+      let netHeight = height;
+      // if (headerHeight) netHeight -= headerHeight;
+      // if (footerHeight) netHeight -= footerHeight;
+      setListHeight(netHeight);
     }
-  }, [mode, listRef, footerRef, Footer]);
+  }, [listRef, footerRef, Footer]);
 
   //   const listHeight = useMemo(
-  //     () => (listRef?.current?.clientHeight || window.innerHeight) - 200,
+  //     () => (listRef?.current?.clientHeight || window.getComputedStyle(divElement).height) - 200,
   //     [listRef?.current?.clientHeight]
   //   );
   return loading ? (
     <PlaceholderDiv number={Math.floor(listHeight / 64)} height={listHeight} />
   ) : (
+    // <TableContext.Provider>
     <WindowDiv
       ref={listRef}
       title={title}
       alwaysShowTitle={alwaysShowTitle}
-      onExpand={() => setMode('fullScreen')}
-      onMinimize={() => setMode('minimized')}
-      onRestore={() => setMode('original')}
+      onExpand={() =>
+        console.log(modeOfWindowDiv) || setModeOfWindowDiv('fullScreen')
+      }
+      onMinimize={() => setModeOfWindowDiv('minimized')}
+      onRestore={() => setModeOfWindowDiv('original')}
     >
-      <Header {...context} />
+      <Header {...context} ref={headerRef} />
       <List
-        height={listHeight}
+        height={listHeight - 200}
         useIsScrolling
         itemCount={data.length}
         itemSize={rowHeight}
         itemData={data}
         width="100%"
+        {...context}
       >
         {reactWindowProps => (
-          <Row component={row} {...context} {...reactWindowProps} />
+          <Row
+            component={row}
+            {...context}
+            {...reactWindowProps}
+            mode={modeOfWindowDiv}
+          />
         )}
       </List>
       {Footer ? <Footer ref={footerRef} {...context} /> : null}
     </WindowDiv>
+    // </TableContext.Provider>
   );
 };
 
@@ -120,7 +136,11 @@ Table.propTypes = {
   loading: PropTypes.bool,
   context: PropTypes.object,
   rowHeight: PropTypes.number,
-  header: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
+  header: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.func,
+    PropTypes.object
+  ]).isRequired,
   row: PropTypes.oneOfType([PropTypes.string, PropTypes.func]).isRequired,
   footer: PropTypes.oneOfType([
     PropTypes.string,

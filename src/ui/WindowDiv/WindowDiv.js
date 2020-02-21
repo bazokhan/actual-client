@@ -44,7 +44,9 @@ const WindowDiv = forwardRef(
           </button>
         </div>
         <div className={styles.body} ref={ref}>
-          {children}
+          {React.Children.toArray(children)?.map(child =>
+            React.cloneElement(child, { mode })
+          )}
         </div>
       </div>
     );

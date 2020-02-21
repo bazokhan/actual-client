@@ -10,6 +10,7 @@ export default gql`
         createdAt
         amount
         date
+        notes
         category {
           id
           name

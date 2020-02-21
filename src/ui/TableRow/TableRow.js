@@ -7,18 +7,25 @@ import styles from './TableRow.module.scss';
 const TableRow = ({ cells, className, style }) => {
   return (
     <div className={cx(styles.tableRow, className)} style={style}>
-      {cells.map(cell => (
-        <div
-          className={cx(styles.tableCell, styles[cell.size || 'md'])}
-          key={cell.name}
-        >
-          {cell.condition
-            ? cell.condition()
-              ? cell.component
-              : null
-            : cell.component}
-        </div>
-      ))}
+      {cells.map(cell =>
+        cell.condition ? (
+          !cell.condition() ? null : (
+            <div
+              className={cx(styles.tableCell, styles[cell.size || 'md'])}
+              key={cell.name}
+            >
+              {cell.component}
+            </div>
+          )
+        ) : (
+          <div
+            className={cx(styles.tableCell, styles[cell.size || 'md'])}
+            key={cell.name}
+          >
+            {cell.component}
+          </div>
+        )
+      )}
     </div>
   );
 };
