@@ -11,7 +11,7 @@ import createAccountsGql from '../gql/createAccounts.gql';
 import createGroupsGql from '../gql/createGroups.gql';
 import createCategoriesGql from '../gql/createCategories.gql';
 import createPayeesGql from '../gql/createPayees.gql';
-import createTransactionsGql from '../gql/createTransactions.gql';
+import migrateTransactionsGql from '../gql/migrateTransactions.gql';
 
 const useMigrationSteps = () => {
   const {
@@ -62,7 +62,7 @@ const useMigrationSteps = () => {
     awaitRefetchQueries: true
   });
 
-  const [createTransactionsMutation] = useMutation(createTransactionsGql, {
+  const [migrateTransactionsMutation] = useMutation(migrateTransactionsGql, {
     refetchQueries: [
       { query: transactionsGql, variables: { includeDeleted: true } }
     ],
@@ -324,9 +324,10 @@ const useMigrationSteps = () => {
         transactions.reduce(async (prev, next, index) => {
           const newPrev = await prev;
           try {
-            await createTransactionsMutation({
+            await migrateTransactionsMutation({
               variables: {
                 transactions: [next].map(t => ({
+                  id: t.id,
                   amount: t.actualAmount,
                   notes: t.notes,
                   date: dateNumToString(t.date, 'DMY'),

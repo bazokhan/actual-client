@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import React, { useContext, useState } from 'react';
 import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
@@ -13,12 +14,35 @@ import {
   FaAngleRight
 } from 'react-icons/fa';
 import styles from './Sidebar.module.scss';
+import { useEffect } from 'react';
+import { useRef } from 'react';
+import { useCallback } from 'react';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  // const [isOver, setIsOver] = useState(false);
+  // const openSidebar = setInterval(() => {
+  //   setCounter(counter + 100), 100;
+  // }, 100);
+  // const closeSidebar = () => {
+  //   setIsOver(false);
+  //   setIsOpen(false);
+  // };
   const { authToken } = useContext(DataContext);
+  const sidebarRef = useRef(null);
+  // useEffect(() => {
+  //   sidebarRef?.current?.addEventListener('mouseover', openSidebar);
+  //   sidebarRef?.current?.addEventListener('mouseout', closeSidebar);
+  //   return () => {
+  //     sidebarRef?.current?.removeEventListener('mouseover', openSidebar);
+  //     sidebarRef?.current?.removeEventListener('mouseout', closeSidebar);
+  //   };
+  // }, [sidebarRef]);
   return (
-    <div className={cx(styles.sidebar, isOpen ? styles.open : '')}>
+    <div
+      className={cx(styles.sidebar, isOpen ? styles.open : '')}
+      ref={sidebarRef}
+    >
       <button
         type="button"
         className={cx(styles.link, 'btn')}

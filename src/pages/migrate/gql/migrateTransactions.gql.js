@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation CREATE_TRANSACTIONS($transactions: [CreateTransactionInput!]!) {
-    createTransactions(transactions: $transactions) {
+  mutation MIGRATE_TRANSACTIONS($transactions: [MigrateTransactionInput!]!) {
+    migrateTransactions(transactions: $transactions) {
       id
       amount
       account {
