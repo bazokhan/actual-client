@@ -155,6 +155,11 @@ const useMigrationSteps = () => {
     ]
   );
 
+  const existingTransactions = useMemo(
+    () => transactionsData?.transactions?.map(t => t.id),
+    [transactionsData]
+  );
+
   const steps = [
     {
       index: 0,
@@ -321,7 +326,10 @@ const useMigrationSteps = () => {
       prevSuccess: successPayees,
       onClick: async () => {
         setLoading({ ...loading, transactions: true });
-        transactions.reduce(async (prev, next, index) => {
+        const errors = await transactions.reduce(async (prev, next, index) => {
+          if (existingTransactions?.includes(next?.id)) {
+            return prev;
+          }
           const newPrev = await prev;
           try {
             await migrateTransactionsMutation({
@@ -341,13 +349,12 @@ const useMigrationSteps = () => {
             });
           } catch (ex) {
             console.log(ex);
-            newPrev.push(ex);
-          }
-          if (index === transactions.length - 1) {
-            setLoading({ ...loading, transactions: false });
+            newPrev.push({ error: ex, id: next?.id, transaction: next });
           }
           return newPrev;
         }, []);
+        setLoading({ ...loading, transactions: false });
+        console.log(errors);
       }
     }
   ];
