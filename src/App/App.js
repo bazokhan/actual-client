@@ -12,7 +12,6 @@ import { sortAmountsByAccount } from 'helpers';
 
 import Sidebar from 'components/Sidebar';
 
-import mapSort from 'mapsort';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { DataContext } from './context';
@@ -38,8 +37,6 @@ const App = () => {
     loading,
     accounts,
     categories,
-    groups,
-    payees,
     transactions,
     deadTransactions
   } = useMigrationData();
@@ -47,12 +44,12 @@ const App = () => {
   const authToken = localStorage.getItem('auth_token');
 
   const [activeTransactions, setActiveTransactions] = useState([]);
-  const [activeAccount, setActiveAccount] = useState('');
-  const [dateFilter, setDateFilter] = useState([]);
-  const [activeType, setActiveType] = useState('');
-  const [activeCategory, setActiveCategory] = useState('');
-  const [activePayee, setActivePayee] = useState('');
-  const [searchString, setSearchString] = useState('');
+  const [activeAccount] = useState('');
+  const [dateFilter] = useState([]);
+  const [activeType] = useState('');
+  const [activeCategory] = useState('');
+  const [activePayee] = useState('');
+  const [searchString] = useState('');
 
   const activeAccountAmount = useMemo(
     () =>
@@ -61,51 +58,12 @@ const App = () => {
     [transactions, activeAccount, accounts]
   );
 
-  const allAccountsAmounts = useMemo(
-    () => sortAmountsByAccount(transactions, accounts),
-    [transactions, accounts]
-  );
-
   const activeAccountName = useMemo(
     () =>
       activeAccount
         ? accounts.find(account => account.id === activeAccount).name
         : 'all accounts',
     [activeAccount, accounts]
-  );
-
-  const totalBalance = useMemo(
-    () =>
-      transactions
-        .map(t => t.actualAmount)
-        .reduce((sum, amount) => sum + amount, 0),
-    [transactions]
-  );
-
-  const sortBy = useMemo(
-    () => (arrayMapFunc, sortFunc) =>
-      setActiveTransactions(
-        mapSort(activeTransactions, arrayMapFunc, sortFunc)
-          .filter(t =>
-            dateFilter.length === 2
-              ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
-              : t
-          )
-          .filter(t => (activeType ? t.amountType === activeType : t))
-          .filter(t =>
-            activeCategory ? t.categoryObj.id === activeCategory : t
-          )
-          .filter(t => (activePayee ? t.payee.id === activePayee : t))
-          .filter(t => t.searchString.includes(searchString))
-      ),
-    [
-      activeTransactions,
-      dateFilter,
-      activeType,
-      activeCategory,
-      activePayee,
-      searchString
-    ]
   );
 
   const transactionsByCategory = useMemo(
@@ -198,30 +156,9 @@ const App = () => {
 
   const DataContextValue = useMemo(
     () => ({
-      accounts,
-      categories,
-      groups,
-      payees,
-      transactions,
       activeTransactions,
-      allAccountsAmounts,
-      activeAccount,
       activeAccountAmount,
-      activeType,
-      activeCategory,
-      activePayee,
-      dateFilter,
-      setActiveAccount,
-      setDateFilter,
-      setActiveType,
-      setActiveCategory,
-      setActivePayee,
-      setSearchString,
-      setActiveTransactions,
       activeAccountName,
-      searchString,
-      sortBy,
-      totalBalance,
       deadTransactions,
       transactionsByCategory,
       totalPayment,
@@ -230,30 +167,9 @@ const App = () => {
       authToken
     }),
     [
-      accounts,
-      categories,
-      groups,
-      payees,
-      transactions,
       activeTransactions,
-      allAccountsAmounts,
-      activeAccount,
       activeAccountAmount,
-      activeType,
-      activeCategory,
-      activePayee,
-      dateFilter,
-      setActiveAccount,
-      setDateFilter,
-      setActiveType,
-      setActiveCategory,
-      setActivePayee,
-      setSearchString,
-      setActiveTransactions,
       activeAccountName,
-      searchString,
-      sortBy,
-      totalBalance,
       deadTransactions,
       transactionsByCategory,
       totalPayment,
