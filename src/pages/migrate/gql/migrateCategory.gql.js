@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation CREATE_CATEGORIES($categories: [CreateCategoryInput!]!) {
-    createCategories(categories: $categories) {
+  mutation MIGRATE_CATEGORY($category: MigrateCategoryInput!) {
+    migrateCategory(category: $category) {
       id
       name
       group {

@@ -1,3 +1,8 @@
+import {
+  transferGroupId,
+  transferinId,
+  transferoutId
+} from 'App/constants/Ids';
 import { dateNumToString } from './dateHelpers';
 
 /* eslint-disable no-param-reassign */
@@ -24,11 +29,11 @@ export default (transactions, accounts, categories, groups, payees) =>
           !t.categoryObj.id
         ) {
           t.categoryObj = {
-            id: 'transfer',
+            id: transferinId,
             type: 'in',
             name: 'Transfer In'
           };
-          t.group = { name: 'تحويلات' };
+          t.group = { id: transferGroupId, name: 'تحويلات' };
         }
         if (
           t.transferAccount.id &&
@@ -36,11 +41,11 @@ export default (transactions, accounts, categories, groups, payees) =>
           !t.categoryObj.id
         ) {
           t.categoryObj = {
-            id: 'transfer',
+            id: transferoutId,
             type: 'out',
             name: 'Transfer Out'
           };
-          t.group = { name: 'تحويلات' };
+          t.group = { id: transferGroupId, name: 'تحويلات' };
         }
         t.searchString = [
           t.dateString,

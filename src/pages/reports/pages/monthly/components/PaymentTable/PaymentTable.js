@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, forwardRef } from 'react';
 import PropTypes from 'prop-types';
 import SORTERS from 'App/constants/Sorters';
 import Table from 'ui/Table';
@@ -9,7 +9,6 @@ import { n } from 'helpers/mathHelpers';
 import Tag from 'ui/Tag';
 import { FaArrowAltCircleRight } from 'react-icons/fa';
 import styles from '../../Monthly.module.scss';
-import { forwardRef } from 'react';
 
 const ROW_HEIGHT = 60;
 const Header = forwardRef(

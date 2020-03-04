@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
 export default gql`
-  mutation CREATE_PAYEES($payees: [CreatePayeeInput!]!) {
-    createPayees(payees: $payees) {
+  mutation MIGRATE_PAYEE($payee: MigratePayeeInput!) {
+    migratePayee(payee: $payee) {
       id
       name
       account {
