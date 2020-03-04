@@ -3,10 +3,10 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import styles from '../Admin.module.scss';
-import payeesGql from '../gql/payees.gql';
-import deletePayeeGql from '../gql/deletePayee.gql';
+import { payeesGql, deletePayeeGql, createPayeeGql } from '../gql/payees.gql';
 import Toast from '../components/Toast';
 import ItemCard from '../../../ui/ItemCard';
+import CreateForm from '../components/CreateForm';
 
 const Payees = () => {
   const [viewMode, setViewMode] = useState(
@@ -29,6 +29,13 @@ const Payees = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
+      <CreateForm
+        gql={createPayeeGql}
+        fields={[
+          { label: 'Payee Name', name: 'name', type: 'text', required: true }
+        ]}
+        queries={[payeesGql]}
+      />
       <div className={styles.adminSubheader}>
         <h6>Payees - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button

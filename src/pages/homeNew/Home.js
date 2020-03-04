@@ -3,13 +3,13 @@ import React, { useState, useMemo } from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import useFilterMachine from 'hooks/useFilterMachine';
 import transactionsGql from './gql/transactions.gql';
+import sidebarGql from './gql/sidebar.gql';
 import Header from './components/Header';
 import TransactionsHeader from './components/TransactionHeader';
 import Transaction from './components/Transaction';
 import styles from './Home.module.scss';
 import Sidebar from './components/Sidebar/Sidebar';
 import TransactionInput from './components/TransactionInput';
-import sidebarGql from './gql/sidebar.gql';
 import Table from '../../ui/Table';
 
 const Home = () => {

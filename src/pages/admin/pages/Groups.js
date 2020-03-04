@@ -3,10 +3,10 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import styles from '../Admin.module.scss';
-import deleteGroupGql from '../gql/deleteGroup.gql';
-import groupsGql from '../gql/groups.gql';
+import { groupsGql, createGroupGql, deleteGroupGql } from '../gql/groups.gql';
 import Toast from '../components/Toast';
 import ItemCard from '../../../ui/ItemCard';
+import CreateForm from '../components/CreateForm';
 
 const Groups = () => {
   const [viewMode, setViewMode] = useState(
@@ -29,6 +29,23 @@ const Groups = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
+      <CreateForm
+        gql={createGroupGql}
+        fields={[
+          { label: 'Group Name', name: 'name', type: 'text', required: true },
+          {
+            label: 'Group Type',
+            name: 'isIncome',
+            type: 'radio',
+            required: true,
+            options: [
+              { label: 'Deposit', value: true },
+              { label: 'Payment', value: false }
+            ]
+          }
+        ]}
+        queries={[groupsGql]}
+      />
       <div className={styles.adminSubheader}>
         <h6>Groups - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button

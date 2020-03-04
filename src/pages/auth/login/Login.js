@@ -49,7 +49,7 @@ const Login = () => {
       setMessage({ type: 'error', text: err.message });
     },
     variables: {
-      user: { name, email, password }
+      user: { name, email, password, role: 'USER' }
     }
   });
 

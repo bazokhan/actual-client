@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export default gql`
+const groupsGql = gql`
   query GROUPS {
     groups {
       id
@@ -14,3 +14,24 @@ export default gql`
     }
   }
 `;
+
+const createGroupGql = gql`
+  mutation CREATE_GROUP($name: String!, $isIncome: Boolean!) {
+    createGroup(group: { name: $name, isIncome: $isIncome }) {
+      id
+      name
+      isIncome
+    }
+  }
+`;
+
+const deleteGroupGql = gql`
+  mutation DELETE_GROUP($id: ID!) {
+    deleteGroup(id: $id) {
+      id
+      name
+    }
+  }
+`;
+
+export { groupsGql, createGroupGql, deleteGroupGql };

@@ -2,11 +2,15 @@ import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
-import accountsGql from '../gql/accounts.gql';
+import {
+  accountsGql,
+  createAccountGql,
+  deleteAccountGql
+} from '../gql/accounts.gql';
 import styles from '../Admin.module.scss';
-import deleteAccountGql from '../gql/deleteAccount.gql';
 import Toast from '../components/Toast';
 import ItemCard from '../../../ui/ItemCard';
+import CreateForm from '../components/CreateForm';
 
 const Accounts = () => {
   const [viewMode, setViewMode] = useState(
@@ -29,6 +33,13 @@ const Accounts = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
+      <CreateForm
+        gql={createAccountGql}
+        fields={[
+          { label: 'Account Name', name: 'name', type: 'text', required: true }
+        ]}
+        queries={[accountsGql]}
+      />
       <div className={styles.adminSubheader}>
         <h6>Accounts - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button

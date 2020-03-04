@@ -6,12 +6,16 @@ import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import Select from 'react-select';
 import styles from '../Admin.module.scss';
-import categoriesGql from '../gql/categories.gql';
-import deleteCategoryGql from '../gql/deleteCategory.gql';
+import {
+  categoriesGql,
+  createCategoryGql,
+  deleteCategoryGql,
+  updateCategoryGql
+} from '../gql/categories.gql';
 import Toast from '../components/Toast';
 import groupsGql from '../../reports/pages/chart/gql/groups.gql';
-import updateCategoryGql from '../gql/updateCategory.gql';
 import ItemCard from '../../../ui/ItemCard';
+import CreateForm from '../components/CreateForm';
 
 const Categories = () => {
   const [editGroup, setEditGroup] = useState('');
@@ -62,6 +66,28 @@ const Categories = () => {
   if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
+      <CreateForm
+        gql={createCategoryGql}
+        fields={[
+          {
+            label: 'Category Name',
+            name: 'name',
+            type: 'text',
+            required: true
+          },
+          {
+            label: 'Category Group',
+            name: 'groupId',
+            type: 'select',
+            required: true,
+            options: groups.map(group => ({
+              label: group.name,
+              value: group.id
+            }))
+          }
+        ]}
+        queries={[categoriesGql]}
+      />
       <div className={styles.adminSubheader}>
         <h6>Categories - {tableMode ? 'Table view' : 'Card view'}</h6>
         <button
@@ -166,7 +192,7 @@ const Categories = () => {
               </div>
               <div className={styles.cardBody}>{n(category.balance)} EGP</div>
               <div className={styles.cardFooter}>
-                Group: {category.group.name}
+                Group: {category.group?.name}
               </div>
             </ItemCard>
           ))}

@@ -9564,6 +9564,11 @@ react-export-excel@^0.5.3:
     file-saver "1.3.8"
     xlsx "git+https://github.com/securedeveloper/js-xlsx.git"
 
+react-hook-form@^4.10.1:
+  version "4.10.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-4.10.1.tgz#abd24888cb9db95a4760fd3b0750eea84d644dee"
+  integrity sha512-ZXEa4YbHqUKxuuTGSVa36NjL7bhIcFEPmXxvq1p/Bq1EAo1cUlgZxcFV7MbAQiK4Nw2+1qg8Oz0mZIITTM8y/g==
+
 react-icons@^3.8.0:
   version "3.8.0"
   resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-3.8.0.tgz#229de5904809696c9f46932bd9b6126b2522866e"

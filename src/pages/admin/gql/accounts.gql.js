@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export default gql`
+const accountsGql = gql`
   query ACCOUNTS_ADMIN {
     accounts {
       id
@@ -10,3 +10,23 @@ export default gql`
     }
   }
 `;
+
+const createAccountGql = gql`
+  mutation CREATE_ACCOUNT($name: String!) {
+    createAccount(account: { name: $name }) {
+      id
+      name
+    }
+  }
+`;
+
+const deleteAccountGql = gql`
+  mutation DELETE_ACCOUNT($id: ID!) {
+    deleteAccount(id: $id) {
+      id
+      name
+    }
+  }
+`;
+
+export { accountsGql, createAccountGql, deleteAccountGql };

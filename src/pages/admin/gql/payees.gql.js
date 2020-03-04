@@ -1,6 +1,6 @@
 import gql from 'graphql-tag';
 
-export default gql`
+const payeesGql = gql`
   query PAYEES {
     payees {
       id
@@ -10,3 +10,27 @@ export default gql`
     }
   }
 `;
+
+const createPayeeGql = gql`
+  mutation CREATE_PAYEE($name: String!) {
+    createPayee(payee: { name: $name }) {
+      id
+      name
+      account {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const deletePayeeGql = gql`
+  mutation DELETE_PAYEE($id: ID!) {
+    deletePayee(id: $id) {
+      id
+      name
+    }
+  }
+`;
+
+export { payeesGql, createPayeeGql, deletePayeeGql };
