@@ -34,54 +34,54 @@
   flex-direction: column;
   justify-content: flex-start;
   align-items: stretch;
+}
 
-  .row {
-    width: 100%;
-    padding: 10px;
-    border-bottom: solid 1px #ddd;
-    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    background: linear-gradient(rgba(0, 0, 0, 0.02), transparent);
+.row {
+  width: 100%;
+  padding: 10px;
+  border-bottom: solid 1px #ddd;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: linear-gradient(rgba(0, 0, 0, 0.02), transparent);
 
-    &:hover {
-      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16);
-      background: rgba(0, 0, 0, 0.02);
-    }
+  &:hover {
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.16);
+    background: rgba(0, 0, 0, 0.02);
+  }
 
-    .rowTitle {
-      font-size: 18px;
-      font-weight: 500;
-      text-align: left;
-      min-width: 200px;
-      border-right: solid 1px #ddd;
-      margin-right: 10px;
-      margin-left: 20px;
-      padding: 0 5px;
-    }
+  .rowTitle {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: left;
+    min-width: 200px;
+    border-right: solid 1px #ddd;
+    margin-right: 10px;
+    margin-left: 20px;
+    padding: 0 5px;
+  }
 
-    .rowBody {
-      font-size: 14px;
-      text-align: left;
-      margin-right: 10px;
-      min-width: 200px;
-      border-right: solid 1px #ddd;
-      padding: 0 5px;
-    }
+  .rowBody {
+    font-size: 14px;
+    text-align: left;
+    margin-right: 10px;
+    min-width: 200px;
+    border-right: solid 1px #ddd;
+    padding: 0 5px;
+  }
 
-    .rowTail {
-      font-size: 14px;
-      font-weight: 500;
-      text-align: right;
-      margin-right: 5px;
-      margin-left: auto;
-    }
+  .rowTail {
+    font-size: 14px;
+    font-weight: 500;
+    text-align: right;
+    margin-right: 5px;
+    margin-left: auto;
+  }
 
-    .rowAction {
-      margin-right: 5px;
-      margin-left: 15px;
-    }
+  .rowAction {
+    margin-right: 5px;
+    margin-left: 15px;
   }
 }
 
@@ -148,4 +148,13 @@
   text-align: left;
   margin: 5px 0;
   border-top: solid 1px #eee;
+}
+
+.actionButton {
+  color: var(--light-main-color);
+  margin-right: var(--size-2);
+
+  &:hover {
+    color: var(--main-color);
+  }
 }

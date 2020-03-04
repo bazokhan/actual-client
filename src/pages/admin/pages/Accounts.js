@@ -1,7 +1,13 @@
 import React, { useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
+import Tag from 'ui/Tag';
+import ItemCard from 'ui/ItemCard';
+import Table from 'ui/Table/Table';
+import TableRow from 'ui/TableRow/TableRow';
+import { colorizeString } from 'helpers/colorHelpers';
 import {
   accountsGql,
   createAccountGql,
@@ -9,8 +15,71 @@ import {
 } from '../gql/accounts.gql';
 import styles from '../Admin.module.scss';
 import Toast from '../components/Toast';
-import ItemCard from '../../../ui/ItemCard';
 import CreateForm from '../components/CreateForm';
+
+const NumDiv = ({ num, title }) => (
+  <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+    <p
+      style={{
+        margin: 0,
+        fontSize: '1.3em',
+        marginRight: '5px',
+        fontWeight: '900'
+      }}
+    >
+      {num}
+    </p>
+    {title && <p style={{ margin: 0 }}>{title}</p>}
+  </div>
+);
+
+const Row = ({ item, deleteAccountMutation, setErrorMessage }) => {
+  const cells = [
+    {
+      name: 'name',
+      size: 'lg',
+      component: <Tag color={colorizeString(item.name)}>{item.name}</Tag>
+    },
+    {
+      name: 'count',
+      size: 'sm',
+      component: <NumDiv num={item.count} title="transactions" />
+    },
+    {
+      name: 'balace',
+      size: 'sm',
+      component: <NumDiv num={item.balance} title="EGP" />
+    },
+    {
+      name: 'deleteButton',
+      size: 'xs',
+      component: (
+        <button
+          type="button"
+          className={styles.actionButton}
+          onClick={async () => {
+            try {
+              await deleteAccountMutation({
+                variables: { id: item.id }
+              });
+            } catch (ex) {
+              setErrorMessage(ex.message);
+            }
+          }}
+        >
+          <FaTrashAlt />
+        </button>
+      )
+    }
+  ];
+  return <TableRow cells={cells} />;
+};
+
+Row.propTypes = {
+  item: PropTypes.object.isRequired,
+  deleteAccountMutation: PropTypes.func.isRequired,
+  setErrorMessage: PropTypes.func.isRequired
+};
 
 const Accounts = () => {
   const [viewMode, setViewMode] = useState(
@@ -29,8 +98,9 @@ const Accounts = () => {
   const accounts = useMemo(() => (data && data.accounts ? data.accounts : []), [
     data
   ]);
+
   if (error) return <div className={styles.loading}>Error!</div>;
-  if (loading) return <div className={styles.loading}>Loading..</div>;
+  // if (loading) return <div className={styles.loading}>Loading..</div>;
   return (
     <>
       <CreateForm
@@ -58,33 +128,15 @@ const Accounts = () => {
         <Toast message={errorMessage} onClose={() => setErrorMessage(null)} />
       )}
       {tableMode ? (
-        <div className={styles.rowsContainer}>
-          {accounts.map(account => (
-            <div className={styles.row} key={account.id}>
-              <div className={styles.rowTitle}>{account.name}</div>
-              <div className={styles.rowBody}>{account.count} Transactions</div>
-              <div className={styles.rowBody}>{n(account.balance)} EGP</div>
-              <div className={styles.rowTail} />
-              <div className={styles.rowAction}>
-                <button
-                  type="button"
-                  className="btn btn-link"
-                  onClick={async () => {
-                    try {
-                      await deleteAccountMutation({
-                        variables: { id: account.id }
-                      });
-                    } catch (ex) {
-                      setErrorMessage(ex.message);
-                    }
-                  }}
-                >
-                  <FaTrashAlt />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Table
+          title="Accounts"
+          data={accounts}
+          loading={loading}
+          context={{ deleteAccountMutation, setErrorMessage }}
+          header={() => <div />}
+          row={Row}
+          rowHeight={60}
+        />
       ) : (
         <div className={styles.cardsContainer}>
           {accounts.map(account => (
