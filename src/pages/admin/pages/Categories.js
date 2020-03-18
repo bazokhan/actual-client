@@ -52,7 +52,13 @@ const Row = ({
     {
       name: 'count',
       size: 'sm',
-      component: <NumDiv num={item.count} title="transactions" />
+      component: (
+        <NumDiv
+          num={item.count}
+          style={{ textAlign: 'right', width: '100%' }}
+          title="transactions"
+        />
+      )
     },
     {
       name: 'balace',

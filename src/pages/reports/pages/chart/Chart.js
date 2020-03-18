@@ -3,6 +3,7 @@ import { useQuery } from '@apollo/react-hooks';
 import ApexChart from 'react-apexcharts';
 import * as moment from 'moment';
 import Select from 'react-select';
+import { dateNumToString } from 'helpers/dateHelpers';
 import styles from './Chart.module.scss';
 import transactionsGql from './gql/transactions.gql';
 import accountsGql from './gql/accounts.gql';
@@ -80,9 +81,10 @@ const Charts = () => {
           activeGroup.value ? t.category.group.id === activeGroup.value : t
         )
         .reduce((prev, next) => {
-          const dateString = moment(next.date, 'DD-MM-YYYY').format(
-            'MM/DD/YYYY'
-          );
+          const dateString = moment(
+            dateNumToString(next.date, 'DMY'),
+            'DD-MM-YYYY'
+          ).format('MM/DD/YYYY');
           if (!dateString) {
             return prev;
           }
@@ -124,9 +126,10 @@ const Charts = () => {
           activeGroup.value ? t.category.group.id === activeGroup.value : t
         )
         .reduce((prev, next) => {
-          const dateString = moment(next.date, 'DD-MM-YYYY').format(
-            'MM/DD/YYYY'
-          );
+          const dateString = moment(
+            dateNumToString(next.date, 'DMY'),
+            'DD-MM-YYYY'
+          ).format('MM/DD/YYYY');
           if (!dateString) {
             return prev;
           }
