@@ -5,7 +5,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-select';
 import PropTypes from 'prop-types';
 
-const SelectableDiv = ({ defaultValue, onChange, options, children }) => {
+const SelectableDiv = ({
+  defaultValue,
+  onChange,
+  options,
+  children,
+  style
+}) => {
   const resetStyles = {
     boxSizing: 'border-box',
     margin: 0,
@@ -100,14 +106,20 @@ const SelectableDiv = ({ defaultValue, onChange, options, children }) => {
         }
       }}
       options={options}
-      styles={customStyles}
+      styles={{ ...style, ...customStyles }}
     />
   ) : (
     <div
       onClick={() => setEditMode(true)}
       onFocus={() => setEditMode(true)}
       tabIndex={0}
-      style={{ width: '100%', padding: '0', height: '100%', display: 'flex' }}
+      style={{
+        ...style,
+        width: '100%',
+        padding: '0',
+        height: '100%',
+        display: 'flex'
+      }}
     >
       {children}
     </div>
@@ -118,7 +130,12 @@ SelectableDiv.propTypes = {
   defaultValue: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
-  children: PropTypes.node.isRequired
+  children: PropTypes.node.isRequired,
+  style: PropTypes.object
+};
+
+SelectableDiv.defaultProps = {
+  style: {}
 };
 
 export default SelectableDiv;

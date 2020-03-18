@@ -1,10 +1,15 @@
+/* eslint-disable no-nested-ternary */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useMemo, useState } from 'react';
+import PropTypes from 'prop-types';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
-import Select from 'react-select';
+import Tag from 'ui/Tag';
+import NumDiv from 'ui/NumDiv';
+import Table from 'ui/Table/Table';
+import TableRow from 'ui/TableRow/TableRow';
 import styles from '../Admin.module.scss';
 import {
   categoriesGql,
@@ -16,9 +21,133 @@ import Toast from '../components/Toast';
 import groupsGql from '../../reports/pages/chart/gql/groups.gql';
 import ItemCard from '../../../ui/ItemCard';
 import CreateForm from '../components/CreateForm';
+import SelectableDiv from '../../../ui/SelectableDiv/SelectableDiv';
+
+const Row = ({
+  item,
+  deleteCategoryMutation,
+  setErrorMessage,
+  updateCategoryMutation,
+  groupsOptions,
+  style
+}) => {
+  const cells = [
+    {
+      name: 'name',
+      size: 'lg',
+      component: (
+        <Tag
+          color={
+            item.group?.isIncome
+              ? '#0C8810'
+              : item.group?.name === 'نفقات'
+              ? '#CD4A50'
+              : '#394960'
+          }
+        >
+          {item.name}
+        </Tag>
+      )
+    },
+    {
+      name: 'count',
+      size: 'sm',
+      component: <NumDiv num={item.count} title="transactions" />
+    },
+    {
+      name: 'balace',
+      size: 'sm',
+      component: (
+        <NumDiv
+          num={n(item.balance)}
+          style={{
+            textAlign: 'right',
+            width: '100%',
+            fontWeight: 100,
+            color: item.group?.isIncome
+              ? '#0C8810'
+              : item.group?.name === 'نفقات'
+              ? '#CD4A50'
+              : '#394960'
+          }}
+          title="EGP"
+        />
+      )
+    },
+    {
+      name: 'group',
+      size: 'lg',
+      component: (
+        <SelectableDiv
+          defaultValue={groupsOptions.find(g => g.value === item.group.id)}
+          onChange={async option => {
+            try {
+              await updateCategoryMutation({
+                variables: {
+                  id: item.id,
+                  category: { groupId: option.value }
+                }
+              });
+            } catch (ex) {
+              console.log(ex);
+            }
+          }}
+          options={groupsOptions}
+        >
+          <div
+            className={styles.rowTail}
+            style={{
+              color: item.group?.isIncome
+                ? '#0C8810'
+                : item.group?.name === 'نفقات'
+                ? '#CD4A50'
+                : '#394960'
+            }}
+          >
+            Group: {item.group.name}
+          </div>
+        </SelectableDiv>
+      )
+    },
+    {
+      name: 'deleteButton',
+      size: 'xs',
+      component: (
+        <button
+          type="button"
+          className={styles.actionButton}
+          onClick={async () => {
+            try {
+              await deleteCategoryMutation({
+                variables: { id: item.id }
+              });
+            } catch (ex) {
+              setErrorMessage(ex.message);
+            }
+          }}
+        >
+          <FaTrashAlt />
+        </button>
+      )
+    }
+  ];
+  return <TableRow style={style} cells={cells} />;
+};
+
+Row.propTypes = {
+  item: PropTypes.object.isRequired,
+  deleteCategoryMutation: PropTypes.func.isRequired,
+  setErrorMessage: PropTypes.func.isRequired,
+  updateCategoryMutation: PropTypes.func.isRequired,
+  groupsOptions: PropTypes.array.isRequired,
+  style: PropTypes.object
+};
+
+Row.defaultProps = {
+  style: {}
+};
 
 const Categories = () => {
-  const [editGroup, setEditGroup] = useState('');
   const [viewMode, setViewMode] = useState(
     localStorage.getItem('view_mode') || 'cards'
   );
@@ -106,61 +235,20 @@ const Categories = () => {
         <Toast message={errorMessage} onClose={() => setErrorMessage(null)} />
       )}
       {tableMode ? (
-        <div className={styles.rowsContainer}>
-          {categories.map(category => (
-            <div className={styles.row} key={category.id}>
-              <div className={styles.rowTitle}>{category.name}</div>
-              <div className={styles.rowBody}>
-                {category.count} Transactions
-              </div>
-              <div className={styles.rowBody}>{n(category.balance)} EGP</div>
-              {editGroup === category.id ? (
-                <Select
-                  onBlur={() => setEditGroup('')}
-                  onChange={async option => {
-                    try {
-                      await updateCategoryMutation({
-                        variables: {
-                          id: category.id,
-                          category: { groupId: option.value }
-                        }
-                      });
-                    } catch (ex) {
-                      console.log(ex);
-                    }
-                    setEditGroup('');
-                  }}
-                  options={groupsOptions}
-                  value={groupsOptions.find(g => g.value === category.group.id)}
-                />
-              ) : (
-                <div
-                  className={styles.rowTail}
-                  onClick={() => setEditGroup(category.id)}
-                >
-                  Group: {category.group.name}
-                </div>
-              )}
-              <div className={styles.rowAction}>
-                <button
-                  type="button"
-                  className="btn btn-link"
-                  onClick={async () => {
-                    try {
-                      await deleteCategoryMutation({
-                        variables: { id: category.id }
-                      });
-                    } catch (ex) {
-                      setErrorMessage(ex.message);
-                    }
-                  }}
-                >
-                  <FaTrashAlt />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Table
+          title="Categories"
+          data={categories}
+          loading={loading}
+          context={{
+            deleteCategoryMutation,
+            updateCategoryMutation,
+            setErrorMessage,
+            groupsOptions
+          }}
+          header={() => <div />}
+          row={Row}
+          rowHeight={60}
+        />
       ) : (
         <div className={styles.cardsContainer}>
           {categories.map(category => (

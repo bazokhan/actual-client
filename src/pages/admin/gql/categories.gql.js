@@ -10,6 +10,7 @@ const categoriesGql = gql`
       group {
         id
         name
+        isIncome
       }
     }
   }
