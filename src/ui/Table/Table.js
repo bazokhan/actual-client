@@ -1,19 +1,10 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import React, {
-  useState,
-  memo,
-  useRef,
-  useLayoutEffect,
-  useMemo,
-  forwardRef
-} from 'react';
+import React, { useState, memo, useRef, useLayoutEffect } from 'react';
 import PropTypes from 'prop-types';
 import { FixedSizeList as List, areEqual } from 'react-window';
 import WindowDiv from 'ui/WindowDiv';
 import PlaceholderDiv from 'ui/PlaceholderDiv';
-// import { createContext } from 'react';
 
-// const TableContext = createContext(null);
 const Row = memo(
   ({ data: dataList, index, style, component: RowComponent, ...context }) => {
     const item = dataList[index];
@@ -30,7 +21,7 @@ const Row = memo(
                   ...style,
                   background: 'linear-gradient(transparent, #F8F6F1)'
                 }
-              : { ...style }
+              : style
           }
         />
       </div>
@@ -72,29 +63,15 @@ const Table = ({
   );
 
   useLayoutEffect(() => {
-    // const height = listRef?.current?.getClientRects()?.[0]?.height;
-    // const footerHeight = footerRef?.current?.getClientRects()?.[0]?.height;
     const height = listRef?.current?.clientHeight;
-    const headerHeight = headerRef?.current?.clientHeight;
-    const footerHeight = footerRef?.current?.clientHeight;
-    // const height = listRef?.current?.getComputedStyle(divElement).height;
-    // const footerHeight = footerRef?.current?.getComputedStyle(divElement).height;
     if (height) {
-      let netHeight = height;
-      // if (headerHeight) netHeight -= headerHeight;
-      // if (footerHeight) netHeight -= footerHeight;
-      setListHeight(netHeight);
+      setListHeight(height);
     }
   }, [listRef, footerRef, Footer]);
 
-  //   const listHeight = useMemo(
-  //     () => (listRef?.current?.clientHeight || window.getComputedStyle(divElement).height) - 200,
-  //     [listRef?.current?.clientHeight]
-  //   );
   return loading ? (
     <PlaceholderDiv number={Math.floor(listHeight / 64)} height={listHeight} />
   ) : (
-    // <TableContext.Provider>
     <WindowDiv
       ref={listRef}
       title={title}
@@ -126,7 +103,6 @@ const Table = ({
       </List>
       {Footer ? <Footer ref={footerRef} {...context} /> : null}
     </WindowDiv>
-    // </TableContext.Provider>
   );
 };
 

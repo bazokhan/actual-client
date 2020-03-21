@@ -4,6 +4,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { n } from 'helpers/mathHelpers';
 import { FaTrashAlt, FaIdCard, FaTable } from 'react-icons/fa';
 import Tag from 'ui/Tag';
+import NumDiv from 'ui/NumDiv';
 import ItemCard from 'ui/ItemCard';
 import Table from 'ui/Table/Table';
 import TableRow from 'ui/TableRow/TableRow';
@@ -16,22 +17,6 @@ import {
 import styles from '../Admin.module.scss';
 import Toast from '../components/Toast';
 import CreateForm from '../components/CreateForm';
-
-const NumDiv = ({ num, title }) => (
-  <div style={{ display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-    <p
-      style={{
-        margin: 0,
-        fontSize: '1.3em',
-        marginRight: '5px',
-        fontWeight: '900'
-      }}
-    >
-      {num}
-    </p>
-    {title && <p style={{ margin: 0 }}>{title}</p>}
-  </div>
-);
 
 const Row = ({ item, deleteAccountMutation, setErrorMessage }) => {
   const cells = [
