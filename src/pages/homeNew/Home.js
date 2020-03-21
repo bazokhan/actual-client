@@ -14,7 +14,7 @@ import Table from '../../ui/Table';
 
 const Home = () => {
   const [optionsState, setOptionsState] = useState({
-    sidebar: true,
+    sidebar: false,
     header: true
   });
 

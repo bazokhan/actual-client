@@ -5,14 +5,16 @@ import React, { useMemo, useState, useRef, useEffect } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { n } from 'helpers/mathHelpers';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import DatePicker from 'react-datepicker';
 import { FaTimes, FaPlus } from 'react-icons/fa';
+import { useForm } from 'react-hook-form';
 import styles from './TransactionInput.module.scss';
-// import createTransactionGql from './gql/createTransaction.gql';
+import createTransactionGql from './gql/createTransaction.gql';
 import transactionListsGql from './gql/transactionLists.gql';
 import InputCell from './components/InputCell';
 import SelectCell from './components/SelectCell';
+import transactionsGql from '../../gql/transactions.gql';
 
 const ExampleCustomInput = ({ value, onClick }) => {
   const firstInputRef = useRef();
@@ -57,7 +59,10 @@ const TransactionInput = ({ onClose, filters }) => {
   const { data } = useQuery(transactionListsGql, {
     fetchPolicy: 'cache-and-network'
   });
-  // const [createTransactionMutation] = useMutation(createTransactionGql);
+  const [createTransactionMutation] = useMutation(createTransactionGql, {
+    refetchQueries: [{ query: transactionsGql }],
+    awaitRefetchQueries: true
+  });
 
   const [inputDate, setDate] = useState(new Date());
   const [inputAccount, setAccount] = useState(null);
@@ -65,6 +70,27 @@ const TransactionInput = ({ onClose, filters }) => {
   const [inputCategory, setCategory] = useState(null);
   const [inputAmount, setAmount] = useState(0);
   const [inputNotes, setNotes] = useState('');
+
+  const { register, handleSubmit, errors, setValue } = useForm();
+
+  const onSubmit = async values => {
+    try {
+      console.log(values);
+      await createTransactionMutation({ variables: { transaction: values } });
+      onClose();
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    register({ name: 'date' }, { required: true });
+    register({ name: 'accountId' }, { required: true });
+    register({ name: 'categoryId' }, { required: true });
+    register({ name: 'payeeId' }, { required: true });
+    register({ name: 'amount' }, { required: true });
+    register({ name: 'notes' });
+  }, [register]);
 
   const accounts = useMemo(
     () =>
@@ -155,20 +181,7 @@ const TransactionInput = ({ onClose, filters }) => {
             </div>
           )}
         </div>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            console.log({
-              inputDate,
-              inputAccount,
-              inputPayee,
-              inputCategory,
-              inputAmount,
-              inputNotes
-            });
-            onClose();
-          }}
-        >
+        <form onSubmit={handleSubmit(onSubmit)}>
           <div
             className={styles.row}
             style={{
@@ -184,8 +197,8 @@ const TransactionInput = ({ onClose, filters }) => {
                 dateFormat="dd-MM-yyyy"
                 selected={inputDate}
                 onChange={date => {
-                  // console.log(date);
                   setDate(date);
+                  setValue('date', date?.toISOString()?.split('T')?.[0]);
                 }}
                 customInput={<ExampleCustomInput />}
               />
@@ -194,26 +207,38 @@ const TransactionInput = ({ onClose, filters }) => {
               <SelectCell
                 className={styles.midCell}
                 value={inputAccount}
-                onChange={a => setAccount(a)}
+                onChange={a => {
+                  setAccount(a);
+                  setValue('accountId', a?.value);
+                }}
                 options={accounts}
               />
             )}
             <SelectCell
               className={styles.normCell}
               value={inputPayee}
-              onChange={p => setPayee(p)}
+              onChange={p => {
+                setPayee(p);
+                setValue('payeeId', p?.value);
+              }}
               options={payees}
             />
             <InputCell
               className={styles.bigCell}
-              onBlur={newNotes => setNotes(newNotes)}
+              onBlur={newNotes => {
+                setNotes(newNotes);
+                setValue('notes', newNotes);
+              }}
               html={inputNotes || ''}
             />
 
             <SelectCell
               className={styles.midCell}
               value={inputCategory}
-              onChange={c => setCategory(c)}
+              onChange={c => {
+                setCategory(c);
+                setValue('categoryId', c?.value);
+              }}
               options={categories}
             />
             {(filters.type === 'Payment' || !filters.type) && (
@@ -226,6 +251,7 @@ const TransactionInput = ({ onClose, filters }) => {
                     if (!typeof newAmount === 'number' || isNaN(newAmount))
                       return;
                     setAmount(newAmount * -1);
+                    setValue('amount', newAmount * -1);
                   } catch (ex) {
                     console.log(ex);
                   }
@@ -247,6 +273,7 @@ const TransactionInput = ({ onClose, filters }) => {
                     if (!typeof newAmount === 'number' || isNaN(newAmount))
                       return;
                     setAmount(newAmount);
+                    setValue('amount', newAmount);
                   } catch (ex) {
                     console.log(ex);
                   }
@@ -275,6 +302,12 @@ const TransactionInput = ({ onClose, filters }) => {
             </button>
           </div>
         </form>
+        {Object.keys(errors)?.length > 0 &&
+          Object.keys(errors).map(key => (
+            <p key={key} style={{ margin: '50px', color: 'red' }}>
+              {key} is {errors[key]?.type}
+            </p>
+          ))}
       </div>
     </div>
   );

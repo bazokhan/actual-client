@@ -62,7 +62,7 @@ const Header = ({
                   })
                 }
               />
-              <p>{optionsState.sidebar ? 'Show sidebar' : 'Hide sidebar'}</p>
+              <p>{optionsState.sidebar ? 'Hide sidebar' : 'Show sidebar'}</p>
             </label>
             <label htmlFor="header">
               <Toggle
@@ -81,7 +81,7 @@ const Header = ({
                   })
                 }
               />
-              <p>{optionsState.header ? 'Show header' : 'Hide header'}</p>
+              <p>{optionsState.header ? 'Hide header' : 'Show header'}</p>
             </label>
           </div>
 
