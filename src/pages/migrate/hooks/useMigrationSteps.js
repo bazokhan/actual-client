@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-unused-expressions */
 import { useState, useMemo } from 'react';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import accountsGql from 'gql/accounts.gql';
@@ -5,7 +7,6 @@ import groupsGql from 'gql/groups.gql';
 import categoriesGql from 'gql/categories.gql';
 import payeesGql from 'gql/payees.gql';
 import transactionsGql from 'gql/transactions.gql';
-import { dateNumToString } from 'helpers/dateHelpers';
 import useMigrationData from 'hooks/useMigrationData';
 import {
   transferGroupId,
@@ -161,6 +162,33 @@ const useMigrationSteps = () => {
     [transactionsData]
   );
 
+  const retry = async (transaction, err, source) => {
+    try {
+      const payeeError = err.message?.includes('No Payee Found!');
+      const categoryError = err.message?.includes('No Category Found!');
+      if (!payeeError && !categoryError) {
+        console.log(err);
+        return null;
+      }
+      if (payeeError) {
+        transaction.payeeId = sparePayeeId;
+      }
+      if (categoryError) {
+        transaction.categoryId = spareCategoryId;
+      }
+
+      const t = await migrateTransactionMutation({
+        variables: {
+          transaction
+        }
+      });
+      return t;
+    } catch (e) {
+      console.log(e);
+      return retry(transaction, e, source);
+    }
+  };
+
   const steps = [
     {
       index: 0,
@@ -222,7 +250,7 @@ const useMigrationSteps = () => {
             });
           } catch (ex) {
             console.log(ex);
-            newPrev.push(ex);
+            newPrev?.push(ex);
           }
           if (index === groups.length - 1) {
             setLoading({ ...loading, groups: false });
@@ -299,7 +327,7 @@ const useMigrationSteps = () => {
               console.log(next);
               console.log(ex);
             }
-            newPrev.push(ex);
+            newPrev?.push(ex);
           }
 
           return newPrev;
@@ -323,7 +351,7 @@ const useMigrationSteps = () => {
           } catch (ex) {
             console.log(next);
             console.log(ex);
-            newPrev.push(ex);
+            newPrev?.push(ex);
           }
           return newPrev;
         }, []);
@@ -375,7 +403,7 @@ const useMigrationSteps = () => {
             });
           } catch (ex) {
             console.log(ex);
-            newPrev.push(ex);
+            newPrev?.push(ex);
           }
         }, []);
         try {
@@ -411,13 +439,14 @@ const useMigrationSteps = () => {
           }
           const newPrev = await prev;
           try {
+            if (!next.id) console.log(next);
             await migrateTransactionMutation({
               variables: {
                 transaction: {
                   id: next.id,
                   amount: next.actualAmount,
                   notes: next.notes,
-                  date: dateNumToString(next.date, 'DMY'),
+                  date: next.date,
                   accountId: next.account.id,
                   categoryId: next.categoryObj.id,
                   payeeId: next.payee.id,
@@ -426,26 +455,21 @@ const useMigrationSteps = () => {
               }
             });
           } catch (ex) {
-            if (ex.message?.includes('No Payee Found!')) {
-              await migrateTransactionMutation({
-                variables: {
-                  transaction: {
-                    id: next.id,
-                    amount: next.actualAmount,
-                    notes: next.notes,
-                    date: dateNumToString(next.date, 'DMY'),
-                    accountId: next.account.id,
-                    categoryId: next.categoryObj.id,
-                    payeeId: sparePayeeId,
-                    tombstone: next.tombstone
-                  }
-                }
-              });
-            } else {
-              console.log(next);
-              console.log(ex);
-              newPrev.push({ error: ex, id: next?.id, transaction: next });
-            }
+            // console.log(ex);
+            retry(
+              {
+                id: next.id,
+                notes: next.notes,
+                date: next.date,
+                tombstone: next.tombstone,
+                amount: next.actualAmount,
+                accountId: next.account?.id,
+                payeeId: next.payee?.id,
+                categoryId: next.categoryObj?.id
+              },
+              ex,
+              next
+            );
           }
           return newPrev;
         }, []);

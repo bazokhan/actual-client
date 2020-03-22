@@ -1,12 +1,11 @@
-import axios from 'axios';
 import { useState, useEffect, useCallback } from 'react';
 
 const server = process.env.REACT_APP_SERVER_URL;
 
 const a = {
-  get: (query, config) => {
-    if (config) return axios.get(server + query, config);
-    return axios.get(server + query);
+  get: async query => {
+    const res = await fetch(server + query).then(r => r.json());
+    return res;
   }
 };
 
@@ -42,7 +41,7 @@ const useInitialLoad = () => {
   const [after, setAfter] = useState(null);
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       try {
         const accountsRes = await a.get(dbRoutes.accounts);
         const categoriesRes = await a.get(dbRoutes.categories);
@@ -50,12 +49,7 @@ const useInitialLoad = () => {
         const categoryMappingRes = await a.get(dbRoutes.categoryMapping);
         const payeesRes = await a.get(dbRoutes.payees);
         const payeeMappingRes = await a.get(dbRoutes.payeeMapping);
-        const initialTransactionsRes = await a.get(dbRoutes.transactions, {
-          headers: {
-            range: 'rows=0-',
-            order: 'date asc'
-          }
-        });
+        const initialTransactionsRes = await a.get(dbRoutes.transactions);
         if (
           accountsRes &&
           categoriesRes &&
@@ -65,18 +59,15 @@ const useInitialLoad = () => {
           payeeMappingRes &&
           initialTransactionsRes
         ) {
-          setAccounts(accountsRes.data ? accountsRes.data : []);
-          setCategories(categoriesRes.data ? categoriesRes.data : []);
-          setGroups(groupsRes.data ? groupsRes.data : []);
-          setCategoryMapping(
-            categoryMappingRes.data ? categoryMappingRes.data : []
-          );
-          setPayees(payeesRes.data ? payeesRes.data : []);
-          setPayeeMapping(payeeMappingRes.data ? payeeMappingRes.data : []);
-          setTransactions(
-            initialTransactionsRes.data ? initialTransactionsRes.data : []
-          );
-          const contentRange = initialTransactionsRes.headers['content-range'];
+          setAccounts(accountsRes?.resources || []);
+          setCategories(categoriesRes?.resources || []);
+          setGroups(groupsRes?.resources || []);
+          setCategoryMapping(categoryMappingRes?.resources || []);
+          setPayees(payeesRes?.resources || []);
+          setPayeeMapping(payeeMappingRes?.resources || []);
+          setTransactions(initialTransactionsRes?.resources || []);
+          const contentRange =
+            initialTransactionsRes.headers?.['content-range'];
           if (contentRange) {
             setAfter(getAfter(contentRange));
           }
@@ -94,7 +85,7 @@ const useInitialLoad = () => {
         setLoading(false);
       }
     };
-    fetch();
+    fetchData();
   }, []);
 
   const fetchMoreTransactions = useCallback(

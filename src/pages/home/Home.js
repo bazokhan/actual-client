@@ -4,7 +4,6 @@ import useFilterMachine from 'hooks/useFilterMachine';
 import TransactionsHeader from '../homeNew/components/TransactionHeader';
 import Transaction from './components/Transaction';
 import Table from '../../ui/Table';
-import { dateNumToString } from '../../helpers/dateHelpers';
 
 const Home = () => {
   const { activeTransactions } = useContext(DataContext);
@@ -13,7 +12,6 @@ const Home = () => {
     () =>
       activeTransactions.map(t => ({
         ...t,
-        date: dateNumToString(t.date, 'DMY'),
         category: t.categoryObj
       })),
     [activeTransactions]

@@ -10,7 +10,6 @@ import { n } from 'helpers/mathHelpers';
 import useFilterMachine from 'hooks/useFilterMachine';
 import FILTERS from 'App/constants/Filters';
 import Toggle from 'react-switch';
-import { dateNumToString } from 'helpers/dateHelpers';
 import styles from './Monthly.module.scss';
 import monthlyReportGql from './gql/monthlyReport.gql';
 import DepositTable from './components/DepositTable';
@@ -31,14 +30,9 @@ const Monthly = () => {
       allAccounts?.[0],
     [activeAccountId, allAccounts]
   );
-  const transactions = useMemo(
-    () =>
-      activeAccount?.transactions?.map(t => ({
-        ...t,
-        date: dateNumToString(t.date, 'DMY')
-      })) || [],
-    [activeAccount]
-  );
+  const transactions = useMemo(() => activeAccount?.transactions || [], [
+    activeAccount
+  ]);
 
   const allCategories = useMemo(() => data?.categories, [data]);
 

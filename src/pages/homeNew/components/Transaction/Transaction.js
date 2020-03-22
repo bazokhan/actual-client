@@ -8,6 +8,7 @@ import { FaTimes, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import { Tag } from 'ui';
 import { COLOR_WHEEL, MAIN_COLORS } from 'App/constants/Colors';
 import TableRow from 'ui/TableRow/TableRow';
+import { dateNumToString } from 'helpers/dateHelpers';
 import styles from './Transaction.module.scss';
 import updateTransactionGql from './gql/updateTransaction.gql';
 import SelectCell from './components/SelectCell';
@@ -240,7 +241,7 @@ const Transaction = ({
     {
       name: 'date',
       size: 'md',
-      component: <p>{date}</p>
+      component: <p className={styles.date}>{dateNumToString(date, 'DMY')}</p>
     },
     {
       name: 'account',

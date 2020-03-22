@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { FaAngleUp, FaAngleDown } from 'react-icons/fa';
-import { numerizeDate } from 'helpers/dateHelpers';
 import SORTERS from 'App/constants/Sorters';
 import styles from './TransactionHeader.module.scss';
 
@@ -37,9 +36,7 @@ const TransactionsHeader = ({ sortBy, filterValues }) => {
         text="Date"
         className={cx(styles.cell, styles.midCell)}
         sortBy={order => {
-          sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t =>
-            numerizeDate(t.date)
-          );
+          sortBy(order ? SORTERS.NUM_ASC : SORTERS.NUM_DES, t => t.date);
         }}
       />
       {!filterValues?.account && (
