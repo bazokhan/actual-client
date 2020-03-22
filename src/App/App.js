@@ -1,207 +1,23 @@
 /* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable no-nested-ternary */
-import React, { useState, useEffect, useMemo, Suspense, lazy } from 'react';
-import useMigrationData from 'hooks/useMigrationData';
+import React, { Suspense } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import './styles/Main.scss';
 import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
 import '../fonts/Changa-VariableFont_wght.ttf';
-import { sortAmountsByAccount } from 'helpers';
-
 import Sidebar from 'components/Sidebar';
-
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { DataContext } from './context';
 import styles from './App.module.scss';
 import client from './client';
 import AuthRoute from './AuthRoute';
-
-const routes = {
-  AdminPage: lazy(() => import('pages/admin')),
-  AuthPage: lazy(() => import('pages/auth')),
-  CategoryPage: lazy(() => import('pages/category')),
-  HistoryPage: lazy(() => import('pages/history')),
-  HomePage: lazy(() => import('pages/home')),
-  HomeNew: lazy(() => import('pages/homeNew')),
-  MigratePage: lazy(() => import('pages/migrate')),
-  OrderPage: lazy(() => import('pages/order')),
-  PivotPage: lazy(() => import('pages/pivot')),
-  ReportsPage: lazy(() => import('pages/reports'))
-};
+import { routes, authRoutes } from './routes';
+import useOldDatabase from './useOldDatabase';
 
 const App = () => {
-  const {
-    loading,
-    accounts,
-    categories,
-    transactions,
-    deadTransactions
-  } = useMigrationData();
-
-  const authToken = localStorage.getItem('auth_token');
-
-  const [activeTransactions, setActiveTransactions] = useState([]);
-  const [activeAccount] = useState('');
-  const [dateFilter] = useState([]);
-  const [activeType] = useState('');
-  const [activeCategory] = useState('');
-  const [activePayee] = useState('');
-  const [searchString] = useState('');
-
-  const activeAccountAmount = useMemo(
-    () =>
-      sortAmountsByAccount(transactions, accounts)[activeAccount] ||
-      transactions.map(t => t.actualAmount),
-    [transactions, activeAccount, accounts]
-  );
-
-  const activeAccountName = useMemo(
-    () =>
-      activeAccount
-        ? accounts.find(account => account.id === activeAccount).name
-        : 'all accounts',
-    [activeAccount, accounts]
-  );
-
-  const transactionsByCategory = useMemo(
-    () =>
-      [
-        ...categories,
-        { id: 'transfer', type: 'in' },
-        { id: 'transfer', type: 'out' }
-      ]
-        .map(category =>
-          activeTransactions.filter(
-            t =>
-              t.categoryObj.id === category.id &&
-              t.categoryObj.type === category.type
-          )
-        )
-        .filter(category => category.length)
-        .map(category => ({
-          id: category.length
-            ? category.find(t => t.categoryObj).categoryObj.id
-            : 'NotFound',
-          name: category.length
-            ? category.find(t => t.categoryObj).categoryObj.name
-            : 'No name',
-          amount: category.reduce((sum, t) => sum + t.actualAmount, 0),
-          accounts: category.reduce(
-            (all, t) =>
-              all.includes(t.account.name) ? all : [...all, t.account.name],
-            []
-          ),
-          payees: category.reduce(
-            (all, t) =>
-              all.includes(t.payee.name || t.transferAccount.name)
-                ? all
-                : [
-                    ...all,
-                    t.payee.name
-                      ? t.payee.name
-                      : t.transferAccount.name
-                      ? t.transferAccount.name
-                      : null
-                  ],
-            []
-          ),
-          duration: category.reduce(
-            (startEnd, t) => [
-              Math.min(startEnd[0], t.date),
-              Math.max(startEnd[1], t.date)
-            ],
-            [100000000, 0]
-          ),
-          transactions: category
-        }))
-        .map(category =>
-          category.amount >= 0
-            ? { ...category, amountType: 'Deposit' }
-            : { ...category, amountType: 'Payment' }
-        ),
-    [categories, activeTransactions]
-  );
-
-  const totalPayment = useMemo(
-    () =>
-      transactionsByCategory.reduce(
-        (sum, category) =>
-          category.amountType === 'Payment' ? sum + category.amount : sum,
-        0
-      ),
-    [transactionsByCategory]
-  );
-
-  const totalDeposit = useMemo(
-    () =>
-      transactionsByCategory.reduce(
-        (sum, category) =>
-          category.amountType === 'Deposit' ? sum + category.amount : sum,
-        0
-      ),
-    [transactionsByCategory]
-  );
-
-  const totalTransactions = useMemo(
-    () =>
-      transactionsByCategory.reduce(
-        (sum, category) => sum + category.transactions.length,
-        0
-      ),
-    [transactionsByCategory]
-  );
-
-  const DataContextValue = useMemo(
-    () => ({
-      activeTransactions,
-      activeAccountAmount,
-      activeAccountName,
-      deadTransactions,
-      transactionsByCategory,
-      totalPayment,
-      totalDeposit,
-      totalTransactions,
-      authToken
-    }),
-    [
-      activeTransactions,
-      activeAccountAmount,
-      activeAccountName,
-      deadTransactions,
-      transactionsByCategory,
-      totalPayment,
-      totalDeposit,
-      totalTransactions,
-      authToken
-    ]
-  );
-
-  useEffect(() => {
-    setActiveTransactions(
-      transactions
-        .filter(t => (activeAccount ? t.account.id === activeAccount : t))
-        .filter(t =>
-          dateFilter.length === 2
-            ? dateFilter[0] <= t.date && t.date <= dateFilter[1]
-            : t
-        )
-        .filter(t => (activeType ? t.amountType === activeType : t))
-        .filter(t => (activeCategory ? t.categoryObj.id === activeCategory : t))
-        .filter(t => (activePayee ? t.payee.id === activePayee : t))
-        .filter(t => t.searchString.includes(searchString))
-    );
-  }, [
-    activeAccount,
-    transactions,
-    dateFilter,
-    activeType,
-    activeCategory,
-    activePayee,
-    searchString
-  ]);
+  const { loading, DataContextValue } = useOldDatabase();
 
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
@@ -216,35 +32,22 @@ const App = () => {
                 fallback={<div className={styles.loading}>Loading..</div>}
               >
                 <Switch>
-                  <AuthRoute path="/admin" component={routes.AdminPage} />
-                  <Route path="/auth" component={routes.AuthPage} />
-                  <AuthRoute
-                    path="/pivot/:categoryid"
-                    exact
-                    component={routes.CategoryPage}
-                  />
-                  <AuthRoute
-                    path="/history"
-                    exact
-                    component={routes.HistoryPage}
-                  />
-                  <AuthRoute path="/" exact component={routes.HomePage} />
-                  <AuthRoute path="/newHome" exact component={routes.HomeNew} />
-                  <AuthRoute
-                    path="/migrate"
-                    exact
-                    component={routes.MigratePage}
-                  />
-                  <AuthRoute path="/order" exact component={routes.OrderPage} />
-                  <AuthRoute path="/pivot" exact component={routes.PivotPage} />
-                  <AuthRoute path="/reports" component={routes.ReportsPage} />
-                  <AuthRoute
-                    path="/:notfound"
-                    exact
-                    component={() => (
-                      <div className={styles.loading}>404! Not found</div>
-                    )}
-                  />
+                  {routes.map(route => (
+                    <Route
+                      key={route.path}
+                      path={route.path}
+                      exact={route.exact}
+                      component={route.component}
+                    />
+                  ))}
+                  {authRoutes.map(route => (
+                    <AuthRoute
+                      key={route.path}
+                      path={route.path}
+                      exact={route.exact}
+                      component={route.component}
+                    />
+                  ))}
                 </Switch>
               </Suspense>
             </div>
