@@ -8,6 +8,7 @@ import TableRow from 'ui/TableRow/TableRow';
 import { n } from 'helpers/mathHelpers';
 import Tag from 'ui/Tag';
 import { FaArrowAltCircleRight } from 'react-icons/fa';
+import { dateNumToString } from 'helpers/dateHelpers';
 import styles from '../../Monthly.module.scss';
 
 const ROW_HEIGHT = 60;
@@ -80,7 +81,9 @@ const Row = ({ item: t, style, mode }) => {
       size: 'sm',
       component: (
         <p className={styles.cell}>
-          {`${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`}
+          {`${dateNumToString(t.date, 'DMY')?.split('-')?.[1]}/${
+            dateNumToString(t.date, 'DMY')?.split('-')?.[2]
+          }`}
         </p>
       )
     },

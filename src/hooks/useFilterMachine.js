@@ -2,7 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo } from 'react';
 import mapSort from 'mapsort';
-import { numerizeDate } from 'helpers/dateHelpers';
+import { numerizeDate, dateNumToString } from 'helpers/dateHelpers';
 import FILTERS from 'App/constants/Filters';
 import SORTERS from 'App/constants/Sorters';
 import * as sorters from 'helpers/sortHelpers';
@@ -21,7 +21,9 @@ const useFilterMachine = transactions => {
         ...t,
         month:
           typeof t.date === 'string'
-            ? `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`
+            ? `${dateNumToString(t.date, 'DMY')?.split('-')?.[1]}/${
+                dateNumToString(t.date, 'DMY')?.split('-')?.[2]
+              }`
             : typeof t.date === 'number'
             ? `${Math.floor(t.date / 10000)}/${Math.floor(t.date / 100)
                 .toString()

@@ -9,6 +9,11 @@ const routes = [
 ];
 const authRoutes = [
   {
+    path: '/',
+    exact: true,
+    component: lazy(() => import('pages/home'))
+  },
+  {
     path: '/admin',
     exact: false,
     component: lazy(() => import('pages/admin'))

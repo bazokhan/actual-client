@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const dateNumToString = (num, format = 'YMD', sep = '-') => {
   if (!num) return '';
   const ds = num.toString();
@@ -12,11 +13,13 @@ const dateNumToString = (num, format = 'YMD', sep = '-') => {
 
 const dateNumFromIsoString = str => {
   if (!str) return 0;
+  if (typeof str !== 'string') str = str?.toString() || '0-0-0';
   return Number(str.split('-').join(''));
 };
 
 const numerizeDate = str => {
   if (!str) return 0;
+  if (typeof str !== 'string') str = str?.toString() || '0-0-0';
   const [day, month, year] = str.split('-');
   const formattedDate = `${year}${month}${day}`;
   return Number(formattedDate);

@@ -6,10 +6,16 @@ import {
   FaRegPaperPlane,
   FaRegEdit,
   FaChartPie,
-  FaCogs
+  FaCogs,
+  FaCalculator
 } from 'react-icons/fa';
 
 const routes = [
+  {
+    route: '/',
+    icon: <FaHome />,
+    text: 'Home'
+  },
   {
     route: '/auth',
     icon: <FaSignInAlt />,
@@ -22,7 +28,7 @@ const routes = [
   },
   {
     route: '/service',
-    icon: <FaHome />,
+    icon: <FaCalculator />,
     text: 'Accounting'
   },
   {

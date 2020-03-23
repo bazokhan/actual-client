@@ -7,6 +7,7 @@ import Table from 'ui/Table';
 import TableRow from 'ui/TableRow/TableRow';
 import useFilterMachine from 'hooks/useFilterMachine';
 import { n } from 'helpers/mathHelpers';
+import { dateNumToString } from 'helpers/dateHelpers';
 import styles from './AccountTable.module.scss';
 
 const Header = ({ style, isAscending, setIsAscending, sortBy }) => {
@@ -89,7 +90,9 @@ const Row = ({ item: t, style }) => {
       component: (
         <p className={styles.cell}>
           {t?.amount >= 0 &&
-            `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`}
+            `${dateNumToString(t.date, 'DMY')?.split('-')?.[1]}/${
+              dateNumToString(t.date, 'DMY')?.split('-')?.[2]
+            }`}
         </p>
       )
     },
@@ -113,7 +116,9 @@ const Row = ({ item: t, style }) => {
       component: (
         <p className={styles.cell}>
           {t?.amount < 0 &&
-            `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`}
+            `${dateNumToString(t.date, 'DMY')?.split('-')?.[1]}/${
+              dateNumToString(t.date, 'DMY')?.split('-')?.[2]
+            }`}
         </p>
       )
     }
