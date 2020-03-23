@@ -1,0 +1,132 @@
+.container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  width: 100%;
+
+  .profilePicture {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    border: solid 2px white;
+    display: flex;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    img,
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    &:hover {
+      transform: scale(1.05, 1.05);
+    }
+  }
+}
+
+.button {
+  border: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 0;
+  width: 100%;
+  box-sizing: border-box;
+  background: none;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+}
+
+.profilesContainer {
+  position: absolute;
+  left: 70px;
+  bottom: 80px;
+  padding: 10px;
+  background-color: var(--main-background);
+  display: flex;
+  flex-direction: row;
+  box-shadow: 0 3px 6px 0 var(--box-shadow-color);
+  border-radius: 10px;
+  .title {
+    font-family: 'Muli', sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    line-height: 1.33;
+    color: var(--secondary-text);
+    margin-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  .profile {
+    display: flex;
+    padding: 10px;
+    cursor: pointer;
+    &:hover {
+      background: var(--hover-box);
+      border-radius: 8px;
+      p {
+        color: var(--main-color);
+      }
+    }
+    .profilePicture {
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin-right: 8px;
+      img,
+      svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    p {
+      color: var(--main-text);
+      font-size: 12px;
+    }
+  }
+  .profiles {
+    border-right: 1px solid var(--secondary-background);
+    padding-right: 10px;
+  }
+  .settings {
+    .links {
+      padding: 0 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 80%;
+      p {
+        color: var(--main-text);
+      }
+      .link {
+        display: flex;
+        padding: 5px;
+        cursor: pointer;
+        &:hover {
+          background: var(--hover-box);
+          border-radius: 8px;
+          p {
+            color: var(--main-color);
+          }
+          svg,
+          img {
+            fill: var(--main-color);
+          }
+        }
+        svg,
+        img {
+          fill: var(--main-text);
+          width: 25px;
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}

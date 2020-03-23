@@ -21,11 +21,9 @@ const useFilterMachine = transactions => {
         ...t,
         month:
           typeof t.date === 'string'
-            ? console.log(typeof t.date) ||
-              `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`
+            ? `${t.date?.split('-')?.[1]}/${t.date?.split('-')?.[2]}`
             : typeof t.date === 'number'
-            ? console.log('here') ||
-              `${Math.floor(t.date / 10000)}/${Math.floor(t.date / 100)
+            ? `${Math.floor(t.date / 10000)}/${Math.floor(t.date / 100)
                 .toString()
                 .slice(4)}`
             : ''

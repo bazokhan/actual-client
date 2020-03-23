@@ -65,6 +65,12 @@ const Login = () => {
     }
   };
 
+  const authToken = localStorage.getItem('auth_token');
+
+  if (authToken) {
+    history.push('/');
+  }
+
   return (
     <div className={styles.container}>
       {message && (

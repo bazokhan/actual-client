@@ -1,7 +1,11 @@
 import React, { lazy } from 'react';
 
 const routes = [
-  { path: '/auth', exact: false, component: lazy(() => import('pages/auth')) }
+  {
+    path: '/auth',
+    exact: false,
+    component: lazy(() => import('pages/auth'))
+  }
 ];
 const authRoutes = [
   {
@@ -10,28 +14,20 @@ const authRoutes = [
     component: lazy(() => import('pages/admin'))
   },
   {
-    path: '/pivot/:categoryid',
+    path: '/service',
     exact: true,
-    component: lazy(() => import('pages/category'))
+    component: lazy(() => import('pages/service'))
   },
   {
-    path: '/history',
-    exact: true,
-    component: lazy(() => import('pages/history'))
-  },
-  { path: '/', exact: true, component: lazy(() => import('pages/home')) },
-  {
-    path: '/newHome',
-    exact: true,
-    component: lazy(() => import('pages/homeNew'))
+    path: '/legacy',
+    exact: false,
+    component: lazy(() => import('pages/legacy'))
   },
   {
-    path: '/migrate',
+    path: '/order',
     exact: true,
-    component: lazy(() => import('pages/migrate'))
+    component: lazy(() => import('pages/order'))
   },
-  { path: '/order', exact: true, component: lazy(() => import('pages/order')) },
-  { path: '/pivot', exact: true, component: lazy(() => import('pages/pivot')) },
   {
     path: '/reports',
     exact: false,

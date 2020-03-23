@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css?family=Muli:300,400,700');
+
+.popup {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  position: absolute;
+  width: 400px;
+  max-height: 450px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+  background-color: var(--main-background);
+  left: 50px;
+  bottom: 20px;
+  margin-top: 5px;
+  z-index: 10;
+  text-decoration: none;
+  border-radius: 10px;
+  border-bottom-left-radius: 0;
+
+  a {
+    text-decoration: none !important;
+  }
+
+  .header {
+    // box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.16);
+    border: solid 1px rgba(0, 0, 0, 0.16);
+    border-bottom: none;
+    padding: 15px;
+    display: grid;
+    grid-template-columns: 3fr 2fr 1fr;
+    height: 50px;
+    span {
+      font-family: 'Muli', sans-serif;
+      font-size: 15px;
+      font-weight: bold;
+      line-height: 1.33;
+      color: var(--secondary-text);
+    }
+
+    .buttons {
+      color: var(--secondary-text);
+      font-family: 'Muli', sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      line-height: 1.33;
+      background: none;
+      padding: 0;
+      letter-spacing: 0;
+      border-radius: 0;
+      box-shadow: none;
+      border: none;
+      padding-bottom: 10px;
+      &:hover {
+        background: none !important;
+        color: var(--main-color) !important;
+        border-color: none !important;
+      }
+    }
+  }
+  .container {
+    overflow-y: auto;
+    // max-height: 100%;
+    flex-grow: 1;
+    border: solid 1px rgba(0, 0, 0, 0.16);
+    .emptyState {
+      width: 100%;
+      padding: 30px 0;
+      // height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.9rem;
+    }
+    .notificationContainer {
+      border-top: 1px rgba(0, 0, 0, 0.16) solid;
+      border-bottom: 1px rgba(0, 0, 0, 0.16) solid;
+      padding: 15px;
+      margin: 0;
+      display: grid;
+      grid-template-columns: 5fr 1fr;
+      justify-content: space-between;
+      background: var(--main-background);
+      transition: all 0.2s;
+
+      &.unread {
+        background: var(--secondary-background);
+      }
+
+      &:hover {
+        background: var(--secondary-text);
+      }
+
+      &:nth-child(1) {
+        // margin-top: 30px;
+        border-top: none;
+      }
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+    .messageType {
+      font-family: 'Muli', sans-serif;
+      font-size: 12px;
+      line-height: 1.17;
+      fill: var(--accent-color);
+      position: relative;
+
+      .icon {
+        font-size: 10px;
+        position: absolute;
+      }
+      .icon:nth-child(1) {
+        left: 0;
+      }
+      .icon:nth-last-child(1) {
+        font-size: 7px;
+        margin-top: 2px;
+        margin-left: 3px;
+      }
+      .text {
+        margin-left: 17px;
+      }
+      span:nth-last-child(2) {
+        color: rgba(0, 0, 0, 0.54);
+      }
+    }
+    .name {
+      margin: 5px 0;
+      font-family: 'Muli', sans-serif;
+      font-weight: normal;
+      font-size: 14px;
+      line-height: 1.21;
+      color: var(--main-text);
+    }
+    .notificationMessage {
+      font-family: 'Muli', sans-serif;
+      font-size: 14px;
+      font-weight: normal;
+      line-height: 1.21;
+      color: var(--secondary-text);
+    }
+    .profileImage {
+      width: 50px;
+      height: 50px;
+      z-index: 10;
+      position: relative;
+      justify-self: end;
+      img {
+        border-radius: 50%;
+        width: 100%;
+      }
+    }
+  }
+  .footer {
+    // position: absolute;
+    // bottom: 0;
+    padding: 10px 15px;
+    // box-shadow: 0 -3px 6px 0 rgba(0, 0, 0, 0.16);
+    border: solid 1px rgba(0, 0, 0, 0.16);
+    border-top: none;
+    width: 100%;
+    text-align: center;
+    a {
+      font-family: 'Muli', sans-serif;
+      font-size: 15px;
+      font-weight: bold;
+      line-height: 1.33;
+      color: var(--secondary-text);
+      text-decoration: none !important;
+      cursor: pointer;
+      &:hover {
+        color: var(--main-color);
+      }
+    }
+  }
+}
+@media (max-width: 767.8px) {
+  .popup {
+    bottom: 5px;
+    right: 30px;
+    height: 85vh;
+  }
+}
+@media (max-width: 567.8px) {
+  .popup {
+    width: 80vw;
+    right: 0;
+    height: 75vh;
+    bottom: 30px;
+  }
+}

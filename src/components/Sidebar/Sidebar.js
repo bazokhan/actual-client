@@ -1,159 +1,92 @@
-/* eslint-disable no-unused-expressions */
-import React, { useContext, useState } from 'react';
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import cx from 'classnames';
-import { NavLink } from 'react-router-dom';
-import { DataContext } from 'App/context';
-import {
-  FaHome,
-  FaUserCog,
-  FaChartBar,
-  FaExclamationTriangle,
-  FaSignOutAlt,
-  FaFileAlt,
-  FaAngleLeft,
-  FaAngleRight
-} from 'react-icons/fa';
+import { useLocation } from 'react-router-dom';
 import styles from './Sidebar.module.scss';
-import { useEffect } from 'react';
-import { useRef } from 'react';
-import { useCallback } from 'react';
+import burgerFull from './images/burger-full.svg';
+import burgerHalf from './images/burger-half.svg';
+import CollapsableLink from './components/CollapsableLink';
+import routes from './routes';
+
+const SubMenu = ({ links, open, parent: { LinkIcon, text } }) => {
+  const [closedVertically, setClosedVertically] = useState(true);
+  return (
+    <>
+      <CollapsableLink
+        type="button"
+        onClick={() => setClosedVertically(!closedVertically)}
+        hasOpenChildren={!closedVertically}
+        openHorizontally={open}
+        icon={LinkIcon}
+        text={text}
+      />
+      {links.map(link => {
+        return (
+          <CollapsableLink
+            key={link?.text}
+            {...link}
+            openHorizontally={open}
+            closedVertically={closedVertically}
+          />
+        );
+      })}
+    </>
+  );
+};
+
+SubMenu.propTypes = {
+  links: PropTypes.array.isRequired,
+  open: PropTypes.bool.isRequired,
+  parent: PropTypes.object.isRequired
+};
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  // const [isOver, setIsOver] = useState(false);
-  // const openSidebar = setInterval(() => {
-  //   setCounter(counter + 100), 100;
-  // }, 100);
-  // const closeSidebar = () => {
-  //   setIsOver(false);
-  //   setIsOpen(false);
-  // };
-  const { authToken } = useContext(DataContext);
-  const sidebarRef = useRef(null);
-  // useEffect(() => {
-  //   sidebarRef?.current?.addEventListener('mouseover', openSidebar);
-  //   sidebarRef?.current?.addEventListener('mouseout', closeSidebar);
-  //   return () => {
-  //     sidebarRef?.current?.removeEventListener('mouseover', openSidebar);
-  //     sidebarRef?.current?.removeEventListener('mouseout', closeSidebar);
-  //   };
-  // }, [sidebarRef]);
+  const { pathname } = useLocation();
+  const [open, setOpen] = useState(false);
+  const pageNames = Object.keys(routes);
+  const pageName = pageNames.find(name => pathname.includes(name));
+  const pageLinks = pageName ? routes[pageName] : null;
+
   return (
-    <div
-      className={cx(styles.sidebar, isOpen ? styles.open : '')}
-      ref={sidebarRef}
-    >
+    <nav className={cx(styles.container, `${open ? styles.open : ''}`)}>
       <button
         type="button"
-        className={cx(styles.link, 'btn')}
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setOpen(!open)}
+        className={cx(styles.bars, styles.basicButton)}
       >
-        <div className={styles.icon}>
-          {isOpen ? <FaAngleLeft /> : <FaAngleRight />}
-        </div>
+        <img src={open ? burgerFull : burgerHalf} alt="menu" />
       </button>
-      {/* <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        exact
-        to="/"
-      >
-        <FaHome />
-         <span>_Home</span>
-      </NavLink> */}
-      <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        exact
-        to="/newHome"
-      >
-        <div className={styles.icon}>
-          <FaHome />
-        </div>
-        <span>Home</span>
-      </NavLink>
-      {/* <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        exact
-        to="/pivot"
-      >
-        <FaChartBar />
-         <span>_Reports</span>
-      </NavLink> */}
-      {/* <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        exact
-        to="/newPivot"
-      >
-        <FaChartBar />
-         <span>Reports</span>
-      </NavLink> */}
-      <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        exact
-        to="/reports"
-      >
-        <div className={styles.icon}>
-          <FaChartBar />
-        </div>
-        <span>Reports</span>
-      </NavLink>
-      {/* <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        to="/history"
-      >
-        <FaTimes />
-         <span>_Deleted</span>
-      </NavLink> */}
-      <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        to="/order"
-      >
-        <div className={styles.icon}>
-          <FaFileAlt />
-        </div>
-        <span>Orders</span>
-      </NavLink>
-      <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        to="/admin"
-      >
-        <div className={styles.icon}>
-          <FaUserCog />
-        </div>
-        <span>Admin</span>
-      </NavLink>
-      <NavLink
-        className={cx(styles.link, 'btn')}
-        activeClassName={styles.active}
-        exact
-        to="/migrate"
-      >
-        <div className={styles.icon}>
-          <FaExclamationTriangle />
-        </div>
-        <span>Migrate</span>
-      </NavLink>
-      {authToken && (
-        <NavLink
-          className={cx(styles.link, 'btn')}
-          activeClassName={styles.active}
-          to="/auth/logout"
-        >
-          <div className={styles.icon}>
-            <FaSignOutAlt />
-          </div>
-          <span>Log out</span>
-        </NavLink>
-      )}
-    </div>
+      <div className={styles.linksContainer}>
+        {pageLinks
+          ? pageLinks?.map(link => {
+              const { icon: LinkIcon, route, text, links } = link;
+              if (links?.length) {
+                return (
+                  <SubMenu
+                    links={links}
+                    open={open}
+                    parent={{ LinkIcon, route, text, links }}
+                    key={text}
+                  />
+                );
+              }
+              return (
+                <CollapsableLink
+                  key={link?.text}
+                  {...link}
+                  openHorizontally={open}
+                />
+              );
+            })
+          : null}
+      </div>
+    </nav>
   );
+};
+
+Sidebar.propTypes = {
+  pageLinks: PropTypes.array.isRequired
 };
 
 export default Sidebar;

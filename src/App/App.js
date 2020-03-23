@@ -6,9 +6,10 @@ import './styles/spectre.min.scss';
 import './styles/spectre-exp.min.scss';
 import './styles/spectre-icons.min.scss';
 import '../fonts/Changa-VariableFont_wght.ttf';
-import Sidebar from 'components/Sidebar';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/react-hooks';
+import Sidebar from 'components/Sidebar';
+import Bar from 'components/Bar';
 import { DataContext } from './context';
 import styles from './App.module.scss';
 import client from './client';
@@ -26,6 +27,7 @@ const App = () => {
       <BrowserRouter>
         <DataContext.Provider value={DataContextValue}>
           <div className={styles.container}>
+            <Bar />
             <Sidebar />
             <div className={styles.main}>
               <Suspense
