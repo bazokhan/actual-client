@@ -20,9 +20,15 @@ export default gql`
         id
         name
       }
-      contributors {
+    }
+
+    myProfile {
+      id
+      service {
         id
-        name
+      }
+      services {
+        id
       }
     }
   }

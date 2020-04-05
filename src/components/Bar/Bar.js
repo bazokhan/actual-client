@@ -1,5 +1,11 @@
 /* eslint-disable no-nested-ternary */
-import React, { useState, useEffect, useMemo } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useContext,
+  useCallback
+} from 'react';
 import cx from 'classnames';
 import PropTypes from 'prop-types';
 import { Link, NavLink } from 'react-router-dom';
@@ -10,6 +16,7 @@ import NotificationPopup from './components/NotificationPopup';
 import placeholder from './images/images.png';
 import LogoutIcon from './images/Logout.svg';
 import pageLinks from './routes';
+import { ServiceContext } from '../../App/hooks/useServicesContext';
 
 const Bar = ({
   profile,
@@ -19,17 +26,21 @@ const Bar = ({
   userProfiles,
   settingsList
 }) => {
+  const { activeService, author } = useContext(ServiceContext);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [notificationRef, setNotificationRef] = useState(null);
 
   const openPopup = () => setNotificationOpen(true);
-  const closePopup = e => {
-    const insidePopup =
-      notificationRef === e.target || notificationRef.contains(e.target);
-    if (!insidePopup) {
-      setNotificationOpen(false);
-    }
-  };
+  const closePopup = useCallback(
+    e => {
+      const insidePopup =
+        notificationRef === e.target || notificationRef.contains(e.target);
+      if (!insidePopup) {
+        setNotificationOpen(false);
+      }
+    },
+    [notificationRef]
+  );
 
   useEffect(() => {
     if (notificationRef) {
@@ -41,11 +52,17 @@ const Bar = ({
     return () => {
       document.removeEventListener('click', closePopup);
     };
-  }, [notificationRef]);
+  }, [closePopup, notificationRef]);
 
   const unreads = useMemo(
     () => notifications.filter(({ read }) => !read).length,
     [notifications]
+  );
+
+  const isAdmin = useMemo(
+    () =>
+      author?.role === 'SUPERADMIN' || author?.id === activeService?.owner?.id,
+    [activeService, author]
   );
 
   return (
@@ -60,10 +77,12 @@ const Bar = ({
       )}
       <div className={styles.body}>
         {pageLinks?.map(pageLink => {
-          const { route, text, icon } = pageLink;
+          const { route, exact, text, icon, userRule } = pageLink;
+          if (userRule === 'ADMIN' && !isAdmin) return null;
           return (
             <NavLink
               key={route}
+              exact={exact}
               className={styles.link}
               activeClassName={styles.active}
               to={route}

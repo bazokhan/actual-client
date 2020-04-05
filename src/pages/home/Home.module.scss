@@ -11,5 +11,15 @@
   padding: 30px;
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start;
+  align-items: stretch;
+}
+
+.loginButton {
+  margin: 'auto 10px 20px';
+  padding: '10px';
+  border: 'solid 1px #ddd';
+  width: 'calc(100% - 20px)';
+  &:hover {
+    background: #eee;
+  }
 }

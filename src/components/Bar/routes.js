@@ -13,28 +13,14 @@ import {
 const routes = [
   {
     route: '/',
+    exact: true,
     icon: <FaHome />,
     text: 'Home'
-  },
-  {
-    route: '/auth',
-    icon: <FaSignInAlt />,
-    text: 'Profile'
-  },
-  {
-    route: '/admin',
-    icon: <FaUserCog />,
-    text: 'Admin'
   },
   {
     route: '/service',
     icon: <FaCalculator />,
     text: 'Accounting'
-  },
-  {
-    route: '/legacy',
-    icon: <FaRegPaperPlane />,
-    text: 'Legacy'
   },
   {
     route: '/order',
@@ -44,12 +30,30 @@ const routes = [
   {
     route: '/reports',
     icon: <FaChartPie />,
+    userRule: 'ADMIN',
     text: 'Reports'
+  },
+  {
+    route: '/admin',
+    icon: <FaUserCog />,
+    userRule: 'ADMIN',
+    text: 'Admin'
+  },
+  {
+    route: '/legacy',
+    icon: <FaRegPaperPlane />,
+    userRule: 'ADMIN',
+    text: 'Legacy'
   },
   {
     route: '/settings',
     icon: <FaCogs />,
     text: 'Settings'
+  },
+  {
+    route: '/auth',
+    icon: <FaSignInAlt />,
+    text: 'Profile'
   }
 ];
 

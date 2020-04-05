@@ -16,9 +16,11 @@ import client from './client';
 import AuthRoute from './AuthRoute';
 import { routes, authRoutes } from './routes';
 import useOldDatabase from './useOldDatabase';
+import useServicesContext from './hooks/useServicesContext';
 
 const App = () => {
   const { loading, DataContextValue } = useOldDatabase();
+  const { Service, ServiceProvider } = useServicesContext(client);
 
   if (loading) return <div className={styles.loading}>Loading..</div>;
 
@@ -26,34 +28,36 @@ const App = () => {
     <ApolloProvider client={client}>
       <BrowserRouter>
         <DataContext.Provider value={DataContextValue}>
-          <div className={styles.container}>
-            <Bar />
-            <Sidebar />
-            <div className={styles.main}>
-              <Suspense
-                fallback={<div className={styles.loading}>Loading..</div>}
-              >
-                <Switch>
-                  {routes.map(route => (
-                    <Route
-                      key={route.path}
-                      path={route.path}
-                      exact={route.exact}
-                      component={route.component}
-                    />
-                  ))}
-                  {authRoutes.map(route => (
-                    <AuthRoute
-                      key={route.path}
-                      path={route.path}
-                      exact={route.exact}
-                      component={route.component}
-                    />
-                  ))}
-                </Switch>
-              </Suspense>
+          <ServiceProvider value={Service}>
+            <div className={styles.container}>
+              <Bar />
+              <Sidebar />
+              <div className={styles.main}>
+                <Suspense
+                  fallback={<div className={styles.loading}>Loading..</div>}
+                >
+                  <Switch>
+                    {routes.map(route => (
+                      <Route
+                        key={route.path}
+                        path={route.path}
+                        exact={route.exact}
+                        component={route.component}
+                      />
+                    ))}
+                    {authRoutes.map(route => (
+                      <AuthRoute
+                        key={route.path}
+                        path={route.path}
+                        exact={route.exact}
+                        component={route.component}
+                      />
+                    ))}
+                  </Switch>
+                </Suspense>
+              </div>
             </div>
-          </div>
+          </ServiceProvider>
         </DataContext.Provider>
       </BrowserRouter>
     </ApolloProvider>
