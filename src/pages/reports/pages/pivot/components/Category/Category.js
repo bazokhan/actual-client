@@ -17,9 +17,9 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
     [category, payeesToFilterBy]
   );
 
-  // useEffect(() => {
-  //   handleCategoryFilter({ ...category, transactions });
-  // }, [category, handleCategoryFilter, transactions]);
+  useEffect(() => {
+    handleCategoryFilter({ ...category, transactions });
+  }, [category, handleCategoryFilter, transactions]);
 
   const balance = useMemo(
     () => transactions.reduce((prev, t) => prev + t.amount, 0),
@@ -65,7 +65,7 @@ const Category = ({ collapseAll, category, index, handleCategoryFilter }) => {
         <button
           className="btn btn-link btn-sm"
           type="button"
-          // onClick={() => setCollapsed(!collapsed)}
+          onClick={() => setCollapsed(!collapsed)}
         >
           {collapsed ? <FaAngleDown /> : <FaAngleUp />}
         </button>

@@ -67,7 +67,8 @@ Header.propTypes = {
   style: PropTypes.object,
   isAscending: PropTypes.bool.isRequired,
   setIsAscending: PropTypes.func.isRequired,
-  sortBy: PropTypes.func.isRequired
+  sortBy: PropTypes.func.isRequired,
+  mode: PropTypes.string.isRequired
 };
 
 Header.defaultProps = {
@@ -133,7 +134,8 @@ const Row = ({ item: t, style, mode }) => {
 
 Row.propTypes = {
   item: PropTypes.object.isRequired,
-  style: PropTypes.object
+  style: PropTypes.object,
+  mode: PropTypes.string.isRequired
 };
 
 Row.defaultProps = {
@@ -148,9 +150,11 @@ const DepositTable = ({ loading, context, isConcise }) => {
     [context]
   );
 
+  const key = useMemo(() => context?.account?.id, [context]);
+
   return (
     <Table
-      key={context?.account?.id}
+      key={key}
       data={
         isConcise
           ? transactions.reduce((prev, next) => {

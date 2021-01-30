@@ -27,26 +27,26 @@ ToggleButton.propTypes = {
 };
 
 const Sidebar = ({ filters, filterBy }) => {
-  const [isExapanded, setIsExpanded] = useState({
-    search: true,
-    filters: false
-  });
+  // const [isExapanded, setIsExpanded] = useState({
+  //   search: true,
+  //   filters: false
+  // });
 
   const [open, setOpen] = useState(true);
 
-  const expand = keyName => {
-    const tabNames = Object.keys(isExapanded);
-    if (!keyName || !tabNames.length || !tabNames.includes(keyName)) return;
-    const updatedTabState = tabNames.reduce((obj, key) => {
-      if (key === keyName) {
-        obj[key] = !isExapanded[key];
-        return obj;
-      }
-      obj[key] = false;
-      return obj;
-    }, {});
-    setIsExpanded(updatedTabState);
-  };
+  // const expand = keyName => {
+  //   const tabNames = Object.keys(isExapanded);
+  //   if (!keyName || !tabNames.length || !tabNames.includes(keyName)) return;
+  //   const updatedTabState = tabNames.reduce((obj, key) => {
+  //     if (key === keyName) {
+  //       obj[key] = !isExapanded[key];
+  //       return obj;
+  //     }
+  //     obj[key] = false;
+  //     return obj;
+  //   }, {});
+  //   setIsExpanded(updatedTabState);
+  // };
   const { accounts, balance } = useAccounts();
 
   const { data, error } = useQuery(sidebarGql, {

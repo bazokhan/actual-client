@@ -5,10 +5,7 @@ import { FaRegWindowRestore, FaWindowMaximize } from 'react-icons/fa';
 import styles from './WindowDiv.module.scss';
 
 const WindowDiv = forwardRef(
-  (
-    { children, onExpand, onMinimize, onRestore, title, alwaysShowTitle },
-    ref
-  ) => {
+  ({ children, onExpand, onRestore, title, alwaysShowTitle }, ref) => {
     const [mode, setMode] = useState('original');
     const className = useMemo(
       () =>
@@ -57,7 +54,6 @@ WindowDiv.propTypes = {
   children: PropTypes.node.isRequired,
   title: PropTypes.string,
   onExpand: PropTypes.func,
-  onMinimize: PropTypes.func,
   onRestore: PropTypes.func,
   alwaysShowTitle: PropTypes.bool
 };
@@ -65,7 +61,6 @@ WindowDiv.propTypes = {
 WindowDiv.defaultProps = {
   title: '',
   onExpand: () => {},
-  onMinimize: () => {},
   onRestore: () => {},
   alwaysShowTitle: false
 };
